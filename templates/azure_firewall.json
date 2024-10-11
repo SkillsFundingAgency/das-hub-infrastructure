@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "firewallName": {
+        "type": "string"
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]"
+      },
+      "firewallSubnetId": {
+        "type": "string"
+      },
+      "firewallPolicyId": {
+        "type": "string"
+      },
+      "firewallPublicIpId": {
+        "type": "string",
+        "metadata": {
+          "description": "The resource ID of the Public IP to associate with the Azure Firewall."
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/azureFirewalls",
+        "apiVersion": "2021-02-01",
+        "name": "[parameters('firewallName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "sku": {
+            "name": "AZFW_VNet",
+            "tier": "Standard"
+          },
+          "ipConfigurations": [
+            {
+              "name": "azureFirewallIpConfig",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('firewallSubnetId')]"
+                },
+                "publicIPAddress": {
+                  "id": "[parameters('firewallPublicIpId')]"
+                }
+              }
+            }
+          ],
+          "firewallPolicy": {
+            "id": "[parameters('firewallPolicyId')]"
+          }
+        }
+      }
+    ]
+  }

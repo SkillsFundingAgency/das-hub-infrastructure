@@ -1,19 +1,54 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  branches:
+    include:
+      - main  # or the desired branch for triggering the pipeline
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  - stage: Deploy_HUB_DTA
+    displayName: 'Deploy Hub VNet to Dev Subscription'
+    jobs:
+      - job: Deploy_DTA
+        displayName: 'Deploy to HUB DTA'
+        variables:
+          - group: DevVariables  # Variable group for Dev environment
+        steps:
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              azureResourceManagerConnection: '<DevServiceConnection>'  # Service connection for Dev subscription
+              subscriptionId: $(subscriptionId)
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: $(resourceGroupName)
+              location: $(location)
+              templateLocation: 'Linked artifact'
+              csmFile: 'hubVnet.bicep'  # Reference to Bicep template
+              deploymentMode: 'Incremental'
+              parameters: >
+                hubVnetName=$(hubVnetName)
+                addressPrefix=$(addressPrefix)
+                location=$(location)
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # - stage: Deploy_Prod_Hub
+  #   displayName: 'Deploy Hub VNet to Prod Subscription'
+  #   jobs:
+  #     - job: Deploy_Prod
+  #       displayName: 'Deploy to Prod'
+  #       variables:
+  #         - group: ProdVariables  # Variable group for Prod environment
+  #       steps:
+  #         - task: AzureResourceManagerTemplateDeployment@3
+  #           inputs:
+  #             azureResourceManagerConnection: '<ProdServiceConnection>'  # Service connection for Prod subscription
+  #             subscriptionId: $(subscriptionId)
+  #             action: 'Create Or Update Resource Group'
+  #             resourceGroupName: $(resourceGroupName)
+  #             location: $(location)
+  #             templateLocation: 'Linked artifact'
+  #             csmFile: 'hubVnet.bicep'
+  #             deploymentMode: 'Incremental'
+  #             parameters: >
+  #               hubVnetName=$(hubVnetName)
+  #               addressPrefix=$(addressPrefix)
+  #               location=$(location)

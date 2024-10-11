@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vnetName": {
+        "type": "string"
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]"
+      },
+      "addressPrefixes": {
+        "type": "array",
+        "defaultValue": ["10.0.0.0/16"]
+      },
+      "subnets": {
+        "type": "array",
+        "metadata": {
+          "description": "Array of subnets to create in the virtual network."
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2021-02-01",
+        "name": "[parameters('vnetName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": "[parameters('addressPrefixes')]"
+          },
+          "subnets": "[parameters('subnets')]"
+        }
+      }
+    ],
+    "outputs": {
+      "subnetIds": {
+        "type": "array",
+        "value": "[parameters('subnets')]"
+      }
+    }
+  }
