@@ -6,6 +6,16 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+resources:
+  repositories:
+  - repository: self
+  - repository: das-hub-infrastructure
+    type: github
+    name: SkillsFundingAgency/das-hub-infrastructure
+    # ref: refs/tags/2.1.15
+    endpoint: SkillsFundingAgency
+
+
 stages:
   - stage: Deploy_HUB_DTA
     displayName: 'Deploy Hub VNet to Dev Subscription'
@@ -23,7 +33,7 @@ stages:
               resourceGroupName: $(resourceGroupName)
               location: $(location)
               templateLocation: 'Linked artifact'
-              csmFile: 'hubVnet.bicep'  # Reference to Bicep template
+              csmFile: 'hubVnet.bicep'  # Template file
               deploymentMode: 'Incremental'
               parameters: >
                 hubVnetName=$(hubVnetName)
