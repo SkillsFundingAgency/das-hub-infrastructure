@@ -50,7 +50,7 @@ stages:
 
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
-                  --template-file master/master_template.json \
+                  --template-file config/master_template.json \
                   --parameters publicIPAddressName=$(publicIPAddressName) \
                               natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
