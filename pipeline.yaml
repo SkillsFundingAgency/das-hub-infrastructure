@@ -81,7 +81,7 @@ stages:
           
           - task: AzureCLI@2
             inputs:
-              azureSubscription: 'DEVOPS_SPN'
+              azureSubscription: 'SFA-DAS-DevTest-ARM'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
