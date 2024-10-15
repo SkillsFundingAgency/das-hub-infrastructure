@@ -70,7 +70,7 @@ stages:
     displayName: 'Deploy to Prod Environment'
     condition: and(succeeded(), eq(variables['environment'], 'prod'))
     variables:
-      - group: Prod-ARMTemplateVariables
+      - group: Prod-HubVariables
     jobs:
       - job: DeployARMTemplate
         displayName: 'Deploy ARM Template to Prod'
