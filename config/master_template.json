@@ -1,0 +1,162 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "publicIPAddressName": { "type": "string" },
+    "natGatewayName": { "type": "string" },
+    "firewallName": { "type": "string" },
+    "firewallPublicIpName": { "type": "string" },
+    "vnetName": { "type": "string" },
+    "armVnetAddressSpaceCIDR": { "type": "string" },
+    "subnet1Name": { "type": "string" },
+    "subnet1Prefix": { "type": "string" },
+    "subnet2Name": { "type": "string" },
+    "subnet2Prefix": { "type": "string" },
+    "firewallPolicy1Name": { "type": "string" },
+    "firewallPolicy2Name": { "type": "string" },
+    "location": { "type": "string" }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "VNetDeployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/virtual-network.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "armVnetName": { "value": "[parameters('vnetName')]" },
+          "armVnetAddressSpaceCIDR": { "value": "[parameters('armVnetAddressSpaceCIDR')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "PublicIPDeployment",
+      "dependsOn": [ "VNetDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/public-ip-address.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "publicIPAddressName": { "value": "[parameters('publicIPAddressName')]" },
+          "sku": { "value": "Standard" },
+          "publicIPAllocationMethod": { "value": "Static" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "NatGatewayDeployment",
+      "dependsOn": [ "PublicIPDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/nat_gateway.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "natGatewayName": { "value": "[parameters('natGatewayName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "publicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "SubnetUpdateDeployment",
+      "dependsOn": [ "NatGatewayDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/subnet.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": { "value": "[parameters('vnetName')]" },
+          "subnetName": { "value": "[parameters('subnet1Name')]" },
+          "subnetAddressPrefix": { "value": "[parameters('subnet1Prefix')]" },
+          "natGatewayId": { "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]" },
+          "serviceEndpointList": { "value": [] },
+          "delegations": { "value": [] },
+          "routeTable": { "value": {} },
+          "networkSecurityGroup": { "value": {} }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "FirewallPublicIPDeployment",
+      "dependsOn": [ "VNetDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/public-ip-address.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "publicIPAddressName": { "value": "[parameters('firewallPublicIpName')]" },
+          "sku": { "value": "Standard" },
+          "publicIPAllocationMethod": { "value": "Static" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "FirewallPoliciesDeployment",
+      "dependsOn": [ "VNetDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/firewall_policies.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "firewallPolicies": { 
+            "value": [
+              { "name": "[parameters('firewallPolicy1Name')]" },
+              { "name": "[parameters('firewallPolicy2Name')]" }
+            ]
+          },
+          "location": { "value": "[parameters('location')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "AzureFirewallDeployment",
+      "dependsOn": [ "FirewallPublicIPDeployment", "NatGatewayDeployment", "FirewallPoliciesDeployment", "VNetDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/azure_firewall.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "firewallName": { "value": "[parameters('firewallName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnet1Name'))]" },
+          "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
+          "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "PublicIpAddressResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+    }
+  }
+}

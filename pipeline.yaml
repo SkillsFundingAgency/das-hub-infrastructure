@@ -1,0 +1,111 @@
+trigger: none
+
+parameters:
+  - name: environment
+    displayName: 'Select Environment'
+    type: string
+    default: 'dev'
+    values:
+      - dev
+      - prod
+
+resources:
+  repositories:
+  - repository: das-hub-infrastructure
+    type: github
+    endpoint: SkillsFundingAgency
+    name: SkillsFundingAgency/das-hub-infrastructure
+    ref: main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: Dev
+    displayName: 'Deploy to Dev Environment'
+    condition: and(succeeded(), eq(variables['environment'], 'dev'))
+    variables:
+      - group: DEV-ARMTemplateVariables
+    jobs:
+      - job: DeployARMTemplate
+        displayName: 'Deploy ARM Template to Dev'
+        steps:
+          - checkout: testrepo1
+            displayName: 'Checkout Repository'
+
+          
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'DEVOPS_SPN'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                # Check if resource group exists, create if not
+                if ! az group exists --name $(resourceGroupName); then
+                  echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
+                  az group create --name $(resourceGroupName) --location $(location)
+                else
+                  echo "Resource group $(resourceGroupName) already exists."
+                fi
+
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --template-file master/master_template.json \
+                  --parameters publicIPAddressName=$(publicIPAddressName) \
+                              natGatewayName=$(natGatewayName) \
+                              firewallName=$(firewallName) \
+                              firewallPublicIpName=$(firewallPublicIpName) \
+                              vnetName=$(vnetName) \
+                              armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+                              subnet1Name=$(subnet1Name) \
+                              subnet1Prefix=$(subnet1Prefix) \
+                              subnet2Name=$(subnet2Name) \
+                              subnet2Prefix=$(subnet2Prefix) \
+                              firewallPolicy1Name=$(firewallPolicy1Name) \
+                              firewallPolicy2Name=$(firewallPolicy2Name) \
+                              location=$(location)
+                        
+                
+  - stage: Prod
+    displayName: 'Deploy to Prod Environment'
+    condition: and(succeeded(), eq(variables['environment'], 'prod'))
+    variables:
+      - group: Prod-ARMTemplateVariables
+    jobs:
+      - job: DeployARMTemplate
+        displayName: 'Deploy ARM Template to Prod'
+        steps:
+          - checkout: testrepo1
+            displayName: 'Checkout Repository'
+
+          
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'DEVOPS_SPN'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                # Check if resource group exists, create if not
+                if ! az group exists --name $(resourceGroupName); then
+                  echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
+                  az group create --name $(resourceGroupName) --location $(location)
+                else
+                  echo "Resource group $(resourceGroupName) already exists."
+                fi
+
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --template-file master/master_template.json \
+                  --parameters publicIPAddressName=$(publicIPAddressName) \
+                              natGatewayName=$(natGatewayName) \
+                              firewallName=$(firewallName) \
+                              firewallPublicIpName=$(firewallPublicIpName) \
+                              vnetName=$(vnetName) \
+                              armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+                              subnet1Name=$(subnet1Name) \
+                              subnet1Prefix=$(subnet1Prefix) \
+                              subnet2Name=$(subnet2Name) \
+                              subnet2Prefix=$(subnet2Prefix) \
+                              firewallPolicy1Name=$(firewallPolicy1Name) \
+                              firewallPolicy2Name=$(firewallPolicy2Name) \
+                              location=$(location)
