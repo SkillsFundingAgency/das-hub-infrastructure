@@ -75,7 +75,7 @@ stages:
       - job: DeployARMTemplate
         displayName: 'Deploy ARM Template to Prod'
         steps:
-          - checkout: testrepo1
+          - checkout: das-hub-infrastructure
             displayName: 'Checkout Repository'
 
           
