@@ -43,7 +43,9 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 # Check if resource group exists, create if not
-                if ! az group exists --name $(resourceGroupName); then
+                resourceGroupExists=$(az group exists --name $(resourceGroupName))
+
+                if [ "$resourceGroupExists" = false ]; then
                   echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
                   az group create --name $(resourceGroupName) --location $(location)
                 else
