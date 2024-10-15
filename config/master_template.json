@@ -24,7 +24,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/virtual-network.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/virtual-network.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -41,7 +41,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/public-ip-address.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -59,7 +59,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/nat_gateway.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/nat_gateway.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -77,7 +77,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/subnet.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/subnet.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -100,7 +100,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/public-ip-address.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -118,7 +118,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/firewall_policies.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_policies.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -140,7 +140,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/azure_firewall.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/azure_firewall.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
