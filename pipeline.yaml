@@ -25,7 +25,7 @@ stages:
     displayName: 'Deploy to Dev Environment'
     condition: and(succeeded(), eq(variables['environment'], 'dev'))
     variables:
-      - group: DEV-ARMTemplateVariables
+      - group: Dev-HubVariables
     jobs:
       - job: DeployARMTemplate
         displayName: 'Deploy ARM Template to Dev'
@@ -36,7 +36,7 @@ stages:
           
           - task: AzureCLI@2
             inputs:
-              azureSubscription: 'DEVOPS_SPN'
+              azureSubscription: 'SFA-DAS-DevTest-ARM'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
