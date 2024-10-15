@@ -47,7 +47,7 @@ stages:
 
                 if [ "$resourceGroupExists" = false ]; then
                   echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-                  az group create --name $(resourceGroupName) --location $(location)
+                  az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships"
                   sleep 30
                 else
                   echo "Resource group $(resourceGroupName) already exists."
