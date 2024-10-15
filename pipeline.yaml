@@ -25,18 +25,18 @@ stages:
     displayName: 'Deploy to Dev Environment'
     condition: and(succeeded(), eq(variables['environment'], 'dev'))
     variables:
-      - group: DEV-ARMTemplateVariables
+      - group: Dev-HubVariables
     jobs:
       - job: DeployARMTemplate
         displayName: 'Deploy ARM Template to Dev'
         steps:
-          - checkout: testrepo1
+          - checkout: das-hub-infrastructure
             displayName: 'Checkout Repository'
 
           
           - task: AzureCLI@2
             inputs:
-              azureSubscription: 'DEVOPS_SPN'
+              azureSubscription: 'SFA-DAS-DevTest-ARM'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -70,18 +70,18 @@ stages:
     displayName: 'Deploy to Prod Environment'
     condition: and(succeeded(), eq(variables['environment'], 'prod'))
     variables:
-      - group: Prod-ARMTemplateVariables
+      - group: Prod-HubVariables
     jobs:
       - job: DeployARMTemplate
         displayName: 'Deploy ARM Template to Prod'
         steps:
-          - checkout: testrepo1
+          - checkout: das-hub-infrastructure
             displayName: 'Checkout Repository'
 
           
           - task: AzureCLI@2
             inputs:
-              azureSubscription: 'DEVOPS_SPN'
+              azureSubscription: 'SFA-DAS-DevTest-ARM'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
