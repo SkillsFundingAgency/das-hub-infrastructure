@@ -69,6 +69,57 @@ stages:
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
                               location=$(location)
+                              natGatewayPublicIP=$(natGatewayPublicIP)
+                              FirewallPublicIP=$(FirewallPublicIP)
+                            
+  - stage: AT
+    displayName: 'Deploy to AT Environment'
+    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'dev'))
+    variables:
+      - name: selectedEnvironment
+        value: ${{ parameters.environment }}
+      - group: AT-HubVariables
+    jobs:
+      - job: DeployARMTemplate
+        displayName: 'Deploy ARM Template to Prod'
+        steps:
+          - checkout: das-hub-infrastructure
+            displayName: 'Checkout Repository'
+
+          
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'SFA-DAS-DevTest-ARM'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                # Check if resource group exists, create if not
+                if ! az group exists --name $(resourceGroupName); then
+                  echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
+                  az group create --name $(resourceGroupName) --location $(location)
+                else
+                  echo "Resource group $(resourceGroupName) already exists."
+                fi
+
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --template-file master/master_template.json \
+                  --parameters publicIPAddressName=$(publicIPAddressName) \
+                              natGatewayName=$(natGatewayName) \
+                              firewallName=$(firewallName) \
+                              firewallPublicIpName=$(firewallPublicIpName) \
+                              vnetName=$(vnetName) \
+                              armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+                              subnet1Name=$(subnet1Name) \
+                              subnet1Prefix=$(subnet1Prefix) \
+                              subnet2Name=$(subnet2Name) \
+                              subnet2Prefix=$(subnet2Prefix) \
+                              firewallPolicy1Name=$(firewallPolicy1Name) \
+                              firewallPolicy2Name=$(firewallPolicy2Name) \
+                              location=$(location)
+                              natGatewayPublicIP=$(natGatewayPublicIP)
+                              FirewallPublicIP=$(FirewallPublicIP)
+
                         
                 
   - stage: Prod
