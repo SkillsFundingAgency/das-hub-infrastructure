@@ -75,7 +75,7 @@ stages:
                             
   - stage: AT
     displayName: 'Deploy to AT Environment'
-    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'dev'))
+
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
