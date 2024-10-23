@@ -67,8 +67,8 @@ stages:
                               subnet2Prefix=$(subnet2Prefix) \
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
-                              location=$(location)
-                              natGatewayPublicIP=$(natGatewayPublicIP)
+                              location=$(location) \
+                              natGatewayPublicIP=$(natGatewayPublicIP) \
                               FirewallPublicIP=$(FirewallPublicIP)
                             
   - stage: AT
@@ -116,8 +116,8 @@ stages:
                               subnet2Prefix=$(subnet2Prefix) \
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
-                              location=$(location)
-                              natGatewayPublicIP=$(natGatewayPublicIP)
+                              location=$(location) \
+                              natGatewayPublicIP=$(natGatewayPublicIP) \
                               FirewallPublicIP=$(FirewallPublicIP)
 
                         
@@ -167,6 +167,6 @@ stages:
                               subnet2Prefix=$(subnet2Prefix) \
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
-                              location=$(location)
-                              natGatewayPublicIP=$(natGatewayPublicIP)
+                              location=$(location) \
+                              natGatewayPublicIP=$(natGatewayPublicIP) \
                               FirewallPublicIP=$(FirewallPublicIP)
