@@ -7,7 +7,7 @@ parameters:
     default: 'dev'
     values:
       - dev
-        at
+      - at
       - prod
 
 resources:
