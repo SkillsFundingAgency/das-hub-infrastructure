@@ -57,10 +57,8 @@ stages:
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
                   --template-file config/master_template.json \
-                  --parameters publicIPAddressName=$(publicIPAddressName) \
-                              natGatewayName=$(natGatewayName) \
+                  --parameters natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
-                              firewallPublicIpName=$(firewallPublicIpName) \
                               vnetName=$(vnetName) \
                               armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                               subnet1Name=$(subnet1Name) \
@@ -108,10 +106,8 @@ stages:
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
                   --template-file config/master_template.json \
-                  --parameters publicIPAddressName=$(publicIPAddressName) \
-                              natGatewayName=$(natGatewayName) \
+                  --parameters natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
-                              firewallPublicIpName=$(firewallPublicIpName) \
                               vnetName=$(vnetName) \
                               armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                               subnet1Name=$(subnet1Name) \
@@ -161,10 +157,8 @@ stages:
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
                   --template-file config/master_template.json \
-                  --parameters publicIPAddressName=$(publicIPAddressName) \
-                              natGatewayName=$(natGatewayName) \
+                  --parameters natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
-                              firewallPublicIpName=$(firewallPublicIpName) \
                               vnetName=$(vnetName) \
                               armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                               subnet1Name=$(subnet1Name) \
@@ -174,3 +168,5 @@ stages:
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
                               location=$(location)
+                              natGatewayPublicIP=$(natGatewayPublicIP)
+                              FirewallPublicIP=$(FirewallPublicIP)
