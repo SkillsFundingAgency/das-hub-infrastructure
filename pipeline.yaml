@@ -1,7 +1,7 @@
 trigger: none
 
 parameters:
-  - name: selectedEnvironment
+  - name: environment
     displayName: 'Select Environment'
     type: string
     default: 'dev'
@@ -24,7 +24,7 @@ pool:
 stages:
   - stage: Dev
     displayName: 'Deploy to Dev Environment'
-    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'dev'))
+    condition: and(succeeded(), eq(variables['environment'], 'dev'))
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
@@ -73,7 +73,7 @@ stages:
                             
   - stage: AT
     displayName: 'Deploy to AT Environment'
-    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'at'))
+    condition: and(succeeded(), eq(variables['environment'], 'at'))
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
