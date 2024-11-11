@@ -46,7 +46,7 @@
         "parameters": {
           "natGatewayName": { "value": "[parameters('natGatewayName')]" },
           "location": { "value": "[parameters('location')]" },
-          "publicIpId": { "value": "[parameters('natGatewayPublicIP')]" }
+          "publicIp": { "value": "[parameters('natGatewayPublicIP')]" }
         }
       }
     },
@@ -110,7 +110,7 @@
           "firewallName": { "value": "[parameters('firewallName')]" },
           "location": { "value": "[parameters('location')]" },
           "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnet1Name'))]" },
-          "firewallPublicIpId": { "value": "[parameters('FirewallPublicIP')]" },
+          "firewallPublicIp": { "value": "[parameters('FirewallPublicIP')]" },
           "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
         }
       }
