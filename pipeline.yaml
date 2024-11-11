@@ -24,7 +24,7 @@ pool:
 stages:
   - stage: Dev
     displayName: 'Deploy to Dev Environment'
-    condition: and(succeeded(), eq(variables['environment'], 'dev'))
+    condition: eq('${{ parameters.environment }}', 'dev')
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
@@ -73,7 +73,7 @@ stages:
                             
   - stage: AT
     displayName: 'Deploy to AT Environment'
-    condition: and(succeeded(), eq(variables['environment'], 'at'))
+    condition: eq('${{ parameters.environment }}', 'at')
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
@@ -124,7 +124,7 @@ stages:
                 
   - stage: Prod
     displayName: 'Deploy to Prod Environment'
-    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'prod'))
+    condition: eq('${{ parameters.environment }}', 'prod')
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
