@@ -73,7 +73,7 @@ stages:
                             
   - stage: AT
     displayName: 'Deploy to AT Environment'
-
+    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'at'))
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
@@ -124,7 +124,7 @@ stages:
                 
   - stage: Prod
     displayName: 'Deploy to Prod Environment'
-    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'dev'))
+    condition: and(succeeded(), eq(variables['selectedEnvironment'], 'prod'))
     variables:
       - name: selectedEnvironment
         value: ${{ parameters.environment }}
