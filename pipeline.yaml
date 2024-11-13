@@ -57,8 +57,10 @@ stages:
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
                   --template-file config/master_template.json \
-                  --parameters natGatewayName=$(natGatewayName) \
+                  --parameters publicIPAddressName=$(publicIPAddressName) \
+                              natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
+                              firewallPublicIpName=$(firewallPublicIpName) \
                               vnetName=$(vnetName) \
                               armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                               subnet1Name=$(subnet1Name) \
@@ -67,9 +69,7 @@ stages:
                               subnet2Prefix=$(subnet2Prefix) \
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
-                              location=$(location) \
-                              natGatewayPublicIP=$(natGatewayPublicIP) \
-                              FirewallPublicIP=$(FirewallPublicIP)
+                              location=$(location)
                             
   - stage: AT
     displayName: 'Deploy to AT Environment'
@@ -106,8 +106,10 @@ stages:
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
                   --template-file config/master_template.json \
-                  --parameters natGatewayName=$(natGatewayName) \
+                  --parameters publicIPAddressName=$(publicIPAddressName) \
+                              natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
+                              firewallPublicIpName=$(firewallPublicIpName) \
                               vnetName=$(vnetName) \
                               armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                               subnet1Name=$(subnet1Name) \
@@ -116,9 +118,7 @@ stages:
                               subnet2Prefix=$(subnet2Prefix) \
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
-                              location=$(location) \
-                              natGatewayPublicIP=$(natGatewayPublicIP) \
-                              FirewallPublicIP=$(FirewallPublicIP)
+                              location=$(location)
 
                         
                 
@@ -157,8 +157,10 @@ stages:
                 az deployment group create \
                   --resource-group $(resourceGroupName) \
                   --template-file config/master_template.json \
-                  --parameters natGatewayName=$(natGatewayName) \
+                  --parameters publicIPAddressName=$(publicIPAddressName) \
+                              natGatewayName=$(natGatewayName) \
                               firewallName=$(firewallName) \
+                              firewallPublicIpName=$(firewallPublicIpName) \
                               vnetName=$(vnetName) \
                               armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                               subnet1Name=$(subnet1Name) \
@@ -167,6 +169,4 @@ stages:
                               subnet2Prefix=$(subnet2Prefix) \
                               firewallPolicy1Name=$(firewallPolicy1Name) \
                               firewallPolicy2Name=$(firewallPolicy2Name) \
-                              location=$(location) \
-                              natGatewayPublicIP=$(natGatewayPublicIP) \
-                              FirewallPublicIP=$(FirewallPublicIP)
+                              location=$(location)
