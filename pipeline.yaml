@@ -8,6 +8,7 @@ parameters:
   values:
   - dev
   - at
+  - demo
   - prod
 
 resources:
@@ -119,7 +120,7 @@ stages:
                         location=$(location)
 - stage: Demo
   displayName: 'Deploy to Demo Environment'
-  condition: eq('${{ parameters.environment }}', 'at')
+  condition: eq('${{ parameters.environment }}', 'demo')
   variables:
   - name: selectedEnvironment
     value: ${{ parameters.environment }}
