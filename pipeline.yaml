@@ -9,7 +9,6 @@ parameters:
   - dev
   - at
   - demo
-  - test  
   - prod
 
 resources:
@@ -81,7 +80,7 @@ stages:
   - group: AT-HubVariables
   jobs:
   - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Prod'
+    displayName: 'Deploy ARM Template to AT'
     steps:
     - checkout: das-hub-infrastructure
       displayName: 'Checkout Repository'
@@ -119,16 +118,16 @@ stages:
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         location=$(location)
-- stage: Test
-  displayName: 'Deploy to Test Environment'
-  condition: eq('${{ parameters.environment }}', 'Test')
+- stage: Demo
+  displayName: 'Deploy to Demo Environment'
+  condition: eq('${{ parameters.environment }}', 'demo')
   variables:
   - name: selectedEnvironment
     value: ${{ parameters.environment }}
-  - group: Test-HubVariables
+  - group: Demo-HubVariables
   jobs:
   - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Prod'
+    displayName: 'Deploy ARM Template to Demo'
     steps:
     - checkout: das-hub-infrastructure
       displayName: 'Checkout Repository'
@@ -169,14 +168,14 @@ stages:
 
 - stage: Test
   displayName: 'Deploy to Test Environment'
-  condition: eq('${{ parameters.environment }}', 'Test')
+  condition: eq('${{ parameters.environment }}', 'test')
   variables:
   - name: selectedEnvironment
     value: ${{ parameters.environment }}
   - group: Test-HubVariables
   jobs:
   - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Prod'
+    displayName: 'Deploy ARM Template to Test'
     steps:
     - checkout: das-hub-infrastructure
       displayName: 'Checkout Repository'
