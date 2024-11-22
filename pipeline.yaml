@@ -9,6 +9,7 @@ parameters:
   - dev
   - at
   - demo
+  - test
   - prod
 
 resources:
