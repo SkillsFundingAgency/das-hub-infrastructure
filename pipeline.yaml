@@ -217,7 +217,7 @@ stages:
                         location=$(location)
 
 - stage: Test2
-  displayName: 'Deploy to Test Environment'
+  displayName: 'Deploy to Test2 Environment'
   condition: eq('${{ parameters.environment }}', 'test2')
   variables:
   - name: selectedEnvironment
