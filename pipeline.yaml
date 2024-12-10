@@ -57,7 +57,6 @@ stages:
           fi
 
           az deployment group create \
-            --mode Incremental \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters publicIPAddressName=$(publicIPAddressName) \
@@ -73,6 +72,8 @@ stages:
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         location=$(location)
+          deploymentMode: 'Incremental'
+
                       
 - stage: AT
   displayName: 'Deploy to AT Environment'
