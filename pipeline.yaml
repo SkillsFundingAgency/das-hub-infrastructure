@@ -72,6 +72,7 @@ stages:
                         subnet2Prefix=$(subnet2Prefix) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
+                        location=$(location)
 
 
                       
