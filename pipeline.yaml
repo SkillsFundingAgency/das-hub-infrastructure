@@ -10,7 +10,7 @@ parameters:
   - at
   - demo
   - test
-  - test2  
+  - test2
   - prod
 
 resources:
@@ -59,6 +59,7 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
+            --parameters @firewall_rules.json \
             --parameters publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
                         firewallName=$(firewallName) \
@@ -94,7 +95,7 @@ stages:
         azureSubscription: 'SFA-DAS-DevTest-ARM'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        inlineScript: |+
+        inlineScript: |
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 

@@ -14,8 +14,10 @@
     "subnet2Prefix": { "type": "string" },
     "firewallPolicy1Name": { "type": "string" },
     "firewallPolicy2Name": { "type": "string" },
-    "location": { "type": "string" }
+    "location": { "type": "string" },
+    "firewallRuleCollectionGroups": { "type": "object" }
   },
+
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
@@ -148,7 +150,8 @@
           "location": { "value": "[parameters('location')]" },
           "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnet1Name'))]" },
           "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
-          "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
+          "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" },
+          "firewallRuleCollectionGroups": { "value": "[parameters('firewallRuleCollectionGroups')]" }  
         }
       }
     }

@@ -1,0 +1,30 @@
+{
+    "ruleCollectionGroups": [
+      {
+        "name": "AllowRules",
+        "priority": 100,
+        "ruleCollections": [
+          {
+            "name": "AppRuleCollection",
+            "priority": 200,
+            "ruleCollectionType": "ApplicationRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "name": "AllowHTTP",
+                "protocols": [
+                  { "protocolType": "Http", "port": 80 },
+                  { "protocolType": "Https", "port": 443 }
+                ],
+                "targetFqdns": [ "*.example.com" ],
+                "sourceAddresses": [ "10.0.0.0/16" ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+      
