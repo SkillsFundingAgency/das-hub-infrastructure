@@ -4,7 +4,7 @@ parameters:
 - name: environment
   displayName: 'Select Environment'
   type: string
-  default: 'dev'
+  default: 'dta'
   values:
   - dta
   - at
