@@ -6,7 +6,7 @@ parameters:
   type: string
   default: 'dev'
   values:
-  - dev
+  - dta
   - at
   - demo
   - test
@@ -25,16 +25,16 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-- stage: Dev
-  displayName: 'Deploy to Dev Environment'
-  condition: eq('${{ parameters.environment }}', 'dev')
+- stage: DTA
+  displayName: 'Deploy to DTA Environment'
+  condition: eq('${{ parameters.environment }}', 'dta')
   variables:
   - name: selectedEnvironment
     value: ${{ parameters.environment }}
   - group: Dev-HubVariables
   jobs:
   - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Dev'
+    displayName: 'Deploy ARM Template to DTA'
     steps:
     - checkout: das-hub-infrastructure
       displayName: 'Checkout Repository'
