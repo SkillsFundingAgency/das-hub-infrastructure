@@ -57,7 +57,6 @@ stages:
           fi
 
           az deployment group create \
-            --mode Incremental \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters publicIPAddressName=$(publicIPAddressName) \
