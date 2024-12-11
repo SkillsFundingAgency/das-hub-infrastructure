@@ -130,6 +130,8 @@
               { "name": "[parameters('firewallPolicy2Name')]" }
             ]
           },
+          "firewallRuleCollectionGroups": { "value": "[parameters('firewallRuleCollectionGroups')]" },
+
           "location": { "value": "[parameters('location')]" }
         }
       }
@@ -151,7 +153,7 @@
           "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnet1Name'))]" },
           "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
           "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" },
-          "firewallRuleCollectionGroups": { "value": "[parameters('firewallRuleCollectionGroups')]" }  
+          // "firewallRuleCollectionGroups": { "value": "[parameters('firewallRuleCollectionGroups')]" }  
         }
       }
     }
