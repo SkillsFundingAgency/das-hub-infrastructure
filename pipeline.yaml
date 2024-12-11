@@ -59,7 +59,7 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters @firewall_rules.json \
+            --parameters ./firewall_rules.json \
             --parameters publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
                         firewallName=$(firewallName) \
