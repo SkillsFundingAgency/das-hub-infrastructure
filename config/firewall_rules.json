@@ -1,0 +1,114 @@
+{
+  "networkRules": [
+    {
+      "name": "AllowDNS",
+      "priority": 100,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "AllowDNS",
+          "ipProtocols": ["UDP"],
+          "sourceAddresses": ["10.1.0.0/16"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["53"]
+        }
+      ]
+    },
+    {
+      "name": "AllowSMB",
+      "priority": 200,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "AllowSMB",
+          "ipProtocols": ["TCP"],
+          "sourceAddresses": ["192.168.100.0/24"],
+          "destinationAddresses": ["10.2.0.0/16"],
+          "destinationPorts": ["445"]
+        }
+      ]
+    },
+    {
+      "name": "BlockFTP",
+      "priority": 300,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Deny" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "BlockFTP",
+          "ipProtocols": ["TCP"],
+          "sourceAddresses": ["172.16.0.0/24"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["21"]
+        }
+      ]
+    }
+  ],
+  "applicationRules": [
+    {
+      "name": "AllowTeams",
+      "priority": 100,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "AllowTeams",
+          "protocols": [
+            { "protocolType": "Https", "port": 443 }
+          ],
+          "sourceAddresses": ["192.168.50.0/24"],
+          "targetFqdns": ["*.teams.microsoft.com"],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    },
+    {
+      "name": "AllowGitHub",
+      "priority": 200,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "AllowGitHub",
+          "protocols": [
+            { "protocolType": "Https", "port": 443 }
+          ],
+          "sourceAddresses": ["10.3.0.0/16"],
+          "targetFqdns": ["*.github.com"],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    },
+    {
+      "name": "BlockSocialMedia",
+      "priority": 300,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Deny" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "BlockSocialMedia",
+          "protocols": [
+            { "protocolType": "Https", "port": 443 }
+          ],
+          "sourceAddresses": ["*"],
+          "targetFqdns": ["*.facebook.com", "*.instagram.com"],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    }
+  ]
+}

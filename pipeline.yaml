@@ -10,7 +10,7 @@ parameters:
   - at
   - demo
   - test
-  - test2  
+  - test2
   - prod
 
 resources:
@@ -71,7 +71,10 @@ stages:
                         subnet2Prefix=$(subnet2Prefix) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        location=$(location) \
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"
 
 
                       
@@ -122,6 +125,7 @@ stages:
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         location=$(location)
+
 - stage: Demo
   displayName: 'Deploy to Demo Environment'
   condition: eq('${{ parameters.environment }}', 'demo')
