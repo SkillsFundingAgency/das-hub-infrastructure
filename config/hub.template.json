@@ -17,6 +17,7 @@
     "location": { "type": "string" },
     "networkRuleCollectionGroupName": { "type": "string" },
     "applicationRuleCollectionGroupName": { "type": "string" },
+    "modifyAzureFirewallSubnet": { "type": "bool" },
     "rulesFileUri": { "type": "object" }
   },
   "resources": [
