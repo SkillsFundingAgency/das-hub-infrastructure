@@ -124,7 +124,10 @@ stages:
                         subnet2Prefix=$(subnet2Prefix) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        location=$(location) \
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"
 
 - stage: Demo
   displayName: 'Deploy to Demo Environment'
