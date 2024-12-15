@@ -20,11 +20,6 @@
         "description": "The address prefix of the subnet."
       }
     },
-    "modifyAzureFirewallSubnet": {
-      "type": "bool",
-      "defaultValue": false
-    },
-
     "natGatewayId": {
       "type": "string",
       "metadata": {
@@ -38,7 +33,6 @@
         "description": "A list of service endpoints."
       }
     },
-    
     "delegations": {
       "type": "array",
       "defaultValue": [],
@@ -79,7 +73,6 @@
       "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "apiVersion": "2018-11-01",
-      "condition": "[parameters('modifyAzureFirewallSubnet')]",
       "properties": "[variables('subnetProperties')]"
     }
   ],

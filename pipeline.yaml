@@ -59,7 +59,6 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters modifyAzureFirewallSubnet=false \
             --parameters publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
                         firewallName=$(firewallName) \
