@@ -55,11 +55,7 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
-          # Check if the subnet being modified is AzureFirewallSubnet
-          if [[ $SUBNET_NAME == "AzureFirewallSubnet" ]]; then
-            echo "Skipping modification of AzureFirewallSubnet"
-          else
-            # Deploy the virtual network and subnets
+
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
