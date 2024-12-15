@@ -73,7 +73,6 @@
       }
     },
     {
-      "condition": "[not(contains(resourceGroup().properties, 'AzureFirewallSubnet'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "SubnetUpdateDeployment",
