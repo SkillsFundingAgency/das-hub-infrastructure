@@ -1,6 +1,21 @@
 {
   "networkRules": [
-
+    {
+      "name": "AllowDNS",
+      "priority": 100,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "AllowDNS",
+          "ipProtocols": ["UDP"],
+          "sourceAddresses": ["10.1.0.0/16"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["53"]
+        }
+      ]
+    },
     {
       "name": "AllowSMB",
       "priority": 200,
