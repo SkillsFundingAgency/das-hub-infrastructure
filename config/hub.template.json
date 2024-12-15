@@ -160,7 +160,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "NetworkRuleCollectionDeployment",
-      "dependsOn": [ "FirewallPoliciesDeployment", "AzureFirewallDeployment" ],
+      "dependsOn": [ "FirewallPoliciesDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -178,7 +178,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "ApplicationRuleCollectionDeployment",
-      "dependsOn": [ "FirewallPoliciesDeployment", "AzureFirewallDeployment" ],
+      "dependsOn": [ "FirewallPoliciesDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
