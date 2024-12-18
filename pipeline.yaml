@@ -59,7 +59,6 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters @config/firewall_rules.json \
             --parameters publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
                         firewallName=$(firewallName) \
@@ -75,7 +74,7 @@ stages:
                         location=$(location) \
                         networkRuleCollectionGroupName=NetworkGroup \
                         applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./firewall_rules.json"
+                        rulesFileUri="@./config/firewall_rules.json"
 
                       
 - stage: AT
