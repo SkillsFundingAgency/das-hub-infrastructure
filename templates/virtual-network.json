@@ -1,35 +1,42 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "armVnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the arm vnet"
-      }
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "armVnetName": { "type": "string" },
+      "armVnetAddressSpaceCIDR": { "type": "string" },
+      "subnetName": { "type": "string" },
+      "subnetAddressPrefix": { "type": "string" },
+      "natGatewayId": { "type": "string" }
     },
-    "armVnetAddressSpaceCIDR": {
-      "type": "string",
-      "metadata": {
-        "description": "CIDR for the address space of the ARM Vnet"
-      }
-    }
-  },
-  "variables": {},
-  "resources": [
-    {
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('armVnetName')]",
-      "apiVersion": "2018-11-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('armVnetAddressSpaceCIDR')]"
+    "resources": [
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "name": "[parameters('armVnetName')]",
+        "apiVersion": "2021-02-01",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": ["[parameters('armVnetAddressSpaceCIDR')]"]
+          },
+          "subnets": [
+            {
+              "name": "[parameters('subnetName')]",
+              "properties": {
+                "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                "natGateway": {
+                  "id": "[parameters('natGatewayId')]"
+                }
+              }
+            }
           ]
         }
       }
+    ],
+    "outputs": {
+      "subnetId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('armVnetName'), parameters('subnetName'))]"
+      }
     }
-  ],
-  "outputs": {}
-}
+  }
+  
