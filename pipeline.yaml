@@ -76,6 +76,7 @@ stages:
                         applicationRuleCollectionGroupName=AppGroup \
                         rulesFileUri="@./config/firewall_rules.json"
 
+
                       
 - stage: AT
   displayName: 'Deploy to AT Environment'
@@ -96,7 +97,8 @@ stages:
         azureSubscription: 'SFA-DAS-DevTest-ARM'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        inlineScript: |
+        inlineScript: |+
+          deploymentMode: 'Incremental'
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
@@ -123,7 +125,11 @@ stages:
                         subnet2Prefix=$(subnet2Prefix) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        location=$(location) \
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"
+
 - stage: Demo
   displayName: 'Deploy to Demo Environment'
   condition: eq('${{ parameters.environment }}', 'demo')
