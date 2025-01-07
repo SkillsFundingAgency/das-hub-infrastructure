@@ -77,7 +77,7 @@
           },
           "parameters": {
             "armVnetName": { "value": "[parameters('vnetName')]" },
-            "armVnetAddressSpaceCIDR": { "value": "[parameters('armVnetAddressSpaceCIDR')]" },
+            "armVnetAddressSpaceCIDR": { "value": "[parameters('armVnetAddressSpaceCIDR')]" }
             // "subnetName": { "value": "[parameters('subnetName')]" },
             // "subnetAddressPrefix": { "value": "[parameters('subnetAddressPrefix')]" },
             // "natGatewayId": { "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]" }
