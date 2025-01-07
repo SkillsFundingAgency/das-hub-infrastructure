@@ -57,7 +57,6 @@
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2021-04-01",
         "name": "VNetDeployment",
-        "dependsOn": ["NatGatewayDeployment"],
         "properties": {
           "mode": "Incremental",
           "subnets": [
