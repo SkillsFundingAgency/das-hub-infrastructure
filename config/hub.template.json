@@ -1,181 +1,179 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "publicIPAddressName": { "type": "string" },
-      "natGatewayName": { "type": "string" },
-      "firewallName": { "type": "string" },
-      "firewallPublicIpName": { "type": "string" },
-      "vnetName": { "type": "string" },
-      "armVnetAddressSpaceCIDR": { "type": "string" },
-      "subnetName": { "type": "string" },
-      "subnetAddressPrefix": { "type": "string" },
-      "firewallPolicy1Name": { "type": "string" },
-      "firewallPolicy2Name": { "type": "string" },
-      "location": { "type": "string" },
-      "networkRuleCollectionGroupName": { "type": "string" },
-      "applicationRuleCollectionGroupName": { "type": "string" },
-      "rulesFileUri": { "type": "object" }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the virtual network."
+      }
     },
-    "resources": [
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "PublicIPDeployment",
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
-            "contentVersion": "1.0.0.0"
-          },
-          "parameters": {
-            "publicIPAddressName": { "value": "[parameters('publicIPAddressName')]" },
-            "sku": { "value": "Standard" },
-            "publicIPAllocationMethod": { "value": "Static" }
-          }
+    "addressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Address prefix for the virtual network."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet."
+      }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Address prefix for the subnet."
+      }
+    },
+    "publicIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Public IP address."
+      }
+    },
+    "natGatewayName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the NAT Gateway."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the resources."
+      }
+    },
+    "firewallPublicIpName": { "type": "string" },
+    "firewallPolicy1Name": { "type": "string" },
+  "firewallPolicy2Name": { "type": "string" },
+  "firewallName": { "type": "string" },
+  "rulesFileUri": { "type": "object" }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "PublicIPDeployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "publicIPAddressName": { "value": "[parameters('publicIPAddressName')]" },
+          "sku": { "value": "Standard" },
+          "publicIPAllocationMethod": { "value": "Static" }
         }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "NatGatewayDeployment",
-        "dependsOn": [ "PublicIPDeployment" ],
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/nat_gateway.json",
-            "contentVersion": "1.0.0.0"
-          },
-          "parameters": {
-            "natGatewayName": { "value": "[parameters('natGatewayName')]" },
-            "location": { "value": "[parameters('location')]" },
-            "publicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]" }
-          }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "NatGatewayDeployment",
+      "dependsOn": [ "PublicIPDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/nat_gateway.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "natGatewayName": { "value": "[parameters('natGatewayName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "publicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]" }
         }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "VNetDeployment",
-        "properties": {
-          "mode": "Incremental",
-          "subnets": [
-          {
-            "name": "[parameters('subnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnetAddressPrefix')]",
-              "natGateway": {
-                "id": "[parameters('natGatewayName')]"
-              }
-            }
-          }
-        ],
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/virtual-network.json",
-            "contentVersion": "1.0.0.0"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "VNetDeployment",
+      "dependsOn": [ "NatGatewayDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/vnet.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
           },
-          "parameters": {
-            "armVnetName": { "value": "[parameters('vnetName')]" },
-            "armVnetAddressSpaceCIDR": { "value": "[parameters('armVnetAddressSpaceCIDR')]" }
-            // "subnetName": { "value": "[parameters('subnetName')]" },
-            // "subnetAddressPrefix": { "value": "[parameters('subnetAddressPrefix')]" },
-            // "natGatewayId": { "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]" }
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "FirewallPublicIPDeployment",
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
-            "contentVersion": "1.0.0.0"
+          "addressPrefix": {
+            "value": "[parameters('addressPrefix')]"
           },
-          "parameters": {
-            "publicIPAddressName": { "value": "[parameters('firewallPublicIpName')]" },
-            "sku": { "value": "Standard" },
-            "publicIPAllocationMethod": { "value": "Static" }
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "AzureFirewallDeployment",
-        "dependsOn": [ "FirewallPublicIPDeployment", "VNetDeployment" ],
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/azure_firewall.json",
-            "contentVersion": "1.0.0.0"
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
           },
-          "parameters": {
-            "firewallName": { "value": "[parameters('firewallName')]" },
-            "location": { "value": "[parameters('location')]" },
-            "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
-            "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
-            "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "FirewallPoliciesDeployment",
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_policies.json",
-            "contentVersion": "1.0.0.0"
+          "subnetPrefix": {
+            "value": "[parameters('subnetPrefix')]"
           },
-          "parameters": {
-            "firewallPolicies": { 
-              "value": [
-                { "name": "[parameters('firewallPolicy1Name')]" },
-                { "name": "[parameters('firewallPolicy2Name')]" }
-              ]
-            },
-            "location": { "value": "[parameters('location')]" }
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "NetworkRuleCollectionDeployment",
-        "dependsOn": [ "FirewallPoliciesDeployment" ],
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_network_rule_collection_rule.json",
-            "contentVersion": "1.0.0.0"
-          },
-          "parameters": {
-            "firewallPolicyName": { "value": "[parameters('firewallPolicy1Name')]" },
-            "ruleCollectionGroupName": { "value": "[parameters('networkRuleCollectionGroupName')]" },
-            "networkRules": { "value": "[parameters('rulesFileUri').networkRules]" }
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2021-04-01",
-        "name": "ApplicationRuleCollectionDeployment",
-        "dependsOn": [ "FirewallPoliciesDeployment" ],
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_application_rule_collection_rule.json",
-            "contentVersion": "1.0.0.0"
-          },
-          "parameters": {
-            "firewallPolicyName": { "value": "[parameters('firewallPolicy2Name')]" },
-            "ruleCollectionGroupName": { "value": "[parameters('applicationRuleCollectionGroupName')]" },
-            "applicationRules": { "value": "[parameters('rulesFileUri').applicationRules]" }
+          "natGatewayId": {
+            "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]"
           }
         }
       }
-    ]
-  }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "FirewallPublicIPDeployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "publicIPAddressName": { "value": "[parameters('firewallPublicIpName')]" },
+          "sku": { "value": "Standard" },
+          "publicIPAllocationMethod": { "value": "Static" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "FirewallPoliciesDeployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_policies.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "firewallPolicies": { 
+            "value": [
+              { "name": "[parameters('firewallPolicy1Name')]" },
+              { "name": "[parameters('firewallPolicy2Name')]" }
+            ]
+          },
+          "location": { "value": "[parameters('location')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "AzureFirewallDeployment",
+      "dependsOn": [ "FirewallPublicIPDeployment", "FirewallPoliciesDeployment", "VNetDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/azure_firewall.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "firewallName": { "value": "[parameters('firewallName')]" },
+          "location": { "value": "[parameters('location')]" },
+          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
+          "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
+          "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
+        }
+      }
+    }
+  ]
+}
