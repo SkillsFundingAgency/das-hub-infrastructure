@@ -1,6 +1,10 @@
 trigger: none
 
 parameters:
+- name: firewallSubnetName
+  displayName: 'Azure Firewall Subnet Name'
+  type: string
+  default: 'AzureFirewallSubnet'
 - name: environment
   displayName: 'Select Environment'
   type: string
@@ -109,6 +113,10 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
+          # Skip operations on AzureFirewallSubnet
+          if [[ "$(subnet1Name)" == "${{ parameters.firewallSubnetName }}" ]]; then
+            echo "Skipping update for Azure Firewall Subnet: $(subnet1Name)"
+          else
 
           az deployment group create \
             --resource-group $(resourceGroupName) \
