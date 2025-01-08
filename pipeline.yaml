@@ -117,7 +117,7 @@ stages:
           if [[ "$(subnet1Name)" == "${{ parameters.firewallSubnetName }}" ]]; then
             echo "Skipping update for Azure Firewall Subnet: $(subnet1Name)"
           else
-
+          fi
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
