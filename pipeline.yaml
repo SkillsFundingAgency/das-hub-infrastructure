@@ -103,6 +103,12 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |+
+        
+          # Skip operations on AzureFirewallSubnet
+          if [[ "$(subnet1Name)" == "${{ parameters.firewallSubnetName }}" ]]; then
+            echo "Skipping update for Azure Firewall Subnet: $(subnet1Name)"
+          else
+
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
@@ -113,11 +119,8 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
-          # Skip operations on AzureFirewallSubnet
-          if [[ "$(subnet1Name)" == "${{ parameters.firewallSubnetName }}" ]]; then
-            echo "Skipping update for Azure Firewall Subnet: $(subnet1Name)"
-          else
-          fi
+
+          
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
