@@ -56,27 +56,22 @@ stages:
             echo "Resource group $(resourceGroupName) already exists."
           fi
 
-          az deployment group what-if \
-            --mode Incremental  \
+          az deployment group validate \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(armVnetAddressSpaceCIDR) \
+                        subnetName=$(subnet1Name) \
+                        subnetPrefix=$(subnet1Prefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
                         firewallName=$(firewallName) \
                         firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        natGatewayName=$(subnet2Prefix) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         location=$(location) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
                         rulesFileUri="@./config/firewall_rules.json"
-
 
                       
 - stage: AT
@@ -99,7 +94,6 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |+
-          deploymentMode: 'Incremental'
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
