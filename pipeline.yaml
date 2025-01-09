@@ -55,7 +55,10 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
-
+          ls -a 
+          echo "=============================================="
+          cat ./config/hub.template.json
+          echo "=============================================="
           az deployment group validate \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
