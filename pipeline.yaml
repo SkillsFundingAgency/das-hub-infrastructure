@@ -59,6 +59,8 @@ stages:
           echo "=============================================="
           cat ./config/hub.template.json
           echo "=============================================="
+          git branch --show-current
+          echo "=============================================="
           az deployment group validate \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
