@@ -69,8 +69,8 @@ stages:
           az deployment group validate \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+            --parameters armVnetName=$(armVnetName) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \  
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -119,8 +119,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+            --parameters armVnetName=$(armVnetName) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -167,8 +167,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+            --parameters armVnetName=$(armVnetName) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -215,8 +215,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+            --parameters armVnetName=$(armVnetName) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -263,8 +263,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+            --parameters armVnetName=$(armVnetName) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -313,8 +313,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+            --parameters armVnetName=$(armVnetName) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \

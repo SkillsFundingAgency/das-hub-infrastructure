@@ -2,13 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vnetName": {
+    "armVnetName": {
       "type": "string",
       "metadata": {
         "description": "Name of the virtual network."
       }
     },
-    "addressPrefix": {
+    "armVnetAddressSpaceCIDR": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the virtual network."
@@ -101,11 +101,11 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vnetName": {
-            "value": "[parameters('vnetName')]"
+          "armVnetName": {
+            "value": "[parameters('armVnetName')]"
           },
-          "addressPrefix": {
-            "value": "[parameters('addressPrefix')]"
+          "armVnetAddressSpaceCIDR": {
+            "value": "[parameters('armVnetAddressSpaceCIDR')]"
           },
           "subnetName": {
             "value": "[parameters('subnetName')]"
@@ -171,7 +171,7 @@
         "parameters": {
           "firewallName": { "value": "[parameters('firewallName')]" },
           "location": { "value": "[parameters('location')]" },
-          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
+          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('armVnetName'), parameters('subnetName'))]" },
           "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
           "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
         }
