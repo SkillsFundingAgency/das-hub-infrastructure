@@ -19,7 +19,7 @@ resources:
     type: github
     endpoint: SkillsFundingAgency
     name: SkillsFundingAgency/das-hub-infrastructure
-    ref: main
+    # ref: main
 
 pool:
   vmImage: 'ubuntu-latest'
