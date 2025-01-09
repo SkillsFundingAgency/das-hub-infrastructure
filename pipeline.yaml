@@ -56,7 +56,8 @@ stages:
             echo "Resource group $(resourceGroupName) already exists."
           fi
 
-          az group deployment incremental \
+          az deployment group create \
+            --mode Incremental  \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters publicIPAddressName=$(publicIPAddressName) \
