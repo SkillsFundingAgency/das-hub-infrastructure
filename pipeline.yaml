@@ -60,9 +60,9 @@ stages:
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+                        subnet1Name=$(subnet1Name) \
+                        subnet1Prefix=$(subnet1Prefix) \
                         publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
                         firewallName=$(firewallName) \

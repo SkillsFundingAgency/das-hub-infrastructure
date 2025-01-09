@@ -8,19 +8,19 @@
         "description": "Name of the virtual network."
       }
     },
-    "addressPrefix": {
+    "armVnetAddressSpaceCIDR": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the virtual network."
       }
     },
-    "subnetName": {
+    "subnet1Name": {
       "type": "string",
       "metadata": {
         "description": "Name of the subnet."
       }
     },
-    "subnetPrefix": {
+    "subnet1Prefix": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the subnet."
@@ -102,14 +102,14 @@
           "vnetName": {
             "value": "[parameters('vnetName')]"
           },
-          "addressPrefix": {
-            "value": "[parameters('addressPrefix')]"
+          "armVnetAddressSpaceCIDR": {
+            "value": "[parameters('armVnetAddressSpaceCIDR')]"
           },
-          "subnetName": {
-            "value": "[parameters('subnetName')]"
+          "subnet1Name": {
+            "value": "[parameters('subnet1Name')]"
           },
-          "subnetPrefix": {
-            "value": "[parameters('subnetPrefix')]"
+          "subnet1Prefix": {
+            "value": "[parameters('subnet1Prefix')]"
           },
           "natGatewayId": {
             "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]"
@@ -169,7 +169,7 @@
         "parameters": {
           "firewallName": { "value": "[parameters('firewallName')]" },
           "location": { "value": "[parameters('location')]" },
-          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
+          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnet1Name'))]" },
           "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
           "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
         }
