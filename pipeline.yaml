@@ -61,6 +61,11 @@ stages:
           echo "=============================================="
           git branch --show-current
           echo "=============================================="
+          cat ./pipeline.yaml
+          echo "=============================================="
+          ls -a ./templates
+          echo "=============================================="
+
           az deployment group validate \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
