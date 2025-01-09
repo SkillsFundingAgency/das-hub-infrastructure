@@ -70,7 +70,7 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./firewall_rules.json"                        
+                        rulesFileUri="@./config/firewall_rules.json"                        
 
                       
 - stage: AT
