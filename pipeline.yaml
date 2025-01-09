@@ -60,7 +60,7 @@ stages:
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
+                        armVnetAddressSpaceCIDR=$(addressPrefix) \
                         subnetName=$(subnet1Name) \
                         subnetPrefix=$(subnet1Prefix) \
                         publicIPAddressName=$(publicIPAddressName) \
