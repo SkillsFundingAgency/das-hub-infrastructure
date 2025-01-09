@@ -71,6 +71,12 @@ stages:
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         location=$(location) \
+                        subnet2Name=$(subnet2Name) \
+                        subnet2Prefix=$(subnet2Prefix) \
+                        location=$(location) \
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+
                         rulesFileUri="@./config/firewall_rules.json"
 
                       
