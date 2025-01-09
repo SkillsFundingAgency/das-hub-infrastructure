@@ -57,9 +57,9 @@ stages:
           fi
 
           az deployment group validate \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
+            --resource-group arm-template-rg \
+            --template-file master_template.json \
+            --parameters vnetName=dev-vnet \
                         addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
@@ -70,7 +70,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./config/firewall_rules.json"                        
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"                   
 
                       
 - stage: AT
