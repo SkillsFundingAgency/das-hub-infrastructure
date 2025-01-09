@@ -61,7 +61,7 @@ stages:
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
                         armVnetAddressSpaceCIDR=$(addressPrefix) \
-                        subnetName=$(subnet1Name) \
+                        subnet1Name=$(subnet1Name) \
                         subnetPrefix=$(subnet1Prefix) \
                         publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
