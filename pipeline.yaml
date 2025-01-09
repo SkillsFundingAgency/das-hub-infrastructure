@@ -70,7 +70,7 @@ stages:
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \  
+                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -82,7 +82,7 @@ stages:
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         networkRuleCollectionGroupName=NetworkGroup \
                         applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                   
+                        rulesFileUri="@./config/firewall_rules.json"               
 
                       
 - stage: AT
