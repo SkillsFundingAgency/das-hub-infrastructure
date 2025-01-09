@@ -57,9 +57,9 @@ stages:
           fi
 
           az deployment group validate \
-            --resource-group arm-template-rg \
-            --template-file hub.template.json \
-            --parameters vnetName=dev-vnet \
+            --resource-group $(resourceGroupName) \
+            --template-file config/hub.template.json \
+            --parameters vnetName=$(vnetName) \
                         addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
