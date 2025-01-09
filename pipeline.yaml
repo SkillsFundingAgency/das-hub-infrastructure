@@ -60,24 +60,17 @@ stages:
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
+                        addressPrefix=$(addressPrefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
+                        location=$(location) \
                         firewallPublicIpName=$(firewallPublicIpName) \
-                        natGatewayName=$(subnet2Prefix) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
-                        location=$(location) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-
-                        rulesFileUri="@./config/firewall_rules.json"
+                        rulesFileUri="@./firewall_rules.json"                        
 
                       
 - stage: AT
