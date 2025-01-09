@@ -8,19 +8,19 @@
         "description": "Name of the virtual network."
       }
     },
-    "armVnetAddressSpaceCIDR": {
+    "addressPrefix": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the virtual network."
       }
     },
-    "subnet1Name": {
+    "subnetName": {
       "type": "string",
       "metadata": {
         "description": "Name of the subnet."
       }
     },
-    "subnet1Prefix": {
+    "subnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the subnet."
@@ -41,15 +41,15 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "addressSpace": {
-          "armVnetAddressSpaceCIDRes": [
-            "[parameters('armVnetAddressSpaceCIDR')]"
+          "addressPrefixes": [
+            "[parameters('addressPrefix')]"
           ]
         },
         "subnets": [
           {
-            "name": "[parameters('subnet1Name')]",
+            "name": "[parameters('subnetName')]",
             "properties": {
-              "armVnetAddressSpaceCIDR": "[parameters('subnet1Prefix')]",
+              "addressPrefix": "[parameters('subnetPrefix')]",
               "natGateway": {
                 "id": "[parameters('natGatewayId')]"
               }
