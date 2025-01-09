@@ -22,7 +22,7 @@ resources:
     # ref: main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 stages:
 - stage: DTA
