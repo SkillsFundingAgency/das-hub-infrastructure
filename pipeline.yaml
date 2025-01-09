@@ -31,7 +31,7 @@ stages:
   variables:
   - name: selectedEnvironment
     value: ${{ parameters.environment }}
-  - group: Dev-HubVariables
+  - group: Dev-HubVariables2
   jobs:
   - job: DeployARMTemplate
     displayName: 'Deploy ARM Template to DTA'
