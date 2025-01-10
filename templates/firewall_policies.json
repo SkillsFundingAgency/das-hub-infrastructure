@@ -8,12 +8,6 @@
                 "description": "Array of firewall policies to create."
             }
         },
-                "firewallRuleCollectionGroups": {
-            "type": "array",
-            "metadata": {
-                "description": "Array of firewall policies to create."
-            }
-        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
@@ -26,7 +20,6 @@
             "name": "[parameters('firewallPolicies')[copyIndex()].name]",
             "location": "[parameters('location')]",
             "properties": {
-                "ruleCollectionGroups": "[parameters('firewallRuleCollectionGroups')]",
                 "sku": {
                     "tier": "Standard"
                 }
