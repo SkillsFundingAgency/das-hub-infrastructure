@@ -41,7 +41,7 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "addressSpace": {
-          "armVnetAddressSpaceCIDRes": [
+          "armVnetAddressSpaceCIDR": [
             "[parameters('armVnetAddressSpaceCIDR')]"
           ]
         },
