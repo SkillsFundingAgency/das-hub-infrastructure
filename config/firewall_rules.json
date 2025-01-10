@@ -16,22 +16,7 @@
         }
       ]
     },
-    {
-      "name": "TestingRule",
-      "priority": 400,
-      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-      "action": { "type": "Allow" },
-      "rules": [
-        {
-          "ruleType": "NetworkRule",
-          "name": "TestingRule",
-          "ipProtocols": ["UDP"],
-          "sourceAddresses": ["10.10.0.0/16"],
-          "destinationAddresses": ["*"],
-          "destinationPorts": ["53"]
-        }
-      ]
-    },
+
     {
       "name": "BlockFTP",
       "priority": 300,
