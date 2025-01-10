@@ -41,7 +41,7 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "addressSpace": {
-          "armVnetAddressSpaceCIDR": [
+          "addressPrefixes": [
             "[parameters('armVnetAddressSpaceCIDR')]"
           ]
         },
@@ -49,7 +49,7 @@
           {
             "name": "[parameters('subnetName')]",
             "properties": {
-              "armVnetAddressSpaceCIDR": "[parameters('subnetPrefix')]",
+              "addressPrefix": "[parameters('subnetPrefix')]",
               "natGateway": {
                 "id": "[parameters('natGatewayId')]"
               }
