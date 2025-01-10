@@ -2,13 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "armVnetName": {
+    "vnetName": {
       "type": "string",
       "metadata": {
         "description": "Name of the virtual network."
       }
     },
-    "armVnetAddressSpaceCIDR": {
+    "addressPrefix": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the virtual network."
@@ -61,7 +61,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/public-ip-address.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -79,7 +79,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/nat_gateway.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/nat_gateway.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -97,15 +97,15 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/virtual-network.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/vnet.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "armVnetName": {
-            "value": "[parameters('armVnetName')]"
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
           },
-          "armVnetAddressSpaceCIDR": {
-            "value": "[parameters('armVnetAddressSpaceCIDR')]"
+          "addressPrefix": {
+            "value": "[parameters('addressPrefix')]"
           },
           "subnetName": {
             "value": "[parameters('subnetName')]"
@@ -126,7 +126,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/public-ip-address.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -143,7 +143,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_policies.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/firewall_policies.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -165,13 +165,13 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/azure_firewall.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/azure_firewall.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "firewallName": { "value": "[parameters('firewallName')]" },
           "location": { "value": "[parameters('location')]" },
-          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('armVnetName'), parameters('subnetName'))]" },
+          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
           "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
           "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
         }
@@ -185,7 +185,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_network_rule_collection_rule.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/firewall_network_rule_collection_rule.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -203,7 +203,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_application_rule_collection_rule.json",
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/firewall_application_rule_collection_rule.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

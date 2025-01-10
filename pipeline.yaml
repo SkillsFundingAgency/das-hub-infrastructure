@@ -69,8 +69,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \

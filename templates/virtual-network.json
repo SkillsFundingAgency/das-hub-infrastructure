@@ -2,13 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "armVnetName": {
+    "vnetName": {
       "type": "string",
       "metadata": {
         "description": "Name of the virtual network."
       }
     },
-    "armVnetAddressSpaceCIDR": {
+    "addressPrefix": {
       "type": "string",
       "metadata": {
         "description": "Address prefix for the virtual network."
@@ -37,12 +37,12 @@
     {
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2020-11-01",
-      "name": "[parameters('armVnetName')]",
+      "name": "[parameters('vnetName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[parameters('armVnetAddressSpaceCIDR')]"
+            "[parameters('addressPrefix')]"
           ]
         },
         "subnets": [
