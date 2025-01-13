@@ -1,18 +1,18 @@
 {
   "networkRules": [
     {
-      "name": "AllowDNS",
+      "name": "AllowSubnet-PL-SN",
       "priority": 100,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
         {
           "ruleType": "NetworkRule",
-          "name": "AllowDNS",
-          "ipProtocols": ["UDP"],
+          "name": "AllowSubnet-PL-SN",
+          "ipProtocols": ["TCP","UDP"],
           "sourceAddresses": ["10.1.0.0/16"],
           "destinationAddresses": ["*"],
-          "destinationPorts": ["53"]
+          "destinationPorts": ["80","443"]
         }
       ]
     },
