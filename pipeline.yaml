@@ -55,16 +55,7 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
-          ls -a 
-          echo "=============================================="
-          cat ./config/hub.template.json
-          echo "=============================================="
-          git branch --show-current
-          echo "=============================================="
-          cat ./pipeline.yaml
-          echo "=============================================="
-          ls -a ./templates
-          echo "=============================================="
+
 
           az deployment group create \
             --resource-group $(resourceGroupName) \

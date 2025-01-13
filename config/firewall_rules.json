@@ -8,27 +8,27 @@
       "rules": [
         {
           "ruleType": "NetworkRule",
-          "name": "AllowSubnet-PL-SN",
+          "name": "AllowSubnet-PL-SN-Outbound",
           "ipProtocols": ["TCP","UDP"],
-          "sourceAddresses": ["10.1.0.0/16"],
+          "sourceAddresses": ["10.1.200.0/24"],
           "destinationAddresses": ["*"],
           "destinationPorts": ["80","443"]
         }
       ]
     },
     {
-      "name": "AllowSMB",
+      "name": "AllowSubnet-PFBA-SN",
       "priority": 200,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
         {
           "ruleType": "NetworkRule",
-          "name": "AllowSMB",
-          "ipProtocols": ["TCP"],
-          "sourceAddresses": ["192.168.100.0/24"],
-          "destinationAddresses": ["10.2.0.0/16"],
-          "destinationPorts": ["445"]
+          "name": "AllowSubnet-PFBA-SN-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.1.131.0/24"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["80","443"]
         }
       ]
     },
