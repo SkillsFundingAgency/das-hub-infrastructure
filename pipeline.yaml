@@ -110,8 +110,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -121,7 +121,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./firewall_rules.json"                        
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"        
 
 
 - stage: Demo
@@ -158,8 +160,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -169,7 +171,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./firewall_rules.json"                        
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"                   
 
 
 - stage: Test
@@ -202,12 +206,11 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
-
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -217,7 +220,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./firewall_rules.json"                        
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"                       
 
 
 - stage: Test2
@@ -254,8 +259,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -265,7 +270,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./firewall_rules.json"                        
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"                      
 
 
 
@@ -304,8 +311,8 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters armVnetName=$(armVnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
                         subnetName=$(subnetName) \
                         subnetPrefix=$(subnetPrefix) \
                         publicIPAddressName=$(publicIPAddressName) \
@@ -315,4 +322,6 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        rulesFileUri="@./firewall_rules.json"                        
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"                     
