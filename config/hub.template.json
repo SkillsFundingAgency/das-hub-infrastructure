@@ -2,45 +2,62 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "publicIPAddressName": { "type": "string" },
-    "natGatewayName": { "type": "string" },
-    "firewallName": { "type": "string" },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the virtual network."
+      }
+    },
+    "addressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Address prefix for the virtual network."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet."
+      }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Address prefix for the subnet."
+      }
+    },
+    "publicIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Public IP address."
+      }
+    },
+    "natGatewayName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the NAT Gateway."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the resources."
+      }
+    },
     "firewallPublicIpName": { "type": "string" },
-    "vnetName": { "type": "string" },
-    "armVnetAddressSpaceCIDR": { "type": "string" },
-    "subnet1Name": { "type": "string" },
-    "subnet1Prefix": { "type": "string" },
-    "subnet2Name": { "type": "string" },
-    "subnet2Prefix": { "type": "string" },
     "firewallPolicy1Name": { "type": "string" },
-    "firewallPolicy2Name": { "type": "string" },
-    "location": { "type": "string" },
-    "networkRuleCollectionGroupName": { "type": "string" },
-    "applicationRuleCollectionGroupName": { "type": "string" },
-    "rulesFileUri": { "type": "object" }
+  "firewallPolicy2Name": { "type": "string" },
+  "firewallName": { "type": "string" },
+  "networkRuleCollectionGroupName": { "type": "string" },
+  "applicationRuleCollectionGroupName": { "type": "string" },
+  "rulesFileUri": { "type": "object" }
   },
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "VNetDeployment",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/virtual-network.json",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "armVnetName": { "value": "[parameters('vnetName')]" },
-          "armVnetAddressSpaceCIDR": { "value": "[parameters('armVnetAddressSpaceCIDR')]" }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
       "name": "PublicIPDeployment",
-      "dependsOn": [ "VNetDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -75,23 +92,30 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "SubnetUpdateDeployment",
+      "name": "VNetDeployment",
       "dependsOn": [ "NatGatewayDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/subnet.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/vnet.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "virtualNetworkName": { "value": "[parameters('vnetName')]" },
-          "subnetName": { "value": "[parameters('subnet1Name')]" },
-          "subnetAddressPrefix": { "value": "[parameters('subnet1Prefix')]" },
-          "natGatewayId": { "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]" },
-          "serviceEndpointList": { "value": [] },
-          "delegations": { "value": [] },
-          "routeTable": { "value": {} },
-          "networkSecurityGroup": { "value": {} }
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "addressPrefix": {
+            "value": "[parameters('addressPrefix')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "subnetPrefix": {
+            "value": "[parameters('subnetPrefix')]"
+          },
+          "natGatewayId": {
+            "value": "[resourceId('Microsoft.Network/natGateways', parameters('natGatewayName'))]"
+          }
         }
       }
     },
@@ -99,7 +123,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "FirewallPublicIPDeployment",
-      "dependsOn": [ "VNetDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -117,7 +140,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "FirewallPoliciesDeployment",
-      "dependsOn": [ "VNetDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -139,7 +161,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "AzureFirewallDeployment",
-      "dependsOn": [ "FirewallPublicIPDeployment", "NatGatewayDeployment", "FirewallPoliciesDeployment", "VNetDeployment" ],
+      "dependsOn": [ "FirewallPublicIPDeployment", "FirewallPoliciesDeployment", "VNetDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -149,13 +171,12 @@
         "parameters": {
           "firewallName": { "value": "[parameters('firewallName')]" },
           "location": { "value": "[parameters('location')]" },
-          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnet1Name'))]" },
+          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
           "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
           "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
         }
       }
     },
-
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
@@ -192,11 +213,5 @@
         }
       }
     }
-  ],
-  "outputs": {
-    "PublicIpAddressResourceId": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
-    }
-  }
+  ]
 }
