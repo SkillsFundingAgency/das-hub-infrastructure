@@ -1,7 +1,6 @@
 trigger: none
 
 parameters:
-
 - name: environment
   displayName: 'Select Environment'
   type: string
@@ -20,7 +19,7 @@ resources:
     type: github
     endpoint: SkillsFundingAgency
     name: SkillsFundingAgency/das-hub-infrastructure
-    ref: main
+    # ref: main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -32,7 +31,7 @@ stages:
   variables:
   - name: selectedEnvironment
     value: ${{ parameters.environment }}
-  - group: Dev-HubVariables
+  - group: Dev-HubVariables2
   jobs:
   - job: DeployARMTemplate
     displayName: 'Deploy ARM Template to DTA'
@@ -56,27 +55,34 @@ stages:
           else
             echo "Resource group $(resourceGroupName) already exists."
           fi
+          ls -a 
+          echo "=============================================="
+          cat ./config/hub.template.json
+          echo "=============================================="
+          git branch --show-current
+          echo "=============================================="
+          cat ./pipeline.yaml
+          echo "=============================================="
+          ls -a ./templates
+          echo "=============================================="
 
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
                         natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
+                        location=$(location) \
                         firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
-                        armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location) \
                         networkRuleCollectionGroupName=NetworkGroup \
                         applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"
-
+                        rulesFileUri="@./config/firewall_rules.json"               
 
                       
 - stage: AT
@@ -110,26 +116,22 @@ stages:
             echo "Resource group $(resourceGroupName) already exists."
           fi
 
-          
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
+            --parameters armVnetName=$(armVnetName) \
                         armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
+                        natGatewayName=$(natGatewayName) \
+                        location=$(location) \
+                        firewallPublicIpName=$(firewallPublicIpName) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"
+                        rulesFileUri="@./firewall_rules.json"                        
+
 
 - stage: Demo
   displayName: 'Deploy to Demo Environment'
@@ -165,19 +167,19 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
+            --parameters armVnetName=$(armVnetName) \
                         armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
+                        natGatewayName=$(natGatewayName) \
+                        location=$(location) \
+                        firewallPublicIpName=$(firewallPublicIpName) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        rulesFileUri="@./firewall_rules.json"                        
+
 
 - stage: Test
   displayName: 'Deploy to Test Environment'
@@ -213,19 +215,19 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
+            --parameters armVnetName=$(armVnetName) \
                         armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
+                        natGatewayName=$(natGatewayName) \
+                        location=$(location) \
+                        firewallPublicIpName=$(firewallPublicIpName) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        rulesFileUri="@./firewall_rules.json"                        
+
 
 - stage: Test2
   displayName: 'Deploy to Test2 Environment'
@@ -261,19 +263,19 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
+            --parameters armVnetName=$(armVnetName) \
                         armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
+                        natGatewayName=$(natGatewayName) \
+                        location=$(location) \
+                        firewallPublicIpName=$(firewallPublicIpName) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        rulesFileUri="@./firewall_rules.json"                        
+
 
 
                   
@@ -311,16 +313,15 @@ stages:
           az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
-            --parameters publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        firewallName=$(firewallName) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        vnetName=$(vnetName) \
+            --parameters armVnetName=$(armVnetName) \
                         armVnetAddressSpaceCIDR=$(armVnetAddressSpaceCIDR) \
-                        subnet1Name=$(subnet1Name) \
-                        subnet1Prefix=$(subnet1Prefix) \
-                        subnet2Name=$(subnet2Name) \
-                        subnet2Prefix=$(subnet2Prefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
+                        natGatewayName=$(natGatewayName) \
+                        location=$(location) \
+                        firewallPublicIpName=$(firewallPublicIpName) \
+                        firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        location=$(location)
+                        rulesFileUri="@./firewall_rules.json"                        
