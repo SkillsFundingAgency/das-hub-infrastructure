@@ -107,7 +107,7 @@ stages:
             echo "Resource group $(resourceGroupName) already exists."
           fi
 
-          az deployment group validate \
+          az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
