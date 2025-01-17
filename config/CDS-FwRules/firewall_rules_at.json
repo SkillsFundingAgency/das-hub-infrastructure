@@ -18,7 +18,7 @@
     },
     {
       "name": "AllowSubnet-PFBA-SN",
-      "priority": 220,
+      "priority": 380,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -34,7 +34,7 @@
     },
     {
       "name": "AllowSubnet-ATLSSN-USR-SN",
-      "priority": 230,
+      "priority": 680,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -274,7 +274,7 @@
     },
     {
       "name": "AllowSubnet-COMTWKR-SN",
-      "priority": 380,
+      "priority": 220,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -674,7 +674,7 @@
     },
     {
       "name": "AllowSubnet-ACOMTWKR-SN",
-      "priority": 680,
+      "priority": 230,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
