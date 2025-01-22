@@ -79,8 +79,7 @@
   },
     "rulesFileUri": { 
       "type": "object" 
-      }
-  },
+      },
   
   "resources": [
     {
