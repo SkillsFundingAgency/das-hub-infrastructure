@@ -73,10 +73,15 @@
       "type": "string" 
       },
 
+    "rulesFileAT": { 
+      "type": "object" 
+      }
+  },
     "rulesFileUri": { 
       "type": "object" 
       }
   },
+  
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
@@ -260,7 +265,7 @@
             "value": "[parameters('networkRuleCollectionGroupName2')]"
           },
           "networkRules": {
-            "value": "[parameters('rulesFileUri').networkRulesInbound]"
+            "value": "[parameters('rulesFileAT').networkRulesInbound]"
           }
         }
       }
