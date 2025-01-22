@@ -1,5 +1,5 @@
 {
-  "networkRules": [
+  "networkRulesOutbound": [
     {
       "name": "AllowSubnet-PL-SN",
       "priority": 1010,

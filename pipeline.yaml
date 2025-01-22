@@ -107,7 +107,7 @@ stages:
             echo "Resource group $(resourceGroupName) already exists."
           fi
 
-          az deployment group create \
+          az deployment group validate \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
@@ -121,9 +121,10 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=Network-Rules \
+                        networkRuleCollectionGroupName=Network-Rules-Outbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
                         applicationRuleCollectionGroupName=Application-Rules \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_at.json"        
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at_outbound.json","@./config/CDS-FwRules/firewallrules_at_inbound.json"    
 
 
 - stage: Demo

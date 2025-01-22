@@ -1,0 +1,21 @@
+{
+  "networkRulesInbound": [
+    {
+      "name": "Denu-All-Outbound",
+      "priority": 100,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Deny" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Deny-All-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["*"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["*"]
+        }
+      ]
+    }
+
+  ]
+}
