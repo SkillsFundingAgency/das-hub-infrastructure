@@ -57,7 +57,7 @@ stages:
           fi
 
 
-          az deployment group validate \
+          az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
@@ -71,11 +71,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=Network-Rules-Outbound \
-                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
-                        applicationRuleCollectionGroupName=Application-Rules \
-                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at_outbound.json" \      
-                        rulesFileAT="@./config/CDS-FwRules/firewallrules_at_inbound.json"               
+                        networkRuleCollectionGroupName=NetworkGroup \
+                        applicationRuleCollectionGroupName=AppGroup \
+                        rulesFileUri="@./config/firewall_rules.json"               
 
                       
 - stage: AT
@@ -124,10 +122,9 @@ stages:
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         networkRuleCollectionGroupName=Network-Rules-Outbound \
-                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Outbound \
                         applicationRuleCollectionGroupName=Application-Rules \
-                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at_outbound.json",      
-                        rulesFileAT="@./config/CDS-FwRules/firewallrules_at_inbound.json"     
+                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_at.json"        
 
 
 - stage: Demo

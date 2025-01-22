@@ -73,13 +73,10 @@
       "type": "string" 
       },
 
-    "rulesFileAT": { 
+    "rulesFileUri": { 
       "type": "object" 
       }
   },
-    "rulesFileUri": { 
-      "type": "object" 
-      },
   
   "resources": [
     {
@@ -264,7 +261,7 @@
             "value": "[parameters('networkRuleCollectionGroupName2')]"
           },
           "networkRules": {
-            "value": "[parameters('rulesFileAT').networkRulesInbound]"
+            "value": "[parameters('rulesFileUri').networkRulesInbound]"
           }
         }
       }
