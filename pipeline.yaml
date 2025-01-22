@@ -124,7 +124,7 @@ stages:
                         networkRuleCollectionGroupName=Network-Rules-Outbound \
                         networkRuleCollectionGroupName2=Network-Rules-Inbound \
                         applicationRuleCollectionGroupName=Application-Rules \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_at.json"        
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"        
 
 
 - stage: Demo
