@@ -1391,28 +1391,28 @@
           "destinationPorts": ["80","443"]
         }
       ]
-    },
-    {
-      "networkRulesInbound": [
-        {
-          "name": "Deny-All-Outbound",
-          "priority": 100,
-          "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-          "action": { "type": "Deny" },
-          "rules": [
-            {
-              "ruleType": "NetworkRule",
-              "name": "Deny-All-Outbound",
-              "ipProtocols": ["TCP","UDP"],
-              "sourceAddresses": ["*"],
-              "destinationAddresses": ["*"],
-              "destinationPorts": ["*"]
-            }
-          ]
-        }
+    }
   ],
 
-  
+  "networkRulesInbound": [
+    {
+      "name": "Deny-All-Inbound",
+      "priority": 1010,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Deny" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Deny-All-Inbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["172.12.12.0/24"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["80","443"]
+        }
+      ]
+    }
+  ],
+
   "applicationRules": [
     {
       "name": "AllowTeams",
@@ -1476,3 +1476,5 @@
     }
   ]
 }
+
+
