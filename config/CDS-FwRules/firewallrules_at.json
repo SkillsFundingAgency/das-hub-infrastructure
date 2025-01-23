@@ -1394,7 +1394,7 @@
     },
     {
       "name": "AllowSubnet-SHAREDBE-SN-2",
-      "priority": 150,
+      "priority": 155,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1410,7 +1410,7 @@
     },
     {
       "name": "AllowSubnet-SHAREDBE-SN-3",
-      "priority": 150,
+      "priority": 145,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1426,7 +1426,7 @@
     },
     {
       "name": "AllowSubnet-CRSWKR-SN",
-      "priority": 400,
+      "priority": 405,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1442,7 +1442,7 @@
     },
     {
       "name": "AllowSubnet-SHAREDBE-SN-4",
-      "priority": 150,
+      "priority": 135,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
