@@ -71,9 +71,10 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"               
+                        networkRuleCollectionGroupName=Network-Rules-Outbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
+                        applicationRuleCollectionGroupName=Application-Rules \
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"                 
 
                       
 - stage: AT
@@ -107,7 +108,7 @@ stages:
             echo "Resource group $(resourceGroupName) already exists."
           fi
 
-          az deployment group validate \
+          az deployment group create \
             --resource-group $(resourceGroupName) \
             --template-file config/hub.template.json \
             --parameters vnetName=$(vnetName) \
@@ -124,7 +125,7 @@ stages:
                         networkRuleCollectionGroupName=Network-Rules-Outbound \
                         networkRuleCollectionGroupName2=Network-Rules-Inbound \
                         applicationRuleCollectionGroupName=Application-Rules \
-                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"        
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"         
 
 
 - stage: Demo
@@ -172,9 +173,10 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                   
+                        networkRuleCollectionGroupName=Network-Rules-Outbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
+                        applicationRuleCollectionGroupName=Application-Rules \
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"                     
 
 
 - stage: Test
@@ -221,9 +223,10 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                       
+                        networkRuleCollectionGroupName=Network-Rules-Outbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
+                        applicationRuleCollectionGroupName=Application-Rules \
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"                         
 
 
 - stage: Test2
@@ -271,9 +274,10 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                      
+                        networkRuleCollectionGroupName=Network-Rules-Outbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
+                        applicationRuleCollectionGroupName=Application-Rules \
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"                      
 
 
 
@@ -323,6 +327,7 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                     
+                        networkRuleCollectionGroupName=Network-Rules-Outbound \
+                        networkRuleCollectionGroupName2=Network-Rules-Inbound \
+                        applicationRuleCollectionGroupName=Application-Rules \
+                        rulesFileUri="@./config/CDS-FwRules/firewallrules_at.json"                      
