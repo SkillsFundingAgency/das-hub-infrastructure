@@ -1458,7 +1458,7 @@
     },
     {
       "name": "AllowSubnet-AODPWKR-SN",
-      "priority": 190,
+      "priority": 505,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
