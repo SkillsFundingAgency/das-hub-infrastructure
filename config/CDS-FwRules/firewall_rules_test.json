@@ -2,7 +2,7 @@
   "networkRules": [
     {
       "name": "AllowSubnet-MGMT-SN-0",
-      "priority": 100,
+      "priority": 250,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
