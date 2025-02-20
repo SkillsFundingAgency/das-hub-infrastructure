@@ -220,9 +220,9 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                       
+                        networkRuleCollectionGroupName=Network-Rules \
+                        applicationRuleCollectionGroupName=Application-Rules \
+                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_test.json"                         
 
 
 - stage: Test2
