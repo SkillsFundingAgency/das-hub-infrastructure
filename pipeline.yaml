@@ -73,7 +73,8 @@ stages:
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         networkRuleCollectionGroupName=NetworkGroup \
                         applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"               
+                        rulesFileUri="@./config/firewall_rules.json"                       
+
 
                       
 - stage: AT
