@@ -19,8 +19,12 @@
         "type": "string",
         "metadata": {
           "description": "The resource ID of the Public IP to associate with the Azure Firewall."
+            }
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string",
+            "defaultValue": "myLogAnalyticsWorkspace"
         }
-      }
     },
     "resources": [
       {
@@ -48,8 +52,57 @@
           ],
           "firewallPolicy": {
             "id": "[parameters('firewallPolicyId')]"
-          }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2022-10-01",
+            "name": "[parameters('logAnalyticsWorkspaceName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "PerGB2018"
+                },
+                "retentionInDays": 30
+            }
+        },
+        {
+            "type": "Microsoft.Insights/diagnosticSettings",
+            "apiVersion": "2021-05-01-preview",
+            "name": "[concat(parameters('firewallName'), '-diagnostics')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/azureFirewalls', parameters('firewallName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+            ],
+            "properties": {
+                "logAnalyticsDestinationType": "Dedicated",
+                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+                "logs": [
+                    {
+                        "category": "AzureFirewallApplicationRule",
+                        "enabled": true
+                    },
+                    {
+                        "category": "AzureFirewallNetworkRule",
+                        "enabled": true
+                    },
+                    {
+                        "category": "AzureFirewallDnsProxy",
+                        "enabled": true
+                    },
+                    {
+                        "category": "AzureFirewallThreatIntel",
+                        "enabled": true
+                    }
+                ],
+                "metrics": [
+                    {
+                        "category": "AllMetrics",
+                        "enabled": true
+                    }
+                ]
+            }
         }
-      }
     ]
-  }
+}
