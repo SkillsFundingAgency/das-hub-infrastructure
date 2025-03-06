@@ -74,7 +74,7 @@ stages:
                         networkRuleCollectionGroupName=NetworkGroup \
                         applicationRuleCollectionGroupName=AppGroup \
                         dnatRuleCollectionGroupName=DNATGroup \
-                        rulesFileUri="@./config/firewall_rules_dta.json"               
+                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_dta.json"               
 
                       
 - stage: AT
