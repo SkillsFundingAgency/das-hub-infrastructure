@@ -75,7 +75,7 @@ stages:
                         applicationRuleCollectionGroupName=AppGroup \
                         dnatRuleCollectionGroupName=$(DNATGroup) \
                         LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName)" \
+                        diagnosticSettingsName=$(FWDiagnosticsName) \
                         AzureFirewallApplicationRule=true \
                         AzureFirewallNetworkRule=true \
                         AzureFirewallDnsProxy=true \
