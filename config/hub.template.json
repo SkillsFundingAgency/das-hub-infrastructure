@@ -45,13 +45,30 @@
         "description": "Location for the resources."
       }
     },
-    "firewallPublicIpName": { "type": "string" },
-    "firewallPolicy1Name": { "type": "string" },
-  "firewallPolicy2Name": { "type": "string" },
-  "firewallName": { "type": "string" },
-  "networkRuleCollectionGroupName": { "type": "string" },
-  "applicationRuleCollectionGroupName": { "type": "string" },
-  "rulesFileUri": { "type": "object" }
+    "firewallPublicIpName": { 
+      "type": "string" 
+    },
+    "firewallPolicy1Name": { 
+      "type": "string" 
+    },
+    "firewallPolicy2Name": { 
+      "type": "string" 
+    },
+    "firewallName": { 
+      "type": "string" 
+    },
+    "networkRuleCollectionGroupName": { 
+      "type": "string" 
+    },
+    "applicationRuleCollectionGroupName": {
+      "type": "string" 
+    },
+    "dnatRuleCollectionGroupName": {
+      "type": "string" 
+    },
+    "rulesFileUri": { 
+      "type": "object" 
+    }
   },
   "resources": [
     {
@@ -65,7 +82,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "publicIPAddressName": { "value": "[parameters('publicIPAddressName')]" },
+          "publicIPAddressName": {
+            "value": "[parameters('publicIPAddressName')]"
+          },
           "sku": { "value": "Standard" },
           "publicIPAllocationMethod": { "value": "Static" }
         }
@@ -75,7 +94,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "NatGatewayDeployment",
-      "dependsOn": [ "PublicIPDeployment" ],
+      "dependsOn": ["PublicIPDeployment"],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -85,7 +104,9 @@
         "parameters": {
           "natGatewayName": { "value": "[parameters('natGatewayName')]" },
           "location": { "value": "[parameters('location')]" },
-          "publicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]" }
+          "publicIpId": {
+            "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+          }
         }
       }
     },
@@ -93,7 +114,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "VNetDeployment",
-      "dependsOn": [ "NatGatewayDeployment" ],
+      "dependsOn": ["NatGatewayDeployment"],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -130,7 +151,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "publicIPAddressName": { "value": "[parameters('firewallPublicIpName')]" },
+          "publicIPAddressName": {
+            "value": "[parameters('firewallPublicIpName')]"
+          },
           "sku": { "value": "Standard" },
           "publicIPAllocationMethod": { "value": "Static" }
         }
@@ -147,7 +170,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "firewallPolicies": { 
+          "firewallPolicies": {
             "value": [
               { "name": "[parameters('firewallPolicy1Name')]" },
               { "name": "[parameters('firewallPolicy2Name')]" }
@@ -161,7 +184,11 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "AzureFirewallDeployment",
-      "dependsOn": [ "FirewallPublicIPDeployment", "FirewallPoliciesDeployment", "VNetDeployment" ],
+      "dependsOn": [
+        "FirewallPublicIPDeployment",
+        "FirewallPoliciesDeployment",
+        "VNetDeployment"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -171,9 +198,15 @@
         "parameters": {
           "firewallName": { "value": "[parameters('firewallName')]" },
           "location": { "value": "[parameters('location')]" },
-          "firewallSubnetId": { "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]" },
-          "firewallPublicIpId": { "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]" },
-          "firewallPolicyId": { "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]" }
+          "firewallSubnetId": {
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+          },
+          "firewallPublicIpId": {
+            "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallPublicIpName'))]"
+          },
+          "firewallPolicyId": {
+            "value": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicy1Name'))]"
+          }
         }
       }
     },
@@ -181,7 +214,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "NetworkRuleCollectionDeployment",
-      "dependsOn": [ "FirewallPoliciesDeployment" ],
+      "dependsOn": ["FirewallPoliciesDeployment"],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -189,9 +222,39 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "firewallPolicyName": { "value": "[parameters('firewallPolicy1Name')]" },
-          "ruleCollectionGroupName": { "value": "[parameters('networkRuleCollectionGroupName')]" },
-          "networkRules": { "value": "[parameters('rulesFileUri').networkRules]" }
+          "firewallPolicyName": {
+            "value": "[parameters('firewallPolicy1Name')]"
+          },
+          "ruleCollectionGroupName": {
+            "value": "[parameters('networkRuleCollectionGroupName')]"
+          },
+          "networkRules": {
+            "value": "[parameters('rulesFileUri').networkRules]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "dnatRuleCollectionGroupName",
+      "dependsOn": ["FirewallPoliciesDeployment"],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_dnat_rule_collection_rule.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "firewallPolicyName": {
+            "value": "[parameters('firewallPolicy1Name')]"
+          },
+          "ruleCollectionGroupName": {
+            "value": "[parameters('dnatRuleCollectionGroupName')]"
+          },
+          "networkRules": {
+            "value": "[parameters('rulesFileUri').networkRules]"
+          }
         }
       }
     },
@@ -199,7 +262,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "ApplicationRuleCollectionDeployment",
-      "dependsOn": [ "FirewallPoliciesDeployment" ],
+      "dependsOn": ["FirewallPoliciesDeployment"],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -207,9 +270,15 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "firewallPolicyName": { "value": "[parameters('firewallPolicy2Name')]" },
-          "ruleCollectionGroupName": { "value": "[parameters('applicationRuleCollectionGroupName')]" },
-          "applicationRules": { "value": "[parameters('rulesFileUri').applicationRules]" }
+          "firewallPolicyName": {
+            "value": "[parameters('firewallPolicy1Name')]"
+          },
+          "ruleCollectionGroupName": {
+            "value": "[parameters('applicationRuleCollectionGroupName')]"
+          },
+          "applicationRules": {
+            "value": "[parameters('rulesFileUri').applicationRules]"
+          }
         }
       }
     }

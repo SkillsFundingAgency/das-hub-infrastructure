@@ -73,6 +73,7 @@ stages:
                         firewallPolicy2Name=$(firewallPolicy2Name) \
                         networkRuleCollectionGroupName=NetworkGroup \
                         applicationRuleCollectionGroupName=AppGroup \
+                        dnatRuleCollectionGroupName=DNATGroup \
                         rulesFileUri="@./config/firewall_rules.json"               
 
                       
