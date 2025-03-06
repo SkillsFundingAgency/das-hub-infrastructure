@@ -48,7 +48,7 @@ stages:
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
-          if [ "$resourceGroupExists" = false ]; then
+          if [ "$resourceGroupExists" = 'false' ]; then
             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
             sleep 30
@@ -76,22 +76,22 @@ stages:
                         dnatRuleCollectionGroupName=$(DNATGroup) \
                         LogAnalyticsWorkspace=$(LA_Name) \
                         diagnosticSettingsName=$(FWDiagnosticsName)" \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
+                        AzureFirewallApplicationRule='true' \
+                        AzureFirewallNetworkRule='true' \
+                        AzureFirewallDnsProxy='true' \
+                        AZFWNetworkRule='true' \
+                        AZFWApplicationRule='true' \
+                        AZFWNatRule='true' \
+                        AZFWThreatIntel='true' \
+                        AZFWIdpsSignature='true' \
+                        AZFWDnsQuery='true' \
+                        AZFWFqdnResolveFailure='true' \
+                        AZFWFatFlow='true' \
+                        AZFWFlowTrace='false' \
+                        AZFWApplicationRuleAggregation='false' \
+                        AZFWNetworkRuleAggregation='false' \
+                        AZFWNatRuleAggregation='false' \
+                        AllMetrics='false' \
                         rulesFileUri="@./config/CDS-FwRules/firewall_rules_dta.json"               
 
                       
@@ -118,7 +118,7 @@ stages:
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
-          if [ "$resourceGroupExists" = false ]; then
+          if [ "$resourceGroupExists" = 'false' ]; then
             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
             sleep 30
@@ -168,7 +168,7 @@ stages:
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
-          if [ "$resourceGroupExists" = false ]; then
+          if [ "$resourceGroupExists" = 'false' ]; then
             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
             sleep 30
@@ -218,7 +218,7 @@ stages:
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
-          if [ "$resourceGroupExists" = false ]; then
+          if [ "$resourceGroupExists" = 'false' ]; then
             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
             sleep 30
@@ -267,7 +267,7 @@ stages:
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
-          if [ "$resourceGroupExists" = false ]; then
+          if [ "$resourceGroupExists" = 'false' ]; then
             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
             sleep 30
@@ -319,7 +319,7 @@ stages:
           # Check if resource group exists, create if not
           resourceGroupExists=$(az group exists --name $(resourceGroupName))
 
-          if [ "$resourceGroupExists" = false ]; then
+          if [ "$resourceGroupExists" = 'false' ]; then
             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
             sleep 30
