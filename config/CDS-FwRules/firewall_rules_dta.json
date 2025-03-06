@@ -11,7 +11,7 @@
           "name": "DNAT-SSH",
           "ipProtocols": ["TCP"],
           "sourceAddresses": ["*"],
-          "destinationAddresses": ["20.30.40.50"],
+          "destinationAddresses": ["10.0.1.4"],
           "destinationPorts": ["22"],
           "translatedAddress": "10.1.200.10",
           "translatedPort": "22"
@@ -21,7 +21,7 @@
           "name": "DNAT-WebServer",
           "ipProtocols": ["TCP"],
           "sourceAddresses": ["*"],
-          "destinationAddresses": ["20.30.40.51"],
+          "destinationAddresses": ["10.0.1.4"],
           "destinationPorts": ["80"],
           "translatedAddress": "10.1.200.20",
           "translatedPort": "8080"
