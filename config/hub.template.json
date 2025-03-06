@@ -252,8 +252,8 @@
           "ruleCollectionGroupName": {
             "value": "[parameters('dnatRuleCollectionGroupName')]"
           },
-          "networkRules": {
-            "value": "[parameters('rulesFileUri').networkRules]"
+          "dnatRules": {
+            "value": "[parameters('rulesFileUri').dnatRules]"
           }
         }
       }
