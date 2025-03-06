@@ -242,7 +242,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_dnat_rule_collection_rule.json",
+          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/firewall_dnat_rule_collection_rule.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
