@@ -45,29 +45,83 @@
         "description": "Location for the resources."
       }
     },
-    "firewallPublicIpName": { 
-      "type": "string" 
+    "firewallPublicIpName": {
+      "type": "string"
     },
-    "firewallPolicy1Name": { 
-      "type": "string" 
+    "firewallPolicy1Name": {
+      "type": "string"
     },
-    "firewallPolicy2Name": { 
-      "type": "string" 
+    "firewallPolicy2Name": {
+      "type": "string"
     },
-    "firewallName": { 
-      "type": "string" 
+    "firewallName": {
+      "type": "string"
     },
-    "networkRuleCollectionGroupName": { 
-      "type": "string" 
+    "networkRuleCollectionGroupName": {
+      "type": "string"
     },
     "applicationRuleCollectionGroupName": {
-      "type": "string" 
+      "type": "string"
     },
     "dnatRuleCollectionGroupName": {
-      "type": "string" 
+      "type": "string"
     },
-    "rulesFileUri": { 
-      "type": "object" 
+    "LogAnalyticsWorkspace": {
+      "type": "string"
+    },
+    "diagnosticSettingsName": {
+      "type": "string"
+    },
+    "AzureFirewallApplicationRule": {
+      "type": "bool"
+    },
+    "AzureFirewallNetworkRule": {
+      "type": "bool"
+    },
+    "AzureFirewallDnsProxy": {
+      "type": "bool"
+    },
+    "AZFWNetworkRule": {
+      "type": "bool"
+    },
+    "AZFWApplicationRule": {
+      "type": "bool"
+    },
+    "AZFWNatRule": {
+      "type": "bool"
+    },
+    "AZFWThreatIntel": {
+      "type": "bool"
+    },
+    "AZFWIdpsSignature": {
+      "type": "bool"
+    },
+    "AZFWDnsQuery": {
+      "type": "bool"
+    },
+    "AZFWFqdnResolveFailure": {
+      "type": "bool"
+    },
+    "AZFWFatFlow": {
+      "type": "bool"
+    },
+    "AZFWFlowTrace": {
+      "type": "bool"
+    },
+    "AZFWApplicationRuleAggregation": {
+      "type": "bool"
+    },
+    "AZFWNetworkRuleAggregation": {
+      "type": "bool"
+    },
+    "AZFWNatRuleAggregation": {
+      "type": "bool"
+    },
+    "AllMetrics": {
+      "type": "bool"
+    },
+    "rulesFileUri": {
+      "type": "object"
     }
   },
   "resources": [
@@ -94,7 +148,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "NatGatewayDeployment",
-      "dependsOn": ["PublicIPDeployment"],
+      "dependsOn": [ "PublicIPDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -114,7 +168,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "VNetDeployment",
-      "dependsOn": ["NatGatewayDeployment"],
+      "dependsOn": [ "NatGatewayDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -183,6 +237,22 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
+      "name": "logAnalyticsDeployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/log_analytics_workspace.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "logAnalyticsWorkspaceName": { "value": "[parameters('LogAnalyticsWorkspace')]" },
+          "location": { "value": "[parameters('location')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
       "name": "AzureFirewallDeployment",
       "dependsOn": [
         "FirewallPublicIPDeployment",
@@ -213,8 +283,42 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
+      "name": "FirewallDiagnosticSettings",
+      "dependsOn": [ "AzureFirewallDeployment", "logAnalyticsDeployment" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/talha1278/testrepo1/main/templates/firewall_diagnostic_settings.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "diagnosticSettingsName": { "value": "[parameters('diagnosticSettingsName')]" },
+          "firewallName": { "value": "[parameters('firewallName')]" },
+          "logAnalyticsWorkspaceId": { "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspace'))]" },
+          "AzureFirewallApplicationRule": { "value": "[parameters('AzureFirewallApplicationRule')]" },
+          "AzureFirewallNetworkRule": { "value": "[parameters('AzureFirewallNetworkRule')]" },
+          "AzureFirewallDnsProxy": { "value": "[parameters('AzureFirewallDnsProxy')]" },
+          "AZFWNetworkRule": { "value": "[parameters('AZFWNetworkRule')]" },
+          "AZFWApplicationRule": { "value": "[parameters('AZFWApplicationRule')]" },
+          "AZFWNatRule": { "value": "[parameters('AZFWNatRule')]" },
+          "AZFWThreatIntel": { "value": "[parameters('AZFWThreatIntel')]" },
+          "AZFWIdpsSignature": { "value": "[parameters('AZFWIdpsSignature')]" },
+          "AZFWDnsQuery": { "value": "[parameters('AZFWDnsQuery')]" },
+          "AZFWFqdnResolveFailure": { "value": "[parameters('AZFWFqdnResolveFailure')]" },
+          "AZFWFatFlow": { "value": "[parameters('AZFWFatFlow')]" },
+          "AZFWFlowTrace": { "value": "[parameters('AZFWFlowTrace')]" },
+          "AZFWApplicationRuleAggregation": { "value": "[parameters('AZFWApplicationRuleAggregation')]" },
+          "AZFWNetworkRuleAggregation": { "value": "[parameters('AZFWNetworkRuleAggregation')]" },
+          "AZFWNatRuleAggregation": { "value": "[parameters('AZFWNatRuleAggregation')]" },
+          "AllMetrics": { "value": "[parameters('AllMetrics')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
       "name": "NetworkRuleCollectionDeployment",
-      "dependsOn": ["FirewallPoliciesDeployment"],
+      "dependsOn": [ "FirewallPoliciesDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -238,7 +342,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "dnatRuleCollectionGroupName",
-      "dependsOn": ["FirewallPoliciesDeployment"],
+      "dependsOn": [ "FirewallPoliciesDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -262,7 +366,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "ApplicationRuleCollectionDeployment",
-      "dependsOn": ["FirewallPoliciesDeployment"],
+      "dependsOn": [ "FirewallPoliciesDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {

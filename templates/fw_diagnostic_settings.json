@@ -1,0 +1,98 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "diagnosticSettingsName": {
+        "type": "string"
+      },
+      "firewallName": {
+        "type": "string"
+      },
+      "logAnalyticsWorkspaceId": {
+        "type": "string"
+      },
+      "AzureFirewallApplicationRule": {
+          "type": "bool"
+      },
+      "AzureFirewallNetworkRule": {
+          "type": "bool"
+      },
+      "AzureFirewallDnsProxy": {
+          "type": "bool"
+      },
+      "AZFWNetworkRule": {
+          "type": "bool"
+      },
+      "AZFWApplicationRule": {
+          "type": "bool"
+      },
+      "AZFWNatRule": {
+          "type": "bool"
+      },
+      "AZFWThreatIntel": {
+          "type": "bool"
+      },
+      "AZFWIdpsSignature": {
+          "type": "bool"
+      },
+      "AZFWDnsQuery": {
+          "type": "bool"
+      },
+      "AZFWFqdnResolveFailure": {
+          "type": "bool"
+      },
+      "AZFWFatFlow": {
+          "type": "bool"
+      },
+      "AZFWFlowTrace": {
+          "type": "bool"
+      },
+      "AZFWApplicationRuleAggregation": {
+          "type": "bool"
+      },
+      "AZFWNetworkRuleAggregation": {
+          "type": "bool"
+      },
+      "AZFWNatRuleAggregation": {
+          "type": "bool"
+      },
+      "AllMetrics": {
+          "type": "bool"
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Insights/diagnosticSettings",
+        "apiVersion": "2021-05-01-preview",
+        "name": "[parameters('diagnosticSettingsName')]",
+        "scope": "[resourceId('Microsoft.Network/azureFirewalls', parameters('firewallName'))]",
+        "properties": {
+          "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+          "logAnalyticsDestinationType": "AzureDiagnostics",
+          "logs": [
+            {"category": "AzureFirewallApplicationRule", "enabled": "[parameters('AzureFirewallApplicationRule')]"},
+            {"category": "AzureFirewallNetworkRule", "enabled": "[parameters('AzureFirewallNetworkRule')]"},
+            {"category": "AzureFirewallDnsProxy", "enabled": "[parameters('AzureFirewallDnsProxy')]"},
+            {"category": "AZFWNetworkRule", "enabled": "[parameters('AZFWNetworkRule')]"},
+            {"category": "AZFWApplicationRule", "enabled": "[parameters('AZFWApplicationRule')]"},
+            {"category": "AZFWNatRule", "enabled": "[parameters('AZFWNatRule')]"},
+            {"category": "AZFWThreatIntel", "enabled": "[parameters('AZFWThreatIntel')]"},
+            {"category": "AZFWIdpsSignature", "enabled": "[parameters('AZFWIdpsSignature')]"},
+            {"category": "AZFWDnsQuery", "enabled": "[parameters('AZFWDnsQuery')]"},
+            {"category": "AZFWFqdnResolveFailure", "enabled": "[parameters('AZFWFqdnResolveFailure')]"},
+            {"category": "AZFWFatFlow", "enabled": "[parameters('AZFWFatFlow')]"},
+            {"category": "AZFWFlowTrace", "enabled": "[parameters('AZFWFlowTrace')]"},
+            {"category": "AZFWApplicationRuleAggregation", "enabled": "[parameters('AZFWApplicationRuleAggregation')]"},
+            {"category": "AZFWNetworkRuleAggregation", "enabled": "[parameters('AZFWNetworkRuleAggregation')]"},
+            {"category": "AZFWNatRuleAggregation", "enabled": "[parameters('AZFWNatRuleAggregation')]"}
+          ],
+          "metrics": [
+            {
+              "enabled": "[parameters('AllMetrics')]",
+              "category": "AllMetrics"
+            }
+          ]
+        }
+      }
+    ]
+}
