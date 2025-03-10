@@ -140,8 +140,27 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=Network-Rules \
-                        applicationRuleCollectionGroupName=Application-Rules \
+                        networkRuleCollectionGroupName=$(NetworkGroup) \
+                        applicationRuleCollectionGroupName=$(AppGroup) \
+                        dnatRuleCollectionGroupName=$(DNATGroup) \
+                        LogAnalyticsWorkspace=$(LA_Name) \
+                        diagnosticSettingsName=$(FWDiagnosticsName) \
+                        AzureFirewallApplicationRule=true \
+                        AzureFirewallNetworkRule=true \
+                        AzureFirewallDnsProxy=true \
+                        AZFWNetworkRule=true \
+                        AZFWApplicationRule=true \
+                        AZFWNatRule=true \
+                        AZFWThreatIntel=true \
+                        AZFWIdpsSignature=true \
+                        AZFWDnsQuery=true \
+                        AZFWFqdnResolveFailure=true \
+                        AZFWFatFlow=true \
+                        AZFWFlowTrace=false \
+                        AZFWApplicationRuleAggregation=false \
+                        AZFWNetworkRuleAggregation=false \
+                        AZFWNatRuleAggregation=false \
+                        AllMetrics=false \
                         rulesFileUri="@./config/CDS-FwRules/firewall_rules_at.json"        
 
 
@@ -190,8 +209,27 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
+                        networkRuleCollectionGroupName=$(NetworkGroup) \
+                        applicationRuleCollectionGroupName=$(AppGroup) \
+                        dnatRuleCollectionGroupName=$(DNATGroup) \
+                        LogAnalyticsWorkspace=$(LA_Name) \
+                        diagnosticSettingsName=$(FWDiagnosticsName) \
+                        AzureFirewallApplicationRule=true \
+                        AzureFirewallNetworkRule=true \
+                        AzureFirewallDnsProxy=true \
+                        AZFWNetworkRule=true \
+                        AZFWApplicationRule=true \
+                        AZFWNatRule=true \
+                        AZFWThreatIntel=true \
+                        AZFWIdpsSignature=true \
+                        AZFWDnsQuery=true \
+                        AZFWFqdnResolveFailure=true \
+                        AZFWFatFlow=true \
+                        AZFWFlowTrace=false \
+                        AZFWApplicationRuleAggregation=false \
+                        AZFWNetworkRuleAggregation=false \
+                        AZFWNatRuleAggregation=false \
+                        AllMetrics=false \
                         rulesFileUri="@./config/firewall_rules.json"                   
 
 
@@ -239,8 +277,27 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
+                        networkRuleCollectionGroupName=$(NetworkGroup) \
+                        applicationRuleCollectionGroupName=$(AppGroup) \
+                        dnatRuleCollectionGroupName=$(DNATGroup) \
+                        LogAnalyticsWorkspace=$(LA_Name) \
+                        diagnosticSettingsName=$(FWDiagnosticsName) \
+                        AzureFirewallApplicationRule=true \
+                        AzureFirewallNetworkRule=true \
+                        AzureFirewallDnsProxy=true \
+                        AZFWNetworkRule=true \
+                        AZFWApplicationRule=true \
+                        AZFWNatRule=true \
+                        AZFWThreatIntel=true \
+                        AZFWIdpsSignature=true \
+                        AZFWDnsQuery=true \
+                        AZFWFqdnResolveFailure=true \
+                        AZFWFatFlow=true \
+                        AZFWFlowTrace=false \
+                        AZFWApplicationRuleAggregation=false \
+                        AZFWNetworkRuleAggregation=false \
+                        AZFWNatRuleAggregation=false \
+                        AllMetrics=false \
                         rulesFileUri="@./config/firewall_rules.json"                       
 
 
