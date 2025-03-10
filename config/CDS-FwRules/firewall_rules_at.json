@@ -1,4 +1,6 @@
 {
+  "dnatRules": [],
+
   "networkRules": [
     {
       "name": "AllowSubnet-PL-SN",

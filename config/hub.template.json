@@ -132,7 +132,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/public-ip-address.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -152,7 +152,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/nat_gateway.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/nat_gateway.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -172,7 +172,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/vnet.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/vnet.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -201,7 +201,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/public-ip-address.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -220,7 +220,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_policies.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/firewall_policies.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -262,7 +262,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/azure_firewall.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/azure_firewall.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -322,7 +322,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_network_rule_collection_rule.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/firewall_network_rule_collection_rule.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -370,7 +370,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_application_rule_collection_rule.json",
+          "uri": "truehttps://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/DASD-12863/templates/firewall_application_rule_collection_rule.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
