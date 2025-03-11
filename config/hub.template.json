@@ -342,7 +342,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "dnatRuleCollectionGroupName",
-      "dependsOn": [ "FirewallPoliciesDeployment" ],
+      "dependsOn": [ "NetworkRuleCollectionDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
