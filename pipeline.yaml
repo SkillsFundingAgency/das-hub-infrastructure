@@ -298,7 +298,7 @@ stages:
                         AZFWNetworkRuleAggregation=false \
                         AZFWNatRuleAggregation=false \
                         AllMetrics=false \
-                        rulesFileUri="@./config/firewall_rules.json"                       
+                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_test.json"                     
 
 
 - stage: Test2
