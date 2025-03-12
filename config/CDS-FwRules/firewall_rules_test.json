@@ -1405,7 +1405,7 @@
           "name": "Allow-ServiceTags-Outbound",
           "ipProtocols": ["TCP","UDP"],
           "sourceAddresses": ["10.2.0.0/16"],
-          "destinationServiceTags": ["Internet", "AzureMonitor", "AzureKeyVault", "AppService", "AppConfiguration", "ServiceBus", "Storage", "VirtualNetwork"],
+          "destinationAddresses": ["Internet", "AzureMonitor", "AzureKeyVault", "AppService", "AppConfiguration", "ServiceBus", "Storage", "VirtualNetwork"],
           "destinationPorts": ["80","443"]
         }
       ]
