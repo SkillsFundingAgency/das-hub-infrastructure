@@ -3,22 +3,6 @@
   
   "networkRules": [
     {
-      "name": "AllowSubnet-PL-SN",
-      "priority": 1010,
-      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-      "action": { "type": "Allow" },
-      "rules": [
-        {
-          "ruleType": "NetworkRule",
-          "name": "AllowSubnet-PL-SN-Outbound",
-          "ipProtocols": ["TCP","UDP"],
-          "sourceAddresses": ["10.1.200.0/24"],
-          "destinationAddresses": ["*"],
-          "destinationPorts": ["80","443"]
-        }
-      ]
-    },
-    {
       "name": "AllowSubnet-PFBA-SN",
       "priority": 380,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
