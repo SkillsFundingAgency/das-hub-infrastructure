@@ -1393,6 +1393,22 @@
           "destinationPorts": ["80","443"]
         }
       ]
+    },
+    {
+      "name": "AllowServiceBus",
+      "priority": 1010,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-ServiceBus-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.2.0.0/16"],
+          "destinationAddresses": ["57.153.239.54"],
+          "destinationPorts": ["5671"]
+        }
+      ]
     }
 
   ],
