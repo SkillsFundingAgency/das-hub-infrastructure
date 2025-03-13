@@ -1396,7 +1396,7 @@
     },
     {
       "name": "AllowServiceBus",
-      "priority": 1010,
+      "priority": 105,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
