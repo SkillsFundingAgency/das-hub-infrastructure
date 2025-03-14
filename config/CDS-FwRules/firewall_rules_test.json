@@ -1380,7 +1380,7 @@
     },
     {
       "name": "AllowServiceTags",
-      "priority": 1010,
+      "priority": 106,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1412,7 +1412,7 @@
     },
     {
       "name": "AllowDNS-Services",
-      "priority": 106,
+      "priority": 107,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1431,7 +1431,7 @@
   "applicationRules": [
     {
       "name": "Allow-AppInsights-Outbound",
-      "priority": 100,
+      "priority": 108,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
