@@ -1,4 +1,6 @@
 {
+  "dnatRules": [],
+  
   "networkRules": [
     {
       "name": "AllowSubnet-MGMT-SN-0",
