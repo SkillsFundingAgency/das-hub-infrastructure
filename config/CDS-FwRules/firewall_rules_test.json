@@ -1409,6 +1409,22 @@
           "destinationPorts": ["5671"]
         }
       ]
+    },
+    {
+      "name": "AllowDNS-Services",
+      "priority": 106,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-DNS-Services-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.2.0.0/16"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["53"]
+        }
+      ]
     }
 
   ],
