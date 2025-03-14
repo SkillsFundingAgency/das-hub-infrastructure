@@ -346,9 +346,28 @@ stages:
                         firewallName=$(firewallName) \
                         firewallPolicy1Name=$(firewallPolicy1Name) \
                         firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        rulesFileUri="@./config/firewall_rules.json"                      
+                        networkRuleCollectionGroupName=$(NetworkGroup) \
+                        applicationRuleCollectionGroupName=$(AppGroup) \
+                        dnatRuleCollectionGroupName=$(DNATGroup) \
+                        LogAnalyticsWorkspace=$(LA_Name) \
+                        diagnosticSettingsName=$(FWDiagnosticsName) \
+                        AzureFirewallApplicationRule=true \
+                        AzureFirewallNetworkRule=true \
+                        AzureFirewallDnsProxy=true \
+                        AZFWNetworkRule=true \
+                        AZFWApplicationRule=true \
+                        AZFWNatRule=true \
+                        AZFWThreatIntel=true \
+                        AZFWIdpsSignature=true \
+                        AZFWDnsQuery=true \
+                        AZFWFqdnResolveFailure=true \
+                        AZFWFatFlow=true \
+                        AZFWFlowTrace=false \
+                        AZFWApplicationRuleAggregation=false \
+                        AZFWNetworkRuleAggregation=false \
+                        AZFWNatRuleAggregation=false \
+                        AllMetrics=false \
+                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_test2.json"                     
 
 
 
