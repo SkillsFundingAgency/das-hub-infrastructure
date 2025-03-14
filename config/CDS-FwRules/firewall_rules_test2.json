@@ -1279,6 +1279,86 @@
           "destinationPorts": ["80","443"]
         }
       ]
+    },
+    {
+      "name": "AllowServiceTags",
+      "priority": 1010,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-ServiceTags-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.3.0.0/16"],
+          "destinationAddresses": ["Internet", "AzureMonitor", "AzureKeyVault", "AppService", "AppConfiguration", "ServiceBus", "Storage", "VirtualNetwork"],
+          "destinationPorts": ["80","443"]
+        }
+      ]
+    },
+    {
+      "name": "AllowServiceBus",
+      "priority": 105,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-ServiceBus-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.3.0.0/16"],
+          "destinationAddresses": ["57.153.239.54"],
+          "destinationPorts": ["5671"]
+        }
+      ]
+    },
+    {
+      "name": "AllowDNS-Services",
+      "priority": 106,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-DNS-Services-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.3.0.0/16"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["53"]
+        }
+      ]
+    }
+
+  ],
+  "applicationRules": [
+    {
+      "name": "Allow-AppInsights-Outbound",
+      "priority": 100,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "Allow-AppInsights-Outbound",
+          "protocols": [
+            { "protocolType": "Https", "port": 443 }
+          ],
+          "sourceAddresses": ["10.3.0.0/16"],
+          "targetFqdns":  [
+            "*.applicationinsights.azure.com",
+            "*.azurewebsites.net",
+            "*.monitoring.azure.com",
+            "dc.services.visualstudio.com",
+            "*.ods.opinsights.azure.com",
+            "*.agentserviceapi.azure.com",
+            "*.live.applicationinsights.azure.com",
+            "*.blob.core.windows.net"
+          ],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
     }
   ]
 }
