@@ -1544,6 +1544,7 @@
             "*.apprenticeships.education.gov.uk",
             "*.core.windows.net",
             "*.vault.azure.net",
+            "*.zendesk.com",
             "management.azure.com"
           ],
           "fqdnTags": [],
@@ -1562,7 +1563,7 @@
           "ruleType": "ApplicationRule",
           "name": "Allow-External-Endpoints-Outbound",
           "protocols": [
-            { "protocolType": "Https", "port": 80 }
+            { "protocolType": "Http", "port": 80 }
           ],
           "sourceAddresses": ["10.1.0.0/16"],
           "targetFqdns":  [
