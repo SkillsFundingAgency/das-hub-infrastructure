@@ -1530,8 +1530,9 @@
             "*.vault.azure.net",
             "*.zendesk.com",
             "management.azure.com",
-            "*.customerengagement.platform.education.gov.uk",
-            "*.apprenticeships.education.gov.uk"
+            "*.platform.education.gov.uk",
+            "*.apprenticeships.education.gov.uk",
+            "dev-api-customerengagement.platform.education.gov.uk"
           ],
           "fqdnTags": [],
           "httpHeadersToInsert": [],
