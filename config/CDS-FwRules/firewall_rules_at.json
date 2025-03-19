@@ -1515,7 +1515,9 @@
             "*.agentserviceapi.azure.com",
             "*.live.applicationinsights.azure.com",
             "*.blob.core.windows.net",
-            "*.monitor.azure.com"
+            "*.monitor.azure.com",
+            "*.customerengagement.platform.education.gov.uk",
+            "*.apprenticeships.education.gov.uk"
           ],
           "fqdnTags": [],
           "httpHeadersToInsert": [],
