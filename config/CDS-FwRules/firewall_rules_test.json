@@ -1220,7 +1220,7 @@
     },
     {
       "name": "AllowSubnet-SHAREDBE-SN-1",
-      "priority": 200,
+      "priority": 201,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1229,6 +1229,54 @@
           "name": "AllowSubnet-SHAREDBE-SN-1-Outbound",
           "ipProtocols": ["TCP","UDP"],
           "sourceAddresses": ["10.2.21.0/24"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["80","443"]
+        }
+      ]
+    },
+    {
+      "name": "AllowSubnet-SHAREDBE-SN-2",
+      "priority": 202,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "AllowSubnet-SHAREDBE-SN-2-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.2.22.0/24"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["80","443"]
+        }
+      ]
+    },
+    {
+      "name": "AllowSubnet-SHAREDBE-SN-3",
+      "priority": 203,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "AllowSubnet-SHAREDBE-SN-3-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.2.23.0/24"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["80","443"]
+        }
+      ]
+    },
+    {
+      "name": "AllowSubnet-SHAREDBE-SN-4",
+      "priority": 204,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "AllowSubnet-SHAREDBE-SN-4-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.2.24.0/24"],
           "destinationAddresses": ["*"],
           "destinationPorts": ["80","443"]
         }
@@ -1431,7 +1479,7 @@
   "applicationRules": [
     {
       "name": "Allow-AppInsights-Outbound",
-      "priority": 108,
+      "priority": 100,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1450,13 +1498,67 @@
             "*.ods.opinsights.azure.com",
             "*.agentserviceapi.azure.com",
             "*.live.applicationinsights.azure.com",
-            "*.blob.core.windows.net"
+            "*.blob.core.windows.net",
+            "*.monitor.azure.com"
           ],
           "fqdnTags": [],
           "httpHeadersToInsert": [],
           "terminateTLS": false
         }
       ]
-    }
+    },
+    {
+      "name": "Allow-AppServices-Endpoints",
+      "priority": 110,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "Allow-AppServices-Endpoints-Outbound",
+          "protocols": [
+            { "protocolType": "Https", "port": 443 }
+          ],
+          "sourceAddresses": ["10.2.0.0/16"],
+          "targetFqdns":  [
+            "login.microsoftonline.com",
+            "*.microsoftonline.com",
+            "login.windows.net",
+            "*.azurewebsites.net",
+            "*.apprenticeships.education.gov.uk",
+            "*.core.windows.net",
+            "*.vault.azure.net",
+            "management.azure.com"
+          ],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    },
+    {
+      "name": "Allow-External-Endpoints",
+      "priority": 120,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "Allow-External-Endpoints-Outbound",
+          "protocols": [
+            { "protocolType": "Https", "port": 80 }
+          ],
+          "sourceAddresses": ["10.2.0.0/16"],
+          "targetFqdns":  [
+            "*.digicert.com",
+            "*.microsoft.com",
+            "management.azure.com"
+          ],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    }      
   ]
 }
