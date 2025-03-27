@@ -1489,6 +1489,38 @@
           "destinationPorts": ["53"]
         }
       ]
+    },
+    {
+      "name": "AllowAPI-Services",
+      "priority": 108,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-API-Services-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.1.0.0/16"],
+          "destinationAddresses": ["ApiManagement", "ApiManagement.WestEurope"],
+          "destinationPorts": ["*"]
+        }
+      ]
+    },
+    {
+      "name": "AllowEP-Ports",
+      "priority": 109,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-EpPorts-Services-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.1.0.0/16"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["12000","1433","445","1886"]
+        }
+      ]
     }
 
   ],
@@ -1579,6 +1611,28 @@
           "terminateTLS": false
         }
       ]
-    }      
+    },
+    {
+      "name": "Allow-SQL-DB",
+      "priority": 120,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "Allow-SQL-DB-Outbound",
+          "protocols": [
+            { "protocolType": "Mssql", "port": 1433 }
+          ],
+          "sourceAddresses": ["10.1.0.0/16"],
+          "targetFqdns":  [
+            "*.database.windows.net"
+          ],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    }            
   ]
 }
