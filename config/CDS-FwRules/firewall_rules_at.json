@@ -1590,7 +1590,7 @@
     },
     {
       "name": "Allow-External-Endpoints",
-      "priority": 120,
+      "priority": 121,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1614,7 +1614,7 @@
     },
     {
       "name": "Allow-SQL-DB",
-      "priority": 120,
+      "priority": 122,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
