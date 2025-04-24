@@ -1329,6 +1329,22 @@
           "destinationPorts": ["53"]
         }
       ]
+    },
+    {
+      "name": "Allow-MongoDB",
+      "priority": 108,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "NetworkRule",
+          "name": "Allow-MongoDB-Services-Outbound",
+          "ipProtocols": ["TCP","UDP"],
+          "sourceAddresses": ["10.4.0.0/16"],
+          "destinationAddresses": ["*"],
+          "destinationPorts": ["27017"]
+        }
+      ]
     }
 
   ],
