@@ -1524,7 +1524,7 @@
     },
     {
       "name": "Allow-MongoDB",
-      "priority": 108,
+      "priority": 111,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
