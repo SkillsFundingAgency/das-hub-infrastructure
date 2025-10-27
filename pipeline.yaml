@@ -11,7 +11,7 @@ parameters:
   - demo
   - test
   - test2
-  - prod
+  - pp
 
 resources:
   repositories:
