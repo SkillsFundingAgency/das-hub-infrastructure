@@ -370,6 +370,73 @@ stages:
                         rulesFileUri="@./config/CDS-FwRules/firewall_rules_test2.json"                     
 
 
+- stage: PP
+  displayName: 'Deploy to PP Environment'
+  condition: eq('${{ parameters.environment }}', 'pp')
+  variables:
+  - name: selectedEnvironment
+    value: ${{ parameters.environment }}
+  - group: PP-HubVariables
+  jobs:
+  - job: DeployARMTemplate
+    displayName: 'Deploy ARM Template to Test2'
+    steps:
+    - checkout: das-hub-infrastructure
+      displayName: 'Checkout Repository'
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'SFA-DAS-DevTest-ARM'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |+
+          # Check if resource group exists, create if not
+          resourceGroupExists=$(az group exists --name $(resourceGroupName))
+
+          if [ "$resourceGroupExists" = false ]; then
+            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
+            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
+            sleep 30
+          else
+            echo "Resource group $(resourceGroupName) already exists."
+          fi
+
+          az deployment group create \
+            --resource-group $(resourceGroupName) \
+            --template-file config/hub.template.json \
+            --parameters vnetName=$(vnetName) \
+                        addressPrefix=$(addressPrefix) \
+                        subnetName=$(subnetName) \
+                        subnetPrefix=$(subnetPrefix) \
+                        publicIPAddressName=$(publicIPAddressName) \
+                        natGatewayName=$(natGatewayName) \
+                        location=$(location) \
+                        firewallPublicIpName=$(firewallPublicIpName) \
+                        firewallName=$(firewallName) \
+                        firewallPolicy1Name=$(firewallPolicy1Name) \
+                        firewallPolicy2Name=$(firewallPolicy2Name) \
+                        networkRuleCollectionGroupName=$(NetworkGroup) \
+                        applicationRuleCollectionGroupName=$(AppGroup) \
+                        dnatRuleCollectionGroupName=$(DNATGroup) \
+                        LogAnalyticsWorkspace=$(LA_Name) \
+                        diagnosticSettingsName=$(FWDiagnosticsName) \
+                        AzureFirewallApplicationRule=true \
+                        AzureFirewallNetworkRule=true \
+                        AzureFirewallDnsProxy=true \
+                        AZFWNetworkRule=true \
+                        AZFWApplicationRule=true \
+                        AZFWNatRule=true \
+                        AZFWThreatIntel=true \
+                        AZFWIdpsSignature=true \
+                        AZFWDnsQuery=true \
+                        AZFWFqdnResolveFailure=true \
+                        AZFWFatFlow=true \
+                        AZFWFlowTrace=false \
+                        AZFWApplicationRuleAggregation=false \
+                        AZFWNetworkRuleAggregation=false \
+                        AZFWNatRuleAggregation=false \
+                        AllMetrics=false \
+                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_pp.json"                     
 
                   
 # - stage: Prod
