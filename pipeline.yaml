@@ -436,7 +436,7 @@ stages:
                         AZFWNetworkRuleAggregation=false \
                         AZFWNatRuleAggregation=false \
                         AllMetrics=false \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_pp.json"                     
+                        rulesFileUri="@./config/FCS-FwRules/firewall_rules_pp.json"                     
 
                   
 # - stage: Prod
