@@ -379,7 +379,7 @@ stages:
   - group: PP-HubVariables
   jobs:
   - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Test2'
+    displayName: 'Deploy ARM Template to Pre-Prod'
     steps:
     - checkout: das-hub-infrastructure
       displayName: 'Checkout Repository'
