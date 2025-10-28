@@ -526,7 +526,7 @@
           "ipProtocols": ["TCP","UDP"],
           "sourceAddresses": ["10.1.128.0/24"],
           "destinationAddresses": ["*"],
-          "destinationPorts": ["80","443"]
+          "destinationPorts": ["  ","443"]
         }
       ]
     },
