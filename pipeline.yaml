@@ -386,7 +386,7 @@ stages:
 
     - task: AzureCLI@2
       inputs:
-        azureSubscription: 'SFA-DAS-DevTest-ARM'
+        azureSubscription: 'SFA-DIG-PreProd-ARM'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |+
