@@ -1868,7 +1868,7 @@
           "ruleType": "NetworkRule",
           "name": "AllowSubnet-SHAREDAKS-APPGW-Outbound",
           "ipProtocols": ["TCP","UDP"],
-          "sourceAddresses": ["10.0.8.0/24"],
+          "sourceAddresses": ["10.1.8.0/24"],
           "destinationAddresses": ["*"],
           "destinationPorts": ["80","443"]
         }
@@ -1884,7 +1884,7 @@
           "ruleType": "NetworkRule",
           "name": "AllowSubnet-SHAREDAKS-Outbound",
           "ipProtocols": ["TCP","UDP"],
-          "sourceAddresses": ["10.0.32.0/24"],
+          "sourceAddresses": ["10.1.32.0/24"],
           "destinationAddresses": ["*"],
           "destinationPorts": ["80","443"]
         }
