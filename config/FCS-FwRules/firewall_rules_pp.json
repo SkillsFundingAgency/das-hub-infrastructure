@@ -1556,7 +1556,7 @@
     },        
     {
       "name": "AllowSubnet-ROATPAPI-SN",
-      "priority": 1020,
+      "priority": 1240,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
