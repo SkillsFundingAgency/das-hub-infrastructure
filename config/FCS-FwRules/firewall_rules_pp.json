@@ -1572,7 +1572,7 @@
     },        
     {
       "name": "AllowSubnet-CRSWKR-SN",
-      "priority": 1020,
+      "priority": 1110,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1844,7 +1844,7 @@
     },        
     {
       "name": "AllowSubnet-PROVIDER-SN-1",
-      "priority": 1110,
+      "priority": 1200,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1860,7 +1860,7 @@
     },        
     {
       "name": "AllowSubnet-SHAREDAKS-APPGW-SN",
-      "priority": 1120,
+      "priority": 1210,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
@@ -1876,7 +1876,7 @@
     },        
     {
       "name": "AllowSubnet-SHAREDAKS-SN",
-      "priority": 1130,
+      "priority": 1220,
       "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
       "action": { "type": "Allow" },
       "rules": [
