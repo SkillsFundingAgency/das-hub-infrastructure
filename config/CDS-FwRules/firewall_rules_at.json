@@ -1649,6 +1649,29 @@
           "terminateTLS": false
         }
       ]
-    }            
+    },
+    {
+      "name": "Allow-OIDC-Endpoints",
+      "priority": 123,
+      "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+      "action": { "type": "Allow" },
+      "rules": [
+        {
+          "ruleType": "ApplicationRule",
+          "name": "Allow-OIDC-Endpoints-Outbound",
+          "protocols": [
+            { "protocolType": "Https", "port": 443 }
+          ],
+          "sourceAddresses": ["10.1.0.0/16"],
+          "targetFqdns":  [
+            "*oidc.signin.education.gov.uk",
+            "*oidc.integration.account.gov.uk"
+          ],
+          "fqdnTags": [],
+          "httpHeadersToInsert": [],
+          "terminateTLS": false
+        }
+      ]
+    }             
   ]
 }
