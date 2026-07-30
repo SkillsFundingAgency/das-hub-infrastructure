@@ -1943,6 +1943,7 @@
             "login.windows.net",
             "*.azurewebsites.net",
             "*.apprenticeships.education.gov.uk",
+            "api.education.gov.uk",
             "*.core.windows.net",
             "*.vault.azure.net",
             "*.zendesk.com",
