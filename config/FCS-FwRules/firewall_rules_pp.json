@@ -1950,7 +1950,13 @@
             "management.azure.com",
             "*.platform.education.gov.uk",
             "*.apprenticeships.education.gov.uk",
-            "dev-api-customerengagement.platform.education.gov.uk"
+            "dev-api-customerengagement.platform.education.gov.uk",
+            "api.appstoreconnect.apple.com",
+            "oauth2.googleapis.com",
+            "www.googleapis.com",
+            "androidpublisher.googleapis.com",
+            "playdeveloperreporting.googleapis.com",
+            "storage.googleapis.com"
           ],
           "fqdnTags": [],
           "httpHeadersToInsert": [],

@@ -1597,7 +1597,13 @@
             "*.core.windows.net",
             "*.vault.azure.net",
             "*.zendesk.com",
-            "management.azure.com"
+            "management.azure.com",
+            "api.appstoreconnect.apple.com",
+            "oauth2.googleapis.com",
+            "www.googleapis.com",
+            "androidpublisher.googleapis.com",
+            "playdeveloperreporting.googleapis.com",
+            "storage.googleapis.com"
           ],
           "fqdnTags": [],
           "httpHeadersToInsert": [],
