@@ -197,7 +197,7 @@
             "value": "[parameters('subnetPrefix')]"
           },
           "natGatewayId": {
-            "value": "[reference(concat('nat-gateway-', parameters('utcValue'))).outputs.PublicIpAddressResourceId.value]"
+            "value": "[reference(concat('nat-gateway-', parameters('utcValue'))).outputs.natGatewayId.value]"
           }
         }
       }
