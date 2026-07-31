@@ -7,70 +7,70 @@
     },
     "AllMetrics": {
       "type": "bool",
-      "defaultValue": "bool('false')"
+      "defaultValue": false
     },
     "applicationRuleCollectionGroupName": {
       "type": "string"
     },
     "AZFWApplicationRule": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWApplicationRuleAggregation": {
       "type": "bool",
-      "defaultValue": "bool('false')"
+      "defaultValue": false
     },
     "AZFWDnsQuery": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWFatFlow": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWFlowTrace": {
       "type": "bool",
-      "defaultValue": "bool('false')"
+      "defaultValue": false
     },
     "AZFWFqdnResolveFailure": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWIdpsSignature": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWNatRule": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWNatRuleAggregation": {
       "type": "bool",
-      "defaultValue": "bool('false')"
+      "defaultValue": false
     },
     "AZFWNetworkRule": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AZFWNetworkRuleAggregation": {
       "type": "bool",
-      "defaultValue": "bool('false')"
+      "defaultValue": false
     },
     "AZFWThreatIntel": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AzureFirewallApplicationRule": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AzureFirewallDnsProxy": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "AzureFirewallNetworkRule": {
       "type": "bool",
-      "defaultValue": "bool('true')"
+      "defaultValue": true
     },
     "dnatRuleCollectionGroupName": {
       "type": "string"

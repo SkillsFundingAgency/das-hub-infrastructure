@@ -13,6 +13,10 @@ parameters:
 jobs:
 - deployment: DeployHub
   displayName: 'Deploy ARM Template to ${{ parameters.Environment }}'
+  pool:
+    name: DAS - Continuous Deployment Agents
+  workspace:
+    clean: all
   environment: ${{ parameters.Environment }}
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   strategy:

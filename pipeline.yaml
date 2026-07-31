@@ -16,9 +16,6 @@ resources:
     ref: refs/tags/5.1.24
     endpoint: SkillsFundingAgency
 
-pool:
-  vmImage: 'ubuntu-latest'
-
 variables:
 - group: RELEASE das-hub-infrastructure
 

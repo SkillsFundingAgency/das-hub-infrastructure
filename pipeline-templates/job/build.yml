@@ -4,6 +4,10 @@
 jobs:
 - job: Build
   displayName: 'Build'
+  pool:
+    name: DAS - Continuous Integration Agents
+  workspace:
+    clean: all
   steps:
   - checkout: self
   - script: python3 scripts/validate-firewall-rules.py
