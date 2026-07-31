@@ -98,7 +98,7 @@ stages:
   jobs:
   - template: pipeline-templates/job/deploy-hub.yml
     parameters:
-      Environment: PP
+      Environment: PREPROD
       ServiceConnection: SFA-DIG-PreProd-ARM
       RulesFile: config/FCS-FwRules/firewall_rules_pp.json
       EnvironmentTag: 'Pre-Production'
