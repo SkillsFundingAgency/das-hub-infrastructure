@@ -23,7 +23,7 @@ stages:
 - stage: Build
   displayName: 'Build and Validate'
   jobs:
-  - template: pipeline-templates/job/deploy-hub.yml
+  - template: pipeline-templates/job/build.yml
 
 - stage: Deploy_DTA
   dependsOn: Validate

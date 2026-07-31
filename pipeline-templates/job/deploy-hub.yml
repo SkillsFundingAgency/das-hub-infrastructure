@@ -1,13 +1,8 @@
 parameters:
   - name: Environment
     type: string
-    default: ''
   - name: ServiceConnection
     type: string
-    default: ''
-  - name: RulesFile
-    type: string
-    default: ''
   # A full run is the firewall idle guard (up to 30 minutes) plus a serialised
   # rule collection group deployment (12-15 minutes), so the 60 minute default
   # is uncomfortably tight.
