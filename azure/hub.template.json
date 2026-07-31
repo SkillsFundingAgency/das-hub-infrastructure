@@ -100,7 +100,7 @@
     }
   },
   "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/",
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
     "firewallName": "[concat(variables('resourceNamePrefix'), '-fw')]",
@@ -111,7 +111,7 @@
     "logAnalyticsWorkspaceName": "[concat(variables('resourceNamePrefix'), '-log')]",
     "natGatewayName": "[concat(variables('resourceNamePrefix'), '-natgw')]",
     "publicIPAddressName": "[concat(variables('resourceNamePrefix'), '-natgw-pip-0')]",
-    "rulesFileUri": "[concat(variables('deploymentUrlBase'), 'azure/firewall_rules_', parameters('resourceEnvironmentName'), '.json')]",
+    "rulesFileUri": "[concat(variables('deploymentUrlBase'), 'firewall_rules_', parameters('resourceEnvironmentName'), '.json')]",
     "subnetName": "AzureFirewallSubnet",
     "vnetName": "[concat(variables('resourceNamePrefix'), '-vnet')]"
   },
@@ -132,7 +132,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/public-ip-address.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'public-ip-address.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -157,7 +157,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/nat_gateway.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'nat_gateway.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -182,7 +182,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/vnet.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'vnet.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -212,7 +212,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/public-ip-address.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'public-ip-address.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -236,7 +236,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/firewall_policies.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'firewall_policies.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -264,7 +264,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/log_analytics.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'log_analytics.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -290,7 +290,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/azure_firewall.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'azure_firewall.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -321,7 +321,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/fw_diagnostic_settings.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'fw_diagnostic_settings.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -394,7 +394,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/firewall_network_rule_collection_rule.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'firewall_network_rule_collection_rule.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -419,7 +419,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/firewall_dnat_rule_collection_rule.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'firewall_dnat_rule_collection_rule.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -444,7 +444,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'templates/firewall_application_rule_collection_rule.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'), 'firewall_application_rule_collection_rule.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
