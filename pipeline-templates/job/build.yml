@@ -1,0 +1,26 @@
+# Validate once, up front. Every deploy stage hangs off this, so a bad rule
+# file fails in seconds rather than part way through a 15 minute firewall
+# update in the first environment.
+jobs:
+- job: Build
+  displayName: 'Build'
+  pool:
+    name: DAS - Continuous Integration Agents
+  workspace:
+    clean: all
+  steps:
+  - checkout: self
+  - script: python3 scripts/validate-firewall-rules.py
+    displayName: 'Validate firewall rule files'
+  - task: CopyFiles@2
+    displayName: Copy Files to $(build.artifactstagingdirectory)/publish
+    inputs:
+      Contents: |
+        azure/**
+      TargetFolder: $(build.artifactstagingdirectory)/publish
+      OverWrite: true
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: drop

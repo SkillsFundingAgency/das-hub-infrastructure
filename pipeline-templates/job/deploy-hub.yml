@@ -1,0 +1,95 @@
+parameters:
+  - name: Environment
+    type: string
+  - name: ServiceConnection
+    type: string
+  # A full run is the firewall idle guard (up to 30 minutes) plus a serialised
+  # rule collection group deployment (12-15 minutes), so the 60 minute default
+  # is uncomfortably tight.
+  - name: TimeoutInMinutes
+    type: number
+    default: 90
+
+jobs:
+- deployment: DeployHub
+  displayName: 'Deploy ARM Template to ${{ parameters.Environment }}'
+  pool:
+    name: DAS - Continuous Deployment Agents
+  workspace:
+    clean: all
+  environment: ${{ parameters.Environment }}
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: self
+
+        - task: AzureCLI@2
+          displayName: 'Deploy hub template to ${{ parameters.Environment }}'
+          inputs:
+            azureSubscription: ${{ parameters.ServiceConnection }}
+            scriptType: pscore
+            scriptLocation: inlineScript
+            inlineScript: |
+              $ErrorActionPreference = 'Stop'
+
+              $rulesFile = "$(Pipeline.Workspace)/drop/azure/templates/firewall_rules_$(resourceEnvironmentName).json"
+              if (-not (Test-Path -Path $rulesFile)) {
+                Write-Host "##vso[task.logissue type=error]Rules file not found: $rulesFile"
+                exit 1
+              }
+
+              $resourceGroupName = 'das-$(resourceEnvironmentName)-$(serviceName)-rg'
+              $firewallPolicyName = 'das-$(resourceEnvironmentName)-$(serviceName)-fw-policy-0'
+
+              # Azure Firewall rejects overlapping configuration changes, and a
+              # cancelled run leaves its rule collection group update committing
+              # server-side. Wait for the resource group to settle first. On a
+              # first deployment it does not exist yet, so there is nothing to
+              # wait for.
+              if ((& az group exists --name $resourceGroupName) -eq 'true') {
+                & "$(Build.SourcesDirectory)/scripts/wait-for-firewall-idle.ps1" `
+                  -ResourceGroupName $resourceGroupName `
+                  -FirewallPolicyName $firewallPolicyName
+                if ($LASTEXITCODE -ne 0) { exit 1 }
+              }
+              else {
+                Write-Host "$resourceGroupName does not exist yet; nothing to wait for."
+              }
+
+              # Built as a parameters file rather than passed on the command
+              # line: the rules document and the tags object are JSON, and
+              # quoting those through a shell is a reliable source of breakage.
+              $parameters = [ordered]@{
+                '$schema'      = 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
+                contentVersion = '1.0.0.0'
+                parameters     = [ordered]@{
+                  templateBaseUri                    = @{ value = "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/azure/templates/" }
+                  resourceEnvironmentName            = @{ value = '$(resourceEnvironmentName)' }
+                  serviceName                        = @{ value = '$(serviceName)' }
+                  location                           = @{ value = '$(location)' }
+                  addressPrefix                      = @{ value = '$(addressPrefix)' }
+                  subnetPrefix                       = @{ value = '$(subnetPrefix)' }
+                  networkRuleCollectionGroupName     = @{ value = '$(networkRuleCollectionGroupName)' }
+                  applicationRuleCollectionGroupName = @{ value = '$(applicationRuleCollectionGroupName)' }
+                  dnatRuleCollectionGroupName        = @{ value = '$(dnatRuleCollectionGroupName)' }
+                  tags                               = @{ value = ($env:TAGS | ConvertFrom-Json) }
+                  rulesFileUri                       = @{ value = (Get-Content -Path $rulesFile -Raw | ConvertFrom-Json) }
+                }
+              }
+
+              # WriteAllText rather than Set-Content: the latter emits a UTF-8
+              # BOM on Windows PowerShell, which the CLI will not parse.
+              $parametersFile = Join-Path $env:AGENT_TEMPDIRECTORY 'hub.template.parameters.json'
+              [System.IO.File]::WriteAllText($parametersFile, ($parameters | ConvertTo-Json -Depth 100))
+              Write-Host "Wrote parameters to $parametersFile"
+
+              # Subscription scoped: the template creates the resource group.
+              & az deployment sub create `
+                --name "hub-$(Build.BuildId)-$(System.JobAttempt)" `
+                --location '$(location)' `
+                --template-file "$(Pipeline.Workspace)/drop/azure/hub.template.json" `
+                --parameters "@$parametersFile"
+
+              if ($LASTEXITCODE -ne 0) { exit 1 }

@@ -29,11 +29,5 @@
                 "count": "[length(parameters('firewallPolicies'))]"
             }
         }
-    ],
-    "outputs": {
-        "firewallPolicyIds": {
-            "type": "array",
-            "value": "[range(0, length(parameters('firewallPolicies')))]"
-        }
-    }
+    ]
 }
