@@ -29,8 +29,8 @@ jobs:
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             SubscriptionId: $(SubscriptionId)
-            Location: $(ResourceGroupLocation)
+            Location: $(location)
             Environment: ${{ parameters.Environment }}
-            TemplatePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/hub.template.json
-            ParametersPath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/hub.template.parameters.json
+            TemplatePath: $(Pipeline.Workspace)/drop/azure/hub.template.json
+            ParametersPath: $(Pipeline.Workspace)/drop/azure/hub.template.parameters.json
             IsMultiRepoCheckout: true
