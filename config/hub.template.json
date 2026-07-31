@@ -57,6 +57,13 @@
     "firewallName": {
       "type": "string"
     },
+    "templateBaseUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/",
+      "metadata": {
+        "description": "Base URI the linked templates are fetched from, with a trailing slash. The pipeline passes the exact commit being deployed so that nested templates cannot drift from this file. Defaults to main for manual deployments."
+      }
+    },
     "networkRuleCollectionGroupName": {
       "type": "string"
     },
@@ -132,7 +139,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/public-ip-address.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -152,7 +159,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/nat_gateway.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/nat_gateway.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -172,7 +179,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/vnet.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/vnet.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -201,7 +208,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/public-ip-address.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/public-ip-address.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -220,7 +227,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_policies.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/firewall_policies.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -241,7 +248,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/log_analytics.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/log_analytics.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -262,7 +269,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/azure_firewall.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/azure_firewall.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -288,7 +295,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main//templates/fw_diagnostic_settings.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/fw_diagnostic_settings.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -322,7 +329,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_network_rule_collection_rule.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/firewall_network_rule_collection_rule.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -346,7 +353,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_dnat_rule_collection_rule.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/firewall_dnat_rule_collection_rule.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -366,11 +373,11 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "ApplicationRuleCollectionDeployment",
-      "dependsOn": [ "FirewallPoliciesDeployment" ],
+      "dependsOn": [ "dnatRuleCollectionGroupName" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/main/templates/firewall_application_rule_collection_rule.json",
+          "uri": "[concat(parameters('templateBaseUri'), 'templates/firewall_application_rule_collection_rule.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

@@ -1,0 +1,100 @@
+parameters:
+  Environment: ''
+  ServiceConnection: ''
+  RulesFile: ''
+  EnvironmentTag: 'Dev/Test'
+  # A full run is the firewall idle guard (up to 30 minutes) plus a serialised
+  # rule collection group deployment (12-15 minutes), so the 60 minute default
+  # is uncomfortably tight.
+  TimeoutInMinutes: 90
+  # Rule collection group names come from the environment's variable group.
+  # DTA predates that convention and names them literally, so they are
+  # overridable here rather than assumed to exist as variables.
+  NetworkGroupName: '$(NetworkGroup)'
+  AppGroupName: '$(AppGroup)'
+  DnatGroupName: '$(DNATGroup)'
+
+jobs:
+# A deployment job rather than a plain job, so the Azure DevOps Environment of
+# the same name applies its approvals and checks before anything reaches the
+# subscription. Without this, every stage would deploy unattended.
+- deployment: DeployHub
+  displayName: 'Deploy ARM Template to ${{ parameters.Environment }}'
+  environment: ${{ parameters.Environment }}
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        # Deployment jobs do not check out sources automatically.
+        - checkout: self
+          displayName: 'Checkout Repository'
+
+        - task: AzureCLI@2
+          displayName: 'Deploy hub template to ${{ parameters.Environment }}'
+          inputs:
+            azureSubscription: ${{ parameters.ServiceConnection }}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              set -euo pipefail
+
+              resourceGroupExists=$(az group exists --name $(resourceGroupName))
+
+              if [ "$resourceGroupExists" = "false" ]; then
+                echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
+                az group create --name $(resourceGroupName) --location $(location) --tags \
+                  "Environment=${{ parameters.EnvironmentTag }}" \
+                  "Parent Business=Apprenticeships" \
+                  "Portfolio=Education and Skills Funding Agency" \
+                  "Product=AS Manage your Apprenticeships" \
+                  "Service=Apprenticeships" \
+                  "Service Line=Apprenticeships" \
+                  "Service Offering=AS Manage your Apprenticeships"
+              else
+                echo "Resource group $(resourceGroupName) already exists."
+              fi
+
+              # Azure Firewall rejects overlapping configuration changes, and a
+              # cancelled run leaves its rule collection group update committing
+              # server-side. Wait for the resource group to settle first.
+              bash ./scripts/wait-for-firewall-idle.sh "$(resourceGroupName)" "$(firewallPolicy1Name)"
+
+              az deployment group create \
+                --name "hub-$(Build.BuildId)-$(System.JobAttempt)" \
+                --resource-group $(resourceGroupName) \
+                --template-file config/hub.template.json \
+                --parameters templateBaseUri="https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/" \
+                             vnetName=$(vnetName) \
+                             addressPrefix=$(addressPrefix) \
+                             subnetName=$(subnetName) \
+                             subnetPrefix=$(subnetPrefix) \
+                             publicIPAddressName=$(publicIPAddressName) \
+                             natGatewayName=$(natGatewayName) \
+                             location=$(location) \
+                             firewallPublicIpName=$(firewallPublicIpName) \
+                             firewallName=$(firewallName) \
+                             firewallPolicy1Name=$(firewallPolicy1Name) \
+                             firewallPolicy2Name=$(firewallPolicy2Name) \
+                             networkRuleCollectionGroupName=${{ parameters.NetworkGroupName }} \
+                             applicationRuleCollectionGroupName=${{ parameters.AppGroupName }} \
+                             dnatRuleCollectionGroupName=${{ parameters.DnatGroupName }} \
+                             LogAnalyticsWorkspace=$(LA_Name) \
+                             diagnosticSettingsName=$(FWDiagnosticsName) \
+                             AzureFirewallApplicationRule=true \
+                             AzureFirewallNetworkRule=true \
+                             AzureFirewallDnsProxy=true \
+                             AZFWNetworkRule=true \
+                             AZFWApplicationRule=true \
+                             AZFWNatRule=true \
+                             AZFWThreatIntel=true \
+                             AZFWIdpsSignature=true \
+                             AZFWDnsQuery=true \
+                             AZFWFqdnResolveFailure=true \
+                             AZFWFatFlow=true \
+                             AZFWFlowTrace=false \
+                             AZFWApplicationRuleAggregation=false \
+                             AZFWNetworkRuleAggregation=false \
+                             AZFWNatRuleAggregation=false \
+                             AllMetrics=false \
+                             rulesFileUri="@./${{ parameters.RulesFile }}"

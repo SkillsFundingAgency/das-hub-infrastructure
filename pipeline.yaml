@@ -1,489 +1,132 @@
 trigger: none
 
-parameters:
-- name: environment
-  displayName: 'Select Environment'
-  type: string
-  default: 'dta'
-  values:
-  - dta
-  - at
-  - demo
-  - test
-  - test2
-  - pp
+pr: none
 
 resources:
   repositories:
-  - repository: das-hub-infrastructure
-    type: github
-    endpoint: SkillsFundingAgency
-    name: SkillsFundingAgency/das-hub-infrastructure
-    # ref: main
+  - repository: self
 
 pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-- stage: DTA
-  displayName: 'Deploy to DTA Environment'
-  condition: eq('${{ parameters.environment }}', 'dta')
-  variables:
-  - name: selectedEnvironment
-    value: ${{ parameters.environment }}
-  - group: DTA-HubVariables
+# Validate once, up front. Every deploy stage hangs off this, so a bad rule
+# file fails in seconds rather than part way through a 15 minute firewall
+# update in the first environment.
+- stage: Validate
+  displayName: 'Validate'
   jobs:
-  - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to DTA'
+  - job: ValidateConfig
+    displayName: 'Validate firewall rule configuration'
     steps:
-    - checkout: das-hub-infrastructure
+    - checkout: self
       displayName: 'Checkout Repository'
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SFA-DAS-DevTest-ARM'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |+
-          # Check if resource group exists, create if not
-          resourceGroupExists=$(az group exists --name $(resourceGroupName))
+    - script: python3 scripts/validate-firewall-rules.py
+      displayName: 'Validate firewall rule files'
 
-          if [ "$resourceGroupExists" = false ]; then
-            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-            sleep 30
-          else
-            echo "Resource group $(resourceGroupName) already exists."
-          fi
-
-
-          az deployment group create \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
-                        publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        location=$(location) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        firewallName=$(firewallName) \
-                        firewallPolicy1Name=$(firewallPolicy1Name) \
-                        firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=NetworkGroup \
-                        applicationRuleCollectionGroupName=AppGroup \
-                        dnatRuleCollectionGroupName=$(DNATGroup) \
-                        LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName) \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_dta.json"               
-
-                      
-- stage: AT
-  displayName: 'Deploy to AT Environment'
-  condition: eq('${{ parameters.environment }}', 'at')
+- stage: Deploy_DTA
+  dependsOn: Validate
+  displayName: 'Deploy to DTA'
   variables:
-  - name: selectedEnvironment
-    value: ${{ parameters.environment }}
-  - group: AT-HubVariables
+  - group: DTA das-hub-infrastructure
   jobs:
-  - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to AT'
-    steps:
-    - checkout: das-hub-infrastructure
-      displayName: 'Checkout Repository'
+  - template: pipeline-templates/job/deploy-hub.yml
+    parameters:
+      Environment: DTA
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      RulesFile: config/CDS-FwRules/firewall_rules_dta.json
+      # DTA's live rule collection groups predate the naming used everywhere
+      # else, so it overrides all three rather than taking the shared values.
+      NetworkGroupName: NetworkGroup
+      AppGroupName: AppGroup
+      DnatGroupName: DNAT-Rules
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SFA-DAS-DevTest-ARM'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |+
-          # Check if resource group exists, create if not
-          resourceGroupExists=$(az group exists --name $(resourceGroupName))
-
-          if [ "$resourceGroupExists" = false ]; then
-            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-            sleep 30
-          else
-            echo "Resource group $(resourceGroupName) already exists."
-          fi
-
-          az deployment group create \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
-                        publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        location=$(location) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        firewallName=$(firewallName) \
-                        firewallPolicy1Name=$(firewallPolicy1Name) \
-                        firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=$(NetworkGroup) \
-                        applicationRuleCollectionGroupName=$(AppGroup) \
-                        dnatRuleCollectionGroupName=$(DNATGroup) \
-                        LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName) \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_at.json"        
-
-
-- stage: Demo
-  displayName: 'Deploy to Demo Environment'
-  condition: eq('${{ parameters.environment }}', 'demo')
+- stage: Deploy_AT
+  dependsOn: Validate
+  displayName: 'Deploy to AT'
   variables:
-  - name: selectedEnvironment
-    value: ${{ parameters.environment }}
-  - group: Demo-HubVariables
+  - group: AT das-hub-infrastructure
   jobs:
-  - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Demo'
-    steps:
-    - checkout: das-hub-infrastructure
-      displayName: 'Checkout Repository'
+  - template: pipeline-templates/job/deploy-hub.yml
+    parameters:
+      Environment: AT
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      RulesFile: config/CDS-FwRules/firewall_rules_at.json
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SFA-DAS-DevTest-ARM'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |+
-          # Check if resource group exists, create if not
-          resourceGroupExists=$(az group exists --name $(resourceGroupName))
-
-          if [ "$resourceGroupExists" = false ]; then
-            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-            sleep 30
-          else
-            echo "Resource group $(resourceGroupName) already exists."
-          fi
-
-          az deployment group create \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
-                        publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        location=$(location) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        firewallName=$(firewallName) \
-                        firewallPolicy1Name=$(firewallPolicy1Name) \
-                        firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=$(NetworkGroup) \
-                        applicationRuleCollectionGroupName=$(AppGroup) \
-                        dnatRuleCollectionGroupName=$(DNATGroup) \
-                        LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName) \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_demo.json"   
-
-
-- stage: Test
-  displayName: 'Deploy to Test Environment'
-  condition: eq('${{ parameters.environment }}', 'test')
+- stage: Deploy_TEST
+  dependsOn: Validate
+  displayName: 'Deploy to TEST'
   variables:
-  - name: selectedEnvironment
-    value: ${{ parameters.environment }}
-  - group: Test-HubVariables
+  - group: TEST das-hub-infrastructure
   jobs:
-  - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Test'
-    steps:
-    - checkout: das-hub-infrastructure
-      displayName: 'Checkout Repository'
+  - template: pipeline-templates/job/deploy-hub.yml
+    parameters:
+      Environment: TEST
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      RulesFile: config/CDS-FwRules/firewall_rules_test.json
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SFA-DAS-DevTest-ARM'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |+
-          # Check if resource group exists, create if not
-          resourceGroupExists=$(az group exists --name $(resourceGroupName))
-
-          if [ "$resourceGroupExists" = false ]; then
-            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-            sleep 30
-          else
-            echo "Resource group $(resourceGroupName) already exists."
-          fi
-          az deployment group create \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
-                        publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        location=$(location) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        firewallName=$(firewallName) \
-                        firewallPolicy1Name=$(firewallPolicy1Name) \
-                        firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=$(NetworkGroup) \
-                        applicationRuleCollectionGroupName=$(AppGroup) \
-                        dnatRuleCollectionGroupName=$(DNATGroup) \
-                        LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName) \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_test.json"                     
-
-
-- stage: Test2
-  displayName: 'Deploy to Test2 Environment'
-  condition: eq('${{ parameters.environment }}', 'test2')
+- stage: Deploy_TEST2
+  dependsOn: Validate
+  displayName: 'Deploy to TEST2'
   variables:
-  - name: selectedEnvironment
-    value: ${{ parameters.environment }}
-  - group: Test2-HubVariables
+  - group: TEST2 das-hub-infrastructure
   jobs:
-  - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Test2'
-    steps:
-    - checkout: das-hub-infrastructure
-      displayName: 'Checkout Repository'
+  - template: pipeline-templates/job/deploy-hub.yml
+    parameters:
+      Environment: TEST2
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      RulesFile: config/CDS-FwRules/firewall_rules_test2.json
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SFA-DAS-DevTest-ARM'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |+
-          # Check if resource group exists, create if not
-          resourceGroupExists=$(az group exists --name $(resourceGroupName))
-
-          if [ "$resourceGroupExists" = false ]; then
-            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-            sleep 30
-          else
-            echo "Resource group $(resourceGroupName) already exists."
-          fi
-
-          az deployment group create \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
-                        publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        location=$(location) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        firewallName=$(firewallName) \
-                        firewallPolicy1Name=$(firewallPolicy1Name) \
-                        firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=$(NetworkGroup) \
-                        applicationRuleCollectionGroupName=$(AppGroup) \
-                        dnatRuleCollectionGroupName=$(DNATGroup) \
-                        LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName) \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
-                        rulesFileUri="@./config/CDS-FwRules/firewall_rules_test2.json"                     
-
-
-- stage: PP
-  displayName: 'Deploy to PP Environment'
-  condition: eq('${{ parameters.environment }}', 'pp')
+- stage: Deploy_DEMO
+  dependsOn: Validate
+  displayName: 'Deploy to DEMO'
   variables:
-  - name: selectedEnvironment
-    value: ${{ parameters.environment }}
-  - group: PP-HubVariables
+  - group: DEMO das-hub-infrastructure
   jobs:
-  - job: DeployARMTemplate
-    displayName: 'Deploy ARM Template to Pre-Prod'
-    steps:
-    - checkout: das-hub-infrastructure
-      displayName: 'Checkout Repository'
+  - template: pipeline-templates/job/deploy-hub.yml
+    parameters:
+      Environment: DEMO
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      RulesFile: config/CDS-FwRules/firewall_rules_demo.json
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SFA-DIG-PreProd-ARM'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |+
-          # Check if resource group exists, create if not
-          resourceGroupExists=$(az group exists --name $(resourceGroupName))
+- stage: Deploy_PP
+  dependsOn: Validate
+  displayName: 'Deploy to PP'
+  variables:
+  - group: PP das-hub-infrastructure
+  jobs:
+  - template: pipeline-templates/job/deploy-hub.yml
+    parameters:
+      Environment: PP
+      ServiceConnection: SFA-DIG-PreProd-ARM
+      RulesFile: config/FCS-FwRules/firewall_rules_pp.json
+      EnvironmentTag: 'Pre-Production'
 
-          if [ "$resourceGroupExists" = false ]; then
-            echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-            az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Pre-Production" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-            sleep 30
-          else
-            echo "Resource group $(resourceGroupName) already exists."
-          fi
-
-          az deployment group create \
-            --resource-group $(resourceGroupName) \
-            --template-file config/hub.template.json \
-            --parameters vnetName=$(vnetName) \
-                        addressPrefix=$(addressPrefix) \
-                        subnetName=$(subnetName) \
-                        subnetPrefix=$(subnetPrefix) \
-                        publicIPAddressName=$(publicIPAddressName) \
-                        natGatewayName=$(natGatewayName) \
-                        location=$(location) \
-                        firewallPublicIpName=$(firewallPublicIpName) \
-                        firewallName=$(firewallName) \
-                        firewallPolicy1Name=$(firewallPolicy1Name) \
-                        firewallPolicy2Name=$(firewallPolicy2Name) \
-                        networkRuleCollectionGroupName=$(NetworkGroup) \
-                        applicationRuleCollectionGroupName=$(AppGroup) \
-                        dnatRuleCollectionGroupName=$(DNATGroup) \
-                        LogAnalyticsWorkspace=$(LA_Name) \
-                        diagnosticSettingsName=$(FWDiagnosticsName) \
-                        AzureFirewallApplicationRule=true \
-                        AzureFirewallNetworkRule=true \
-                        AzureFirewallDnsProxy=true \
-                        AZFWNetworkRule=true \
-                        AZFWApplicationRule=true \
-                        AZFWNatRule=true \
-                        AZFWThreatIntel=true \
-                        AZFWIdpsSignature=true \
-                        AZFWDnsQuery=true \
-                        AZFWFqdnResolveFailure=true \
-                        AZFWFatFlow=true \
-                        AZFWFlowTrace=false \
-                        AZFWApplicationRuleAggregation=false \
-                        AZFWNetworkRuleAggregation=false \
-                        AZFWNatRuleAggregation=false \
-                        AllMetrics=false \
-                        rulesFileUri="@./config/FCS-FwRules/firewall_rules_pp.json"                     
-
-                  
-# - stage: Prod
-#   displayName: 'Deploy to Prod Environment'
-#   condition: eq('${{ parameters.environment }}', 'prod')
+# Uncomment once the MO variable group, environment and rule file exist.
+# - stage: Deploy_MO
+#   dependsOn: Validate
+#   displayName: 'Deploy to MO'
 #   variables:
-#   - name: selectedEnvironment
-#     value: ${{ parameters.environment }}
-#   - group: Prod-HubVariables
+#   - group: MO das-hub-infrastructure
 #   jobs:
-#   - job: DeployARMTemplate
-#     displayName: 'Deploy ARM Template to Prod'
-#     steps:
-#     - checkout: das-hub-infrastructure
-#       displayName: 'Checkout Repository'
+#   - template: pipeline-templates/job/deploy-hub.yml
+#     parameters:
+#       Environment: MO
+#       ServiceConnection: SFA-ASM-ModelOffice-ARM
+#       RulesFile: config/FCS-FwRules/firewall_rules_mo.json
+#       EnvironmentTag: 'Model Office'
 
-#     - task: AzureCLI@2
-#       inputs:
-#         azureSubscription: 'SFA-DAS-DevTest-ARM'
-#         scriptType: 'bash'
-#         scriptLocation: 'inlineScript'
-#         inlineScript: |
-#           # Check if resource group exists, create if not
-#           resourceGroupExists=$(az group exists --name $(resourceGroupName))
-
-#           if [ "$resourceGroupExists" = false ]; then
-#             echo "Resource group $(resourceGroupName) doesn't exist. Creating..."
-#             az group create --name $(resourceGroupName) --location $(location)  --tags "Environment=Dev/Test" "Product=AS Manage your Apprenticeships" "Parent Business=Apprenticeships" "Portfolio=Education and Skills Funding Agency" "Product=AS Manage your Apprenticeships" "Service=Apprenticeships" "Service Line=Apprenticeships" "Service Offering=AS Manage your Apprenticeships"
-#             sleep 30
-#           else
-#             echo "Resource group $(resourceGroupName) already exists."
-#           fi
-
-#           az deployment group create \
-#             --resource-group $(resourceGroupName) \
-#             --template-file config/hub.template.json \
-#             --parameters vnetName=$(vnetName) \
-#                         addressPrefix=$(addressPrefix) \
-#                         subnetName=$(subnetName) \
-#                         subnetPrefix=$(subnetPrefix) \
-#                         publicIPAddressName=$(publicIPAddressName) \
-#                         natGatewayName=$(natGatewayName) \
-#                         location=$(location) \
-#                         firewallPublicIpName=$(firewallPublicIpName) \
-#                         firewallName=$(firewallName) \
-#                         firewallPolicy1Name=$(firewallPolicy1Name) \
-#                         firewallPolicy2Name=$(firewallPolicy2Name) \
-#                         networkRuleCollectionGroupName=NetworkGroup \
-#                         applicationRuleCollectionGroupName=AppGroup \
-#                         rulesFileUri="@./config/firewall_rules.json"                     
+# Uncomment once the PRD variable group, environment and rule file exist.
+# - stage: Deploy_PRD
+#   dependsOn: Validate
+#   displayName: 'Deploy to PRD'
+#   variables:
+#   - group: PRD das-hub-infrastructure
+#   jobs:
+#   - template: pipeline-templates/job/deploy-hub.yml
+#     parameters:
+#       Environment: PRD
+#       ServiceConnection: SFA-DIG-Prod-ARM
+#       RulesFile: config/FCS-FwRules/firewall_rules_prd.json
+#       EnvironmentTag: 'Production'
