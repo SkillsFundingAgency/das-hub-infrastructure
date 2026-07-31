@@ -19,6 +19,9 @@ resources:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+- group: RELEASE das-hub-infrastructure
+
 stages:
 - stage: Build
   displayName: 'Build and Validate'
