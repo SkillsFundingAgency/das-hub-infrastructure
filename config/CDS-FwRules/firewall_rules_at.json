@@ -1469,7 +1469,7 @@
           "name": "Allow-ServiceBus-Outbound",
           "ipProtocols": ["TCP","UDP"],
           "sourceAddresses": ["10.1.0.0/16"],
-          "destinationAddresses": ["57.153.239.54"],
+          "destinationAddresses": ["ServiceBus.WestEurope"],
           "destinationPorts": ["5671"]
         }
       ]
