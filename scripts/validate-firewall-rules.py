@@ -111,7 +111,7 @@ def check_file(path):
 
 
 def main(argv):
-    paths = argv[1:] or sorted(glob.glob(os.path.join('config', '*', 'firewall_rules_*.json')))
+    paths = argv[1:] or sorted(glob.glob(os.path.join('azure', '*', 'firewall_rules_*.json')))
     if not paths:
         print("No rule files found. Run from the repository root.")
         return 1
