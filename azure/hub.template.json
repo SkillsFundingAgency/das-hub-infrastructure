@@ -7,70 +7,70 @@
     },
     "AllMetrics": {
       "type": "bool",
-      "defaultValue": "false"
+      "defaultValue": "bool('false')"
     },
     "applicationRuleCollectionGroupName": {
       "type": "string"
     },
     "AZFWApplicationRule": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWApplicationRuleAggregation": {
       "type": "bool",
-      "defaultValue": "false"
+      "defaultValue": "bool('false')"
     },
     "AZFWDnsQuery": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWFatFlow": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWFlowTrace": {
       "type": "bool",
-      "defaultValue": "false"
+      "defaultValue": "bool('false')"
     },
     "AZFWFqdnResolveFailure": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWIdpsSignature": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWNatRule": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWNatRuleAggregation": {
       "type": "bool",
-      "defaultValue": "false"
+      "defaultValue": "bool('false')"
     },
     "AZFWNetworkRule": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AZFWNetworkRuleAggregation": {
       "type": "bool",
-      "defaultValue": "false"
+      "defaultValue": "bool('false')"
     },
     "AZFWThreatIntel": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AzureFirewallApplicationRule": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AzureFirewallDnsProxy": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "AzureFirewallNetworkRule": {
       "type": "bool",
-      "defaultValue": "true"
+      "defaultValue": "bool('true')"
     },
     "dnatRuleCollectionGroupName": {
       "type": "string"
