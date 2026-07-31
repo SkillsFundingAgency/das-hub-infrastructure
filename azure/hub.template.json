@@ -126,7 +126,7 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('publicIPAddressName'), '-public-ip-', parameters('utcValue'))]",
+      "name": "[concat('public-ip-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -150,10 +150,9 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('natGatewayName'), '-nat-gw-', parameters('utcValue'))]",
+      "name": "[concat('nat-gateway-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "PublicIPDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -168,17 +167,16 @@
             "value": "[parameters('location')]"
           },
           "publicIpId": {
-            "value": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+            "value": "[reference(concat('public-ip-', parameters('utcValue'))).outputs.PublicIpAddressResourceId.value]"
           }
         }
       }
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('vnetName'), '-vnet-', parameters('utcValue'))]",
+      "name": "[concat('vnet-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "NatGatewayDeployment" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -199,14 +197,14 @@
             "value": "[parameters('subnetPrefix')]"
           },
           "natGatewayId": {
-            "value": "[resourceId('Microsoft.Network/natGateways', variables('natGatewayName'))]"
+            "value": "[reference(concat('nat-gateway-', parameters('utcValue'))).outputs.PublicIpAddressResourceId.value]"
           }
         }
       }
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallPublicIpName'), '-public-ip-', parameters('utcValue'))]",
+      "name": "[concat('firewall-public-ip-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -230,7 +228,7 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallName'), '-policy-', parameters('utcValue'))]",
+      "name": "[concat('firewall-policies-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -258,7 +256,7 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('logAnalyticsWorkspaceName'), '-log-analytics-', parameters('utcValue'))]",
+      "name": "[concat('log-analytics-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -279,13 +277,13 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallName'), '-firewall-', parameters('utcValue'))]",
+      "name": "[concat('firewall-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "FirewallPublicIPDeployment",
-        "FirewallPoliciesDeployment",
-        "VNetDeployment"
+        "[concat('firewall-public-ip-', parameters('utcValue'))]",
+        "[concat('firewall-policies-', parameters('utcValue'))]",
+        "[concat('vnet-', parameters('utcValue'))]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -314,10 +312,13 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallDiagnosticsName'), '-fw-diag-', parameters('utcValue'))]",
+      "name": "[concat('firewall-diagnostic-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "AzureFirewallDeployment", "logAnalyticsDeployment" ],
+      "dependsOn": [
+        "[concat('firewall-', parameters('utcValue'))]",
+        "[concat('log-analytics-', parameters('utcValue'))]"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -387,10 +388,10 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallPolicy1Name'), '-network-', parameters('utcValue'))]",
+      "name": "[concat('fw-network-rule-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "FirewallPoliciesDeployment" ],
+      "dependsOn": [ "[concat('firewall-policies-', parameters('utcValue'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -412,10 +413,10 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallPolicy1Name'), '-dnat-', parameters('utcValue'))]",
+      "name": "[concat('fw-dnat-rule-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "NetworkRuleCollectionDeployment" ],
+      "dependsOn": [ "[concat('fw-network-rule-', parameters('utcValue'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -437,10 +438,10 @@
     },
     {
       "apiVersion": "2025-04-01",
-      "name": "[concat(variables('firewallPolicy1Name'), '-application-', parameters('utcValue'))]",
+      "name": "[concat('fw-application-rule-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [ "dnatRuleCollectionGroupName" ],
+      "dependsOn": [ "[concat('fw-dnat-rule-', parameters('utcValue'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {

@@ -26,7 +26,7 @@ stages:
   - template: pipeline-templates/job/build.yml
 
 - stage: Deploy_DTA
-  dependsOn: Validate
+  dependsOn: Build
   displayName: 'Deploy to DTA'
   variables:
   - group: DTA das-hub-infrastructure
@@ -37,7 +37,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_AT
-  dependsOn: Validate
+  dependsOn: Build
   displayName: 'Deploy to AT'
   variables:
   - group: AT das-hub-infrastructure
@@ -48,7 +48,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_TEST
-  dependsOn: Validate
+  dependsOn: Build
   displayName: 'Deploy to TEST'
   variables:
   - group: TEST das-hub-infrastructure
@@ -59,7 +59,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_TEST2
-  dependsOn: Validate
+  dependsOn: Build
   displayName: 'Deploy to TEST2'
   variables:
   - group: TEST2 das-hub-infrastructure
@@ -70,7 +70,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_DEMO
-  dependsOn: Validate
+  dependsOn: Build
   displayName: 'Deploy to DEMO'
   variables:
   - group: DEMO das-hub-infrastructure
@@ -81,7 +81,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_PP
-  dependsOn: Validate
+  dependsOn: Build
   displayName: 'Deploy to PP'
   variables:
   - group: PP das-hub-infrastructure
@@ -92,7 +92,7 @@ stages:
       ServiceConnection: SFA-DIG-PreProd-ARM
 
 # - stage: Deploy_MO
-#   dependsOn: Validate
+#   dependsOn: Build
 #   displayName: 'Deploy to MO'
 #   variables:
 #   - group: MO das-hub-infrastructure
@@ -103,7 +103,7 @@ stages:
 #       ServiceConnection: SFA-ASM-ModelOffice-ARM
 
 # - stage: Deploy_PRD
-#   dependsOn: Validate
+#   dependsOn: Build
 #   displayName: 'Deploy to PRD'
 #   variables:
 #   - group: PRD das-hub-infrastructure
