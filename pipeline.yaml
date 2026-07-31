@@ -20,19 +20,10 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-# Validate once, up front. Every deploy stage hangs off this, so a bad rule
-# file fails in seconds rather than part way through a 15 minute firewall
-# update in the first environment.
-- stage: Validate
-  displayName: 'Validate'
+- stage: Build
+  displayName: 'Build and Validate'
   jobs:
-  - job: ValidateConfig
-    displayName: 'Validate firewall rule configuration'
-    steps:
-    - checkout: self
-      displayName: 'Checkout Repository'
-    - script: python3 scripts/validate-firewall-rules.py
-      displayName: 'Validate firewall rule files'
+  - template: pipeline-templates/job/deploy-hub.yml
 
 - stage: Deploy_DTA
   dependsOn: Validate
