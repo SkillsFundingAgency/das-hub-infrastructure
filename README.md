@@ -46,8 +46,8 @@ list of rule *collections* that becomes one rule collection group.
 
 Validate before pushing:
 
-```bash
-python scripts/validate-firewall-rules.py
+```powershell
+./scripts/validate-firewall-rules.ps1
 ```
 
 This checks duplicate priorities, priority range, collection types and rule

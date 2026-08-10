@@ -10,7 +10,7 @@ jobs:
     clean: all
   steps:
   - checkout: self
-  - script: python3 scripts/validate-firewall-rules.py
+  - pwsh: ./scripts/validate-firewall-rules.ps1
     displayName: 'Validate firewall rule files'
   - task: CopyFiles@2
     displayName: Copy Files to $(build.artifactstagingdirectory)/publish
