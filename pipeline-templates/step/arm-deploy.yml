@@ -37,7 +37,7 @@ steps:
   env: ${{ parameters.TemplateSecrets }}
 
 - task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'Deploy ${{ parameters.TemplatePath }}'
+  displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
   inputs:
     deploymentScope: ${{ parameters.Scope }}
     ConnectedServiceName: ${{ parameters.ServiceConnection }}
