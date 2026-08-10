@@ -1,12 +1,5 @@
-#Changes to the following files/folders require review from listed teams
-#
-#Paths here previously referenced /azure/, azure-pipelines.yml and
-#GitVersion.yml, none of which exist in this repository, so nothing was
-#actually protected. Firewall rule files under /config/*-FwRules/ are
-#deliberately left unowned: adding a rule is routine day-to-day work.
 .github/                    @SkillsFundingAgency/das-platform-engineering
-/templates/                 @SkillsFundingAgency/das-platform-engineering
+/azure/                     @SkillsFundingAgency/das-platform-engineering
 /pipeline-templates/        @SkillsFundingAgency/das-platform-engineering
 /scripts/                   @SkillsFundingAgency/das-platform-engineering
 pipeline.yaml               @SkillsFundingAgency/das-platform-engineering
-/config/hub.template.json   @SkillsFundingAgency/das-platform-engineering
