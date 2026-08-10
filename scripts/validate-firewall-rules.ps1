@@ -11,7 +11,7 @@
     than the few seconds it costs.
 
     .PARAMETER Path
-    Rule files to check. Defaults to every azure/*/firewall_rules_*.json.
+    Rule files to check. Defaults to every config/firewall_rules_*.json.
 
     .EXAMPLE
     ./scripts/validate-firewall-rules.ps1
@@ -144,7 +144,7 @@ function Test-RuleFile {
 }
 
 if (-not $Path) {
-    $Path = @(Get-ChildItem -Path 'azure' -Recurse -Filter 'firewall_rules_*.json' -ErrorAction SilentlyContinue |
+    $Path = @(Get-ChildItem -Path 'config' -Recurse -Filter 'firewall_rules_*.json' -ErrorAction SilentlyContinue |
               Sort-Object FullName |
               Select-Object -ExpandProperty FullName)
 }

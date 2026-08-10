@@ -10,15 +10,17 @@ and a Log Analytics workspace for firewall diagnostics.
 | --- | --- |
 | `pipeline.yaml` | Azure DevOps pipeline. One stage per environment, each calling the shared deploy job. |
 | `pipeline-templates/job/deploy-hub.yml` | The deploy job itself. All environments share it; they differ only in parameters and variable group. |
-| `pipeline-templates/job/build.yml` | Validates the rule files and publishes `azure/**` as the `drop` artifact. |
+| `pipeline-templates/job/build.yml` | Validates the rule files and publishes `azure/**` and `config/**` as the `drop` artifact. |
 | `azure/hub.template.json` | Top-level ARM template, deployed at **subscription** scope. Creates the resource group and deploys everything else as linked deployments. |
-| `azure/templates/` | Linked ARM templates, fetched over HTTPS at deploy time (see below), plus `firewall_rules_<env>.json` per environment. |
+| `azure/templates/` | Linked ARM templates, fetched over HTTPS at deploy time (see below). |
+| `config/` | Firewall rules, one `firewall_rules_<env>.json` per environment. Configuration, not templates. |
 | `scripts/` | Deployment helpers. |
 
 ## Deploying
 
 One stage per environment, all depending on a `Build` stage that validates the
-rule files once up front and publishes `azure/**` as the `drop` artifact, which
+rule files once up front and publishes `azure/**` and `config/**` as the `drop`
+artifact, which
 the deploy stages deploy from. Every stage runs in the same pipeline run; gating is
 done by Azure DevOps **Environments**, not by the pipeline. Each deploy job is
 a `deployment` job bound to an environment of the same name (`DTA`, `AT`,
@@ -40,7 +42,7 @@ branch is therefore a real test of that branch, not of `main`.
 
 ## Firewall rules
 
-Rules live in `azure/templates/firewall_rules_<env>.json`, with three
+Rules live in `config/firewall_rules_<env>.json`, with three
 top-level arrays — `networkRules`, `applicationRules`, `dnatRules` — each a
 list of rule *collections* that becomes one rule collection group.
 

@@ -101,7 +101,7 @@
     "rulesFileUri": {
       "type": "object",
       "metadata": {
-        "description": "Contents of the environment's firewall_rules_<env>.json, passed by the pipeline with az's @file syntax."
+        "description": "Contents of the environment's config/firewall_rules_<env>.json, passed by the pipeline with az's @file syntax."
       }
     },
     "templateBaseUri": {

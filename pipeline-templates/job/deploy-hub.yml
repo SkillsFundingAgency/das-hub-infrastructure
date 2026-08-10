@@ -34,7 +34,7 @@ jobs:
             inlineScript: |
               $ErrorActionPreference = 'Stop'
 
-              $rulesFile = "$(Pipeline.Workspace)/drop/azure/templates/firewall_rules_$(resourceEnvironmentName).json"
+              $rulesFile = "$(Pipeline.Workspace)/drop/config/firewall_rules_$(resourceEnvironmentName).json"
               if (-not (Test-Path -Path $rulesFile)) {
                 Write-Host "##vso[task.logissue type=error]Rules file not found: $rulesFile"
                 exit 1
