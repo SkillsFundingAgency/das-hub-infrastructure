@@ -1,0 +1,51 @@
+parameters:
+  - name: Environment
+    type: string
+  - name: ServiceConnection
+    type: string
+  - name: TimeoutInMinutes
+    type: number
+    default: 90
+
+jobs:
+- deployment: DeployHub
+  displayName: 'Deploy ARM Template to ${{ parameters.Environment }}'
+  pool:
+    name: DAS - Continuous Deployment Agents
+  workspace:
+    clean: all
+  environment: ${{ parameters.Environment }}
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+  variables:
+    # New-ParametersFile.ps1 fills each template parameter from the environment
+    # variable of the same name, so these two reach the template as parameters.
+    # Pinning to the commit means the linked templates and rule files match the
+    # code being deployed rather than whatever is on a branch.
+    templateBaseUri: 'https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/azure/templates/'
+    configBaseUri: 'https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/config/'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        # No checkout: everything needed is in the drop artifact, and
+        # arm-deploy.yml checks out das-platform-automation itself.
+        - task: AzureCLI@2
+          displayName: 'Wait for firewall to be idle'
+          inputs:
+            azureSubscription: ${{ parameters.ServiceConnection }}
+            scriptType: pscore
+            scriptLocation: scriptPath
+            scriptPath: '$(Pipeline.Workspace)/drop/scripts/wait-for-firewall-idle.ps1'
+            arguments: >
+              -ResourceGroupName das-$(resourceEnvironmentName)-$(serviceName)-rg
+              -FirewallPolicyName das-$(resourceEnvironmentName)-$(serviceName)-fw-policy-0
+
+        - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SubscriptionId: $(SubscriptionId)
+            Location: $(location)
+            Environment: ${{ parameters.Environment }}
+            TemplatePath: $(Pipeline.Workspace)/drop/azure/hub.template.json
+            ParametersPath: $(Pipeline.Workspace)/drop/azure/hub.template.parameters.json
+            IsMultiRepoCheckout: true
