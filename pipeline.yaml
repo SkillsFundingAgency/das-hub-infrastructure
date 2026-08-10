@@ -5,12 +5,7 @@ trigger:
       - "main"
 
 variables:
-- name: BuildConfiguration
-  value: release
-- name: BuildPlatform
 - group: RELEASE das-hub-infrastructure
-- name: Deploy
-  value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
 
 resources:
   repositories:

@@ -3,7 +3,7 @@
 # kept here so this pipeline has no external repository resources.
 #
 # Differences from the shared step:
-#   - the parameters file is built by scripts/New-ParametersFile.ps1 from this
+#   - the parameters file is built by scripts/new-parameters-file.ps1 from this
 #     repository rather than by das-platform-automation
 #   - DeploymentName is exposed. The shared step lets the task name the
 #     deployment, and these are subscription scoped, so every environment in a
@@ -20,7 +20,7 @@ parameters:
   DeploymentName: ''
   Scope: 'Subscription'
   ResourceGroupName: ''
-  ParametersScriptPath: '$(Pipeline.Workspace)/drop/scripts/New-ParametersFile.ps1'
+  ParametersScriptPath: '$(Pipeline.Workspace)/drop/scripts/new-parameters-file.ps1'
   # Values to expose as environment variables while the parameters file is
   # built, for parameters that must not appear in a variable group.
   TemplateSecrets: {}

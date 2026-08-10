@@ -28,7 +28,7 @@
     Path to write the generated parameters file to.
 
     .EXAMPLE
-    ./scripts/New-ParametersFile.ps1 -TemplateFilePath azure/hub.template.json -ParametersFilePath hub.parameters.json
+    ./scripts/new-parameters-file.ps1 -TemplateFilePath azure/hub.template.json -ParametersFilePath hub.parameters.json
 #>
 [CmdletBinding()]
 param(

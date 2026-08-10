@@ -17,7 +17,7 @@ jobs:
   environment: ${{ parameters.Environment }}
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   variables:
-    # New-ParametersFile.ps1 fills each template parameter from the environment
+    # new-parameters-file.ps1 fills each template parameter from the environment
     # variable of the same name, so these two reach the template as parameters.
     # Pinning to the commit means the linked templates and rule files match the
     # code being deployed rather than whatever is on a branch.
