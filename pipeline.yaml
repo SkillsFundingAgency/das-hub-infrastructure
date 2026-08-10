@@ -44,7 +44,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_AT
-  dependsOn: Build
+  dependsOn: Deploy_DTA
   displayName: 'Deploy to AT'
   variables:
   - group: AT das-hub-infrastructure
