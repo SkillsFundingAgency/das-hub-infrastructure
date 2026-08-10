@@ -27,8 +27,7 @@ jobs:
     runOnce:
       deploy:
         steps:
-        # No checkout: everything needed is in the drop artifact, and
-        # arm-deploy.yml checks out das-platform-automation itself.
+        # No checkout: everything needed is in the drop artifact.
         - task: AzureCLI@2
           displayName: 'Wait for firewall to be idle'
           inputs:
@@ -40,12 +39,13 @@ jobs:
               -ResourceGroupName das-$(resourceEnvironmentName)-$(serviceName)-rg
               -FirewallPolicyName das-$(resourceEnvironmentName)-$(serviceName)-fw-policy-0
 
-        - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
+        - template: ../step/arm-deploy.yml
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             SubscriptionId: $(SubscriptionId)
             Location: $(location)
-            Environment: ${{ parameters.Environment }}
             TemplatePath: $(Pipeline.Workspace)/drop/azure/hub.template.json
             ParametersPath: $(Pipeline.Workspace)/drop/azure/hub.template.parameters.json
-            IsMultiRepoCheckout: true
+            # Subscription scoped, so the name has to carry the environment:
+            # without it every stage in a run writes to the same deployment.
+            DeploymentName: hub-$(resourceEnvironmentName)-$(Build.BuildId)-$(System.JobAttempt)

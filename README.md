@@ -11,6 +11,7 @@ and a Log Analytics workspace for firewall diagnostics.
 | `pipeline.yaml` | Azure DevOps pipeline. One stage per environment, each calling the shared deploy job. |
 | `pipeline-templates/job/deploy-hub.yml` | The deploy job itself. All environments share it; they differ only in parameters and variable group. |
 | `pipeline-templates/job/build.yml` | Validates the rule templates and publishes `azure/**`, `config/**` and `scripts/**` as the `drop` artifact. |
+| `pipeline-templates/step/arm-deploy.yml` | Builds the parameters file and deploys the template. A local equivalent of the `das-platform-building-blocks` step, so there are no external repository resources. |
 | `azure/hub.template.json` | Top-level ARM template, deployed at **subscription** scope. Creates the resource group and deploys everything else as linked deployments. |
 | `azure/templates/` | Linked ARM templates, fetched over HTTPS at deploy time (see below). |
 | `config/` | Firewall rules, one `firewall-rules-<env>.json` per environment. Each is an ARM template declaring the three rule collection groups, linked from `hub.template.json`. |
@@ -39,8 +40,8 @@ Queue it **against the branch you want to deploy**. The `Build` stage checks
 out that branch and publishes it as the artifact, and `templateBaseUri` and
 `configBaseUri` pin the linked templates and rule files to that exact commit.
 Deploying a branch is therefore a real test of that branch, not of `main`.
-The deploy job itself checks out nothing: it works from the artifact, and
-`arm-deploy.yml` checks out `das-platform-automation` for its own scripts.
+The deploy job itself checks out nothing: it works entirely from the artifact.
+The pipeline has no external repository resources.
 
 ## Firewall rules
 
@@ -49,11 +50,10 @@ declaring the three rule collection groups, with the rule collections inline
 under `properties.ruleCollections`. To add a rule, add a collection to the
 relevant group's array.
 
-They are templates rather than plain data because the deployment uses the
-shared `arm-deploy.yml` step, which builds its parameters file from environment
-variables. A Windows environment variable holds 32,767 characters and the
-larger rule sets are over 60 KB, so they cannot travel as a parameter. Linking
-them as a template means ARM fetches them itself.
+They are templates rather than plain data because the parameters file is built
+from environment variables, and a Windows environment variable holds 32,767
+characters while the larger rule sets are over 60 KB. Linking them as a
+template means ARM fetches them itself, so their size stops mattering.
 
 Validate before pushing:
 

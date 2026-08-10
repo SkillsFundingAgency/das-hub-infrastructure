@@ -1,0 +1,51 @@
+# Local equivalent of
+# azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks,
+# kept here so this pipeline has no external repository resources.
+#
+# Differences from the shared step:
+#   - the parameters file is built by scripts/New-ParametersFile.ps1 from this
+#     repository rather than by das-platform-automation
+#   - DeploymentName is exposed. The shared step lets the task name the
+#     deployment, and these are subscription scoped, so every environment in a
+#     run would otherwise write to the same deployment resource
+#   - no ConvertTo-AzureDevOpsVariables step, because hub.template.json
+#     declares no outputs
+
+parameters:
+  ServiceConnection: ''
+  SubscriptionId: ''
+  Location: ''
+  TemplatePath: ''
+  ParametersPath: ''
+  DeploymentName: ''
+  Scope: 'Subscription'
+  ResourceGroupName: ''
+  ParametersScriptPath: '$(Pipeline.Workspace)/drop/scripts/New-ParametersFile.ps1'
+  # Values to expose as environment variables while the parameters file is
+  # built, for parameters that must not appear in a variable group.
+  TemplateSecrets: {}
+
+steps:
+- task: PowerShell@2
+  displayName: 'Generate parameters file'
+  inputs:
+    filePath: ${{ parameters.ParametersScriptPath }}
+    arguments: >
+      -TemplateFilePath ${{ parameters.TemplatePath }}
+      -ParametersFilePath ${{ parameters.ParametersPath }}
+    pwsh: true
+  env: ${{ parameters.TemplateSecrets }}
+
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'Deploy ${{ parameters.TemplatePath }}'
+  inputs:
+    deploymentScope: ${{ parameters.Scope }}
+    ConnectedServiceName: ${{ parameters.ServiceConnection }}
+    ${{ if eq(parameters.Scope, 'Resource Group') }}:
+      resourceGroupName: ${{ parameters.ResourceGroupName }}
+    subscriptionId: ${{ parameters.SubscriptionId }}
+    location: ${{ parameters.Location }}
+    csmFile: ${{ parameters.TemplatePath }}
+    csmParametersFile: ${{ parameters.ParametersPath }}
+    deploymentName: ${{ parameters.DeploymentName }}
+    deploymentMode: Incremental
