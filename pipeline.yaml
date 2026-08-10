@@ -55,7 +55,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_TEST
-  dependsOn: Build
+  dependsOn: Deploy_DTA
   displayName: 'Deploy to TEST'
   variables:
   - group: TEST das-hub-infrastructure
@@ -66,7 +66,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_TEST2
-  dependsOn: Build
+  dependsOn: Deploy_DTA
   displayName: 'Deploy to TEST2'
   variables:
   - group: TEST2 das-hub-infrastructure
@@ -77,7 +77,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_DEMO
-  dependsOn: Build
+  dependsOn: Deploy_DTA
   displayName: 'Deploy to DEMO'
   variables:
   - group: DEMO das-hub-infrastructure
@@ -88,7 +88,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_PP
-  dependsOn: Build
+  dependsOn: Deploy_DTA
   displayName: 'Deploy to PP'
   variables:
   - group: PP das-hub-infrastructure
