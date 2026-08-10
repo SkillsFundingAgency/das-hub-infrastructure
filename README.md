@@ -1,159 +1,162 @@
 # das-hub-infrastructure
 
-ARM templates and Azure Firewall rules for the DAS hub networks. One hub per
-environment: a VNet with an Azure Firewall, a NAT gateway for outbound traffic,
-and a Log Analytics workspace for firewall diagnostics.
+Deploys the DAS hub network for each environment: a virtual network with an
+Azure Firewall that filters outbound traffic, a NAT gateway, and a Log
+Analytics workspace for the firewall logs.
 
-## Layout
+Everything is ARM templates deployed by one Azure DevOps pipeline. The most
+common change by far is adding a firewall rule, which is a single file edit —
+see [Adding a firewall rule](#adding-a-firewall-rule).
 
-| Path | Purpose |
-| --- | --- |
-| `pipeline.yaml` | Azure DevOps pipeline. One stage per environment, each calling the shared deploy job. |
-| `pipeline-templates/job/deploy-hub.yml` | The deploy job itself. All environments share it; they differ only in parameters and variable group. |
-| `pipeline-templates/job/build.yml` | Validates the rule templates and publishes `azure/**`, `config/**` and `scripts/**` as the `drop` artifact. |
-| `pipeline-templates/step/arm-deploy.yml` | Builds the parameters file and deploys the template. A local equivalent of the `das-platform-building-blocks` step, so there are no external repository resources. |
-| `azure/hub.template.json` | Top-level ARM template, deployed at **subscription** scope. Creates the resource group and deploys everything else as linked deployments. |
-| `azure/templates/` | Linked ARM templates, fetched over HTTPS at deploy time (see below). |
-| `config/` | Firewall rules, one `firewall-rules-<env>.json` per environment. Each is an ARM template declaring the three rule collection groups, linked from `hub.template.json`. |
-| `scripts/` | Deployment helpers. |
+## What gets deployed
 
-## Deploying
+One of these per environment, in its own resource group.
 
-One stage per environment, all depending on a `Build` stage that validates the
-rule templates once up front and publishes `azure/**`, `config/**` and
-`scripts/**` as the `drop` artifact, which
-the deploy stages deploy from. Every stage runs in the same pipeline run; gating is
-done by Azure DevOps **Environments**, not by the pipeline. Each deploy job is
-a `deployment` job bound to an environment of the same name (`DTA`, `AT`,
-`TEST`, `TEST2`, `DEMO`, `PP`), so approvals and checks configured there apply
-before anything reaches the subscription.
+```mermaid
+graph LR
+    subgraph rg["das-ENV-hub-rg"]
+        VNET["Virtual network<br/>das-ENV-hub-vnet"]
+        FW["Azure Firewall<br/>das-ENV-hub-fw"]
+        POL["Firewall policy<br/>das-ENV-hub-fw-policy-0"]
+        NAT["NAT gateway<br/>das-ENV-hub-natgw"]
+        LAW["Log Analytics<br/>das-ENV-hub-log"]
 
-> An environment with no approvals configured deploys unattended. Configure
-> approvals on `PP` (and on `PRD` and `MO` when they are enabled) before
-> relying on this.
+        VNET --- FW
+        FW --- POL
+        VNET --- NAT
+        FW -. diagnostics .-> LAW
+    end
 
-The pipeline is still manual (`trigger: none`). To deploy on merge to `main`,
-as the other DAS repos do, replace it with `trigger: batch: true` over `main` —
-but only once environment approvals are in place.
+    POL --> NRG["Network rules<br/>Network-Rules-Outbound"]
+    POL --> DRG["DNAT rules<br/>Dnat-Rules-Inbound"]
+    POL --> ARG["Application rules<br/>Application-Rules-Outbound"]
+```
 
-Queue it **against the branch you want to deploy**. The `Build` stage checks
-out that branch and publishes it as the artifact, and `templateBaseUri` and
-`configBaseUri` pin the linked templates and rule files to that exact commit.
-Deploying a branch is therefore a real test of that branch, not of `main`.
-The deploy job itself checks out nothing: it works entirely from the artifact.
-The pipeline has no external repository resources.
+The three rule collection groups hanging off the policy are what the files in
+`config/` produce. Everything else is fixed infrastructure that rarely changes.
 
-## Firewall rules
+Resource names are never written down anywhere. They are built inside the
+template from `das-<resourceEnvironmentName>-<serviceName>`, so `at` plus `hub`
+gives `das-at-hub-rg`, `das-at-hub-fw`, and so on.
 
-Rules live in `config/firewall-rules-<env>.json`. Each is an ARM template
-declaring the three rule collection groups, with the rule collections inline
-under `properties.ruleCollections`. To add a rule, add a collection to the
-relevant group's array.
+## Repository layout
 
-They are templates rather than plain data because the parameters file is built
-from environment variables, and a Windows environment variable holds 32,767
-characters while the larger rule sets are over 60 KB. Linking them as a
-template means ARM fetches them itself, so their size stops mattering.
+| Path | What it is | Change it when |
+| --- | --- | --- |
+| `config/firewall-rules-<env>.json` | Firewall rules for one environment | Adding, changing or removing a firewall rule |
+| `azure/hub.template.json` | Top level template. Creates the resource group and links everything below | Adding a new kind of resource to the hub |
+| `azure/templates/` | One template per resource type | Changing how a resource is configured |
+| `pipeline.yaml` | The pipeline. One stage per environment | Adding an environment |
+| `pipeline-templates/job/build.yml` | Validates the rules, publishes the artifact | Rarely |
+| `pipeline-templates/job/deploy-hub.yml` | The deploy job every environment shares | Changing deployment steps |
+| `pipeline-templates/step/arm-deploy.yml` | Builds the parameters file and runs the deployment | Rarely |
+| `scripts/` | Validation and deployment helpers | Rarely |
 
-Validate before pushing:
+## How a deployment runs
+
+```mermaid
+graph TD
+    B["Build<br/>validate rules, publish artifact"]
+    B --> DTA[Deploy_DTA]
+    DTA --> AT[Deploy_AT]
+    DTA --> TEST[Deploy_TEST]
+    DTA --> TEST2[Deploy_TEST2]
+    DTA --> DEMO[Deploy_DEMO]
+    DTA --> PP[Deploy_PP]
+```
+
+Every environment deploys in the same run. Which ones actually proceed is
+controlled by approvals on the **Azure DevOps Environment**, not by the
+pipeline, so that is where to add a gate.
+
+Each deploy stage runs four steps:
+
+1. **Wait for firewall to be idle** — Azure Firewall accepts one change at a
+   time, so this waits for any in-flight update to finish.
+2. **Firewall rules being deployed** — logs the rule file for the record.
+3. **Generate parameters file** — builds the ARM parameters from the variable
+   groups.
+4. **Deploy** — subscription scoped, so the template creates its own resource
+   group.
+
+A run takes 12 to 15 minutes per environment. Most of that is the firewall
+applying rules, and it cannot be sped up.
+
+## Adding a firewall rule
+
+Edit `config/firewall-rules-<env>.json`. Each file is an ARM template holding
+three rule collection groups; add your collection to the right one, under
+`resources[].properties.ruleCollections`.
+
+```json
+{
+  "name": "AllowSubnet-EXAMPLE-SN",
+  "priority": 1500,
+  "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+  "action": { "type": "Allow" },
+  "rules": [
+    {
+      "ruleType": "NetworkRule",
+      "name": "AllowSubnet-EXAMPLE-SN-Outbound",
+      "ipProtocols": [ "TCP" ],
+      "sourceAddresses": [ "10.1.2.0/24" ],
+      "destinationAddresses": [ "*" ],
+      "destinationPorts": [ "443" ]
+    }
+  ]
+}
+```
+
+Which group to use:
+
+| Rule type | Group | Filters on |
+| --- | --- | --- |
+| `NetworkRule` | network | IP address, port, protocol |
+| `ApplicationRule` | application | FQDN, URL |
+| `NatRule` | DNAT | inbound traffic to a public IP |
+
+`priority` must be unique within its group. Check before pushing:
 
 ```powershell
 ./scripts/validate-firewall-rules.ps1
 ```
 
-This checks duplicate priorities, priority range, collection types and rule
-collection group size. The `Build` stage runs it before any environment is
-touched. Nothing validates a pull request, because the pipeline is
-`trigger: none` and `pr: none`.
+The same check runs in the Build stage, so a mistake fails the run in seconds
+rather than part way through a deployment.
 
-## Things that will bite you
+## Adding an environment
 
-**Azure Firewall serialises configuration changes.** A rule collection group
-update holds a lock on itself and on its parent policy for 3-5 minutes. The
-three groups are therefore chained network -> DNAT -> application by the
-`dependsOn` between the resources in `config/firewall-rules-<env>.json`, which
-is why a full run takes 12-15 minutes. Do not "optimise" this by removing that
-chain; the groups will race and one will fail with
-`FirewallPolicyRuleCollectionGroupUpdateNotAllowedWhenUpdatingOrDeleting`.
+1. Create the variable group `<ENV> das-hub-infrastructure` and authorise the
+   pipeline to use it.
+2. Create the Azure DevOps Environment named `<ENV>`, adding an approval if it
+   needs one.
+3. Add `config/firewall-rules-<env>.json`.
+4. Add a stage to `pipeline.yaml`, copying an existing one.
 
-**That lock outlives the pipeline job.** Cancelling a run does not stop the
-update Azure is already committing, so the next run collides with it.
-`scripts/wait-for-firewall-idle.ps1` blocks until the resource group is idle
-before deploying. It is deliberately fatal if it cannot run. It is PowerShell
-because the `DAS - Continuous Deployment Agents` pool is Windows, which has no
-`bash`.
+`Deploy_MO` and `Deploy_PRD` are already in `pipeline.yaml`, commented out,
+waiting for the first three steps.
 
-**Linked templates and rule files are fetched over HTTPS, not from the
-artifact.** `azure/hub.template.json` builds each URI from `templateBaseUri`
-and `configBaseUri`, which the pipeline sets to the commit being deployed. A
-consequence: the repository must stay public for deployments to work.
+## Variable groups
 
-**ARM cannot delete rule collection groups.** Removing a rule collection group
-from a template does not remove it from Azure — [it is an unsupported
-operation][arm-limits]. Renaming a group therefore leaves the old one live and
-enforcing its rules. Delete the old one explicitly:
+Values shared by every environment live in one group; everything else is per
+environment.
 
-```bash
-az network firewall policy rule-collection-group delete \
-  -g <hub-rg> --policy-name <policy> -n <old-group-name>
-```
+**`RELEASE das-hub-infrastructure`**
 
-**Rule collection groups at equal priority have undefined ordering.** If two
-groups share a priority, which one's allow or deny wins is not defined. Keep
-priorities distinct across groups in a policy.
+| Variable | Value |
+| --- | --- |
+| `location` | `westeurope` |
+| `serviceName` | `hub` |
+| `subnetName` | `AzureFirewallSubnet` |
+| `networkRuleCollectionGroupName` | `Network-Rules-Outbound` |
+| `applicationRuleCollectionGroupName` | `Application-Rules-Outbound` |
+| `dnatRuleCollectionGroupName` | `Dnat-Rules-Inbound` |
+| `tags` | `{"Environment":"$(EnvironmentTag)", ...}` |
 
-[arm-limits]: https://learn.microsoft.com/troubleshoot/azure/firewall/firewall-known-issues
+**`<ENV> das-hub-infrastructure`** — five values, because resource names are
+derived rather than listed.
 
-## Environments
-
-Environments follow the DAS convention: resources are named `das-<env>-...`
-where `<env>` is one of `dta`, `at`, `test`, `test2`, `demo`, `pp`, `mo`,
-`prd`. `MO` and `PRD` stages exist in `pipeline.yaml` but are commented out
-until their variable group, ADO environment and rule file exist.
-
-Each stage pulls one variable group named `<ENV> das-hub-infrastructure`,
-matching `das-shared-infrastructure` and `das-aodp-api`. It supplies resource
-names, address prefixes and the rule collection group names. A stage cannot
-run until its group exists and is authorised for the pipeline.
-
-| Stage | Variable group | Service connection |
-| --- | --- | --- |
-| Deploy_DTA | `DTA das-hub-infrastructure` | `SFA-DAS-DevTest-ARM` |
-| Deploy_AT | `AT das-hub-infrastructure` | `SFA-DAS-DevTest-ARM` |
-| Deploy_TEST | `TEST das-hub-infrastructure` | `SFA-DAS-DevTest-ARM` |
-| Deploy_TEST2 | `TEST2 das-hub-infrastructure` | `SFA-DAS-DevTest-ARM` |
-| Deploy_DEMO | `DEMO das-hub-infrastructure` | `SFA-DAS-DevTest-ARM` |
-| Deploy_PP | `PP das-hub-infrastructure` | `SFA-DIG-PreProd-ARM` |
-| Deploy_MO *(commented)* | `MO das-hub-infrastructure` | `SFA-ASM-ModelOffice-ARM` |
-| Deploy_PRD *(commented)* | `PRD das-hub-infrastructure` | `SFA-DIG-Prod-ARM` |
-
-### `RELEASE das-hub-infrastructure`
-
-Values identical in every environment. Add this group to the pipeline once,
-at the top of `pipeline.yaml`, rather than repeating it per environment.
-
-| Variable | Value | Notes |
-| --- | --- | --- |
-| `location` | `westeurope` | |
-| `serviceName` | `hub` | Second half of the `das-<env>-<serviceName>` name prefix |
-| `subnetName` | `AzureFirewallSubnet` | Azure requires this exact name for a firewall subnet; it is not a free choice |
-| `networkRuleCollectionGroupName` | `Network-Rules-Outbound` | |
-| `applicationRuleCollectionGroupName` | `Application-Rules-Outbound` | |
-| `dnatRuleCollectionGroupName` | `Dnat-Rules-Inbound` | |
-| `tags` | `{"Environment":"$(EnvironmentTag)", ...}` | JSON object; `EnvironmentTag` comes from the per-environment group |
-
-> DTA's live rule collection groups are named `NetworkGroup` / `AppGroup` /
-> `DNAT-Rules`. Deploying the shared names above will create new groups
-> alongside them rather than renaming them, and ARM cannot delete the old ones.
-> Either set the DTA-specific names in `DTA das-hub-infrastructure`, or delete
-> the old groups with the Azure CLI first.
-
-### `<ENV> das-hub-infrastructure`
-
-Resource names are derived inside the template from
-`das-<resourceEnvironmentName>-<serviceName>`, so only these are needed:
-
-| Variable | AT example |
+| Variable | Example (AT) |
 | --- | --- |
 | `resourceEnvironmentName` | `at` |
 | `addressPrefix` | `10.0.0.0/16` |
@@ -161,9 +164,9 @@ Resource names are derived inside the template from
 | `SubscriptionId` | `68208b91-0105-498e-a1bc-40d75596c01a` |
 | `EnvironmentTag` | `Dev/Test` |
 
-Addressing per environment:
+Addressing in use:
 
-| Env | `addressPrefix` | `subnetPrefix` |
+| Environment | `addressPrefix` | `subnetPrefix` |
 | --- | --- | --- |
 | dta | `10.0.0.0/16` | `10.0.1.0/26` |
 | at | `10.0.0.0/16` | `10.0.1.0/26` |
@@ -171,8 +174,52 @@ Addressing per environment:
 | test2 | `10.30.0.0/16` | `10.30.0.0/26` |
 | demo | `10.40.0.0/16` | `10.40.0.0/26` |
 
-DTA and AT share an address space, so those two VNets can never be peered.
+Service connections: `SFA-DAS-DevTest-ARM` for DTA, AT, TEST, TEST2 and DEMO,
+`SFA-DIG-PreProd-ARM` for PP, `SFA-ASM-ModelOffice-ARM` for MO and
+`SFA-DIG-Prod-ARM` for PRD.
 
-An undefined variable in Azure DevOps expands to the literal string
-`$(NetworkGroup)`, which would create a rule collection group by that name
-rather than failing. Check every variable exists before the first run.
+> A missing variable does not fail the way you would expect. Azure DevOps
+> leaves an undefined `$(name)` as that literal text, so a missing
+> `networkRuleCollectionGroupName` would create a rule collection group
+> actually called `$(networkRuleCollectionGroupName)`. Check a new group is
+> complete before its first run.
+
+## Things worth knowing before changing something
+
+**Azure Firewall applies one change at a time.** A rule collection group update
+locks itself and its parent policy for three to five minutes. The three groups
+deploy in sequence, chained by `dependsOn` inside
+`config/firewall-rules-<env>.json`. Remove that chain and they race, and one
+fails with
+`FirewallPolicyRuleCollectionGroupUpdateNotAllowedWhenUpdatingOrDeleting`.
+
+**That lock outlives the pipeline job.** Cancelling a run does not stop the
+update Azure is already applying, so the next run collides with it.
+`scripts/wait-for-firewall-idle.ps1` waits for the resource group to settle
+first, and fails the job if it cannot run.
+
+**ARM cannot delete rule collection groups.** Removing one from a template
+leaves it live in Azure, still enforcing its rules, and renaming a group
+creates a second one rather than renaming the first. Delete the old one
+explicitly:
+
+```powershell
+az network firewall policy rule-collection-group delete `
+  -g das-<env>-hub-rg --policy-name das-<env>-hub-fw-policy-0 -n <old-name>
+```
+
+**Templates are fetched over HTTPS, not from the artifact.**
+`azure/hub.template.json` builds each URI from `templateBaseUri` and
+`configBaseUri`, which the pipeline pins to the commit being deployed. So the
+repository has to stay public, and deploying a branch really does deploy that
+branch.
+
+**Rule collection groups at equal priority have no defined order.** If two
+groups share a priority, which one's allow or deny wins is undefined. Keep them
+distinct.
+
+## Deploying a branch
+
+Queue the pipeline against the branch. The Build stage checks it out and
+publishes it as the artifact, and the template URIs are pinned to that commit,
+so a branch deployment is a real test of that branch rather than of `main`.
