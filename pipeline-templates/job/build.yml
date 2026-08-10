@@ -1,6 +1,3 @@
-# Validate once, up front. Every deploy stage hangs off this, so a bad rule
-# file fails in seconds rather than part way through a 15 minute firewall
-# update in the first environment.
 jobs:
 - job: Build
   displayName: 'Build'

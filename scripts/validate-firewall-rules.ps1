@@ -25,8 +25,7 @@ param(
     [String[]]$Path
 )
 
-# https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-firewall-limits
-$MaxRuleCollectionGroupBytes = 1MB  # policies created before July 2022
+$MaxRuleCollectionGroupBytes = 1MB
 $PriorityMin = 100
 $PriorityMax = 65000
 
@@ -93,7 +92,6 @@ function Test-RuleCollections {
             $Errors.Add("$where ('$name'): priority $priority outside the allowed range $PriorityMin-$PriorityMax")
         }
         elseif ($seenPriority.ContainsKey($priority)) {
-            # Azure rejects the whole rule collection group for this.
             $Errors.Add("$where ('$name'): duplicate priority $priority, already used by '$($seenPriority[$priority])'")
         }
         else {
@@ -114,7 +112,6 @@ function Test-RuleCollections {
             $Errors.Add("$where ('$name'): 'rules' must be an array")
         }
         elseif ($collection.rules.Count -eq 0) {
-            # Deploys fine, matches nothing, and reads as an oversight.
             $Warnings.Add("$where ('$name'): contains no rules")
         }
     }
@@ -147,7 +144,6 @@ function Test-RuleFile {
             continue
         }
 
-        # Which group a resource is depends on the parameter it is named after.
         $matched = @($ExpectedCollectionType.Keys | Where-Object { $resource.name -like "*$_*" })
         if ($matched.Count -ne 1) {
             $errors.Add("${FilePath}: cannot tell which rule collection group '$($resource.name)' is; its name must reference exactly one of $($ExpectedCollectionType.Keys -join ', ')")

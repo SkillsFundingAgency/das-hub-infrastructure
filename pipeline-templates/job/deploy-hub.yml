@@ -17,17 +17,12 @@ jobs:
   environment: ${{ parameters.Environment }}
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   variables:
-    # new-parameters-file.ps1 fills each template parameter from the environment
-    # variable of the same name, so these two reach the template as parameters.
-    # Pinning to the commit means the linked templates and rule files match the
-    # code being deployed rather than whatever is on a branch.
     templateBaseUri: 'https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/azure/templates/'
     configBaseUri: 'https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/config/'
   strategy:
     runOnce:
       deploy:
         steps:
-        # No checkout: everything needed is in the drop artifact.
         - task: AzureCLI@2
           displayName: 'Wait for firewall to be idle'
           inputs:
@@ -39,9 +34,6 @@ jobs:
               -ResourceGroupName das-$(resourceEnvironmentName)-$(serviceName)-rg
               -FirewallPolicyName das-$(resourceEnvironmentName)-$(serviceName)-fw-policy-0
 
-        # ARM fetches the rules as a linked template, so nothing else in the
-        # run prints them. Log what is about to be applied, and fail here if
-        # the file is missing rather than part way through the deployment.
         - pwsh: |
             $rulesFile = "$(Pipeline.Workspace)/drop/config/firewall-rules-$(resourceEnvironmentName).json"
             if (-not (Test-Path -Path $rulesFile)) {
@@ -60,6 +52,4 @@ jobs:
             Location: $(location)
             TemplatePath: $(Pipeline.Workspace)/drop/azure/hub.template.json
             ParametersPath: $(Pipeline.Workspace)/drop/azure/hub.template.parameters.json
-            # Subscription scoped, so the name has to carry the environment:
-            # without it every stage in a run writes to the same deployment.
             DeploymentName: hub-$(resourceEnvironmentName)-$(Build.BuildId)-$(System.JobAttempt)

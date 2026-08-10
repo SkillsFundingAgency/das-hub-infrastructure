@@ -103,7 +103,5 @@ if ($directory -and -not (Test-Path -Path $directory)) {
     $null = New-Item -ItemType Directory -Path $directory -Force
 }
 
-# WriteAllText rather than Set-Content: the latter emits a UTF-8 BOM on Windows
-# PowerShell, which the CLI will not parse.
 [System.IO.File]::WriteAllText($ParametersFilePath, ($document | ConvertTo-Json -Depth 100))
 Write-Host "Wrote $($parameters.Count) parameter(s) to $ParametersFilePath"

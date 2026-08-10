@@ -23,8 +23,6 @@ param(
 )
 
 function Get-AzCount {
-    # az writes to stderr and returns non-zero for a missing policy, which is
-    # not an error here: nothing to wait for.
     param([String[]]$Arguments)
     $value = & az @Arguments 2>$null
     if ($LASTEXITCODE -ne 0 -or [String]::IsNullOrWhiteSpace($value)) {
@@ -33,8 +31,6 @@ function Get-AzCount {
     return [Int]$value
 }
 
-# On a first deployment the resource group does not exist yet, so there is
-# nothing in flight to wait for.
 if ((& az group exists --name $ResourceGroupName) -ne 'true') {
     Write-Host "$ResourceGroupName does not exist yet; nothing to wait for."
     exit 0
@@ -43,7 +39,6 @@ if ((& az group exists --name $ResourceGroupName) -ne 'true') {
 $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
 
 while ($true) {
-    # Deployments left running by an earlier, possibly cancelled, pipeline run.
     $runningDeployments = Get-AzCount @(
         'deployment', 'group', 'list',
         '--resource-group', $ResourceGroupName,
@@ -51,7 +46,6 @@ while ($true) {
         '--output', 'tsv'
     )
 
-    # Rule collection groups still committing.
     $pendingGroups = Get-AzCount @(
         'network', 'firewall', 'policy', 'rule-collection-group', 'list',
         '--resource-group', $ResourceGroupName,
