@@ -39,6 +39,20 @@ jobs:
               -ResourceGroupName das-$(resourceEnvironmentName)-$(serviceName)-rg
               -FirewallPolicyName das-$(resourceEnvironmentName)-$(serviceName)-fw-policy-0
 
+        # ARM fetches the rules as a linked template, so nothing else in the
+        # run prints them. Log what is about to be applied, and fail here if
+        # the file is missing rather than part way through the deployment.
+        - pwsh: |
+            $rulesFile = "$(Pipeline.Workspace)/drop/config/firewall-rules-$(resourceEnvironmentName).json"
+            if (-not (Test-Path -Path $rulesFile)) {
+              Write-Host "##vso[task.logissue type=error]Rules file not found: $rulesFile"
+              exit 1
+            }
+            Write-Host "##[group]$rulesFile"
+            Get-Content -Path $rulesFile -Raw | Write-Host
+            Write-Host "##[endgroup]"
+          displayName: 'Firewall rules being deployed'
+
         - template: ../step/arm-deploy.yml
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
