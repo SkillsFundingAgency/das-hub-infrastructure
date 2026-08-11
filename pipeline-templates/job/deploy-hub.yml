@@ -1,0 +1,55 @@
+parameters:
+  - name: Environment
+    type: string
+  - name: ServiceConnection
+    type: string
+  - name: TimeoutInMinutes
+    type: number
+    default: 90
+
+jobs:
+- deployment: DeployHub
+  displayName: 'Deploy ARM Template to ${{ parameters.Environment }}'
+  pool:
+    name: DAS - Continuous Deployment Agents
+  workspace:
+    clean: all
+  environment: ${{ parameters.Environment }}
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+  variables:
+    templateBaseUri: 'https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/azure/templates/'
+    configBaseUri: 'https://raw.githubusercontent.com/SkillsFundingAgency/das-hub-infrastructure/$(Build.SourceVersion)/config/'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureCLI@2
+          displayName: 'Wait for firewall to be idle'
+          inputs:
+            azureSubscription: ${{ parameters.ServiceConnection }}
+            scriptType: pscore
+            scriptLocation: scriptPath
+            scriptPath: '$(Pipeline.Workspace)/drop/scripts/wait-for-firewall-idle.ps1'
+            arguments: >
+              -ResourceGroupName das-$(resourceEnvironmentName)-$(serviceName)-rg
+              -FirewallPolicyName das-$(resourceEnvironmentName)-$(serviceName)-fw-policy-0
+
+        - pwsh: |
+            $rulesFile = "$(Pipeline.Workspace)/drop/config/firewall-rules-$(resourceEnvironmentName).json"
+            if (-not (Test-Path -Path $rulesFile)) {
+              Write-Host "##vso[task.logissue type=error]Rules file not found: $rulesFile"
+              exit 1
+            }
+            Write-Host "##[group]$rulesFile"
+            Get-Content -Path $rulesFile -Raw | Write-Host
+            Write-Host "##[endgroup]"
+          displayName: 'Firewall rules being deployed'
+
+        - template: ../step/arm-deploy.yml
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SubscriptionId: $(SubscriptionId)
+            Location: $(location)
+            TemplatePath: $(Pipeline.Workspace)/drop/azure/hub.template.json
+            ParametersPath: $(Pipeline.Workspace)/drop/azure/hub.template.parameters.json
+            DeploymentName: hub-$(resourceEnvironmentName)-$(Build.BuildId)-$(System.JobAttempt)

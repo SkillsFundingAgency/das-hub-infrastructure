@@ -1,0 +1,218 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "firewallPolicyName": {
+      "type": "string"
+    },
+    "networkRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "applicationRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "dnatRuleCollectionGroupName": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('networkRuleCollectionGroupName'))]",
+      "properties": {
+        "priority": 100,
+        "ruleCollections": [
+          {
+            "name": "AllowSubnet-PL-SN",
+            "priority": 1010,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-PL-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.1.200.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('dnatRuleCollectionGroupName'))]",
+      "properties": {
+        "priority": 300,
+        "ruleCollections": [
+          {
+            "name": "DNAT-Inbound-Allow-TestEnv",
+            "priority": 1020,
+            "ruleCollectionType": "FirewallPolicyNatRuleCollection",
+            "action": {
+              "type": "Dnat"
+            },
+            "rules": [
+              {
+                "ruleType": "NatRule",
+                "name": "DNAT-SSH",
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "sourceAddresses": [
+                  "*"
+                ],
+                "destinationAddresses": [
+                  "10.0.1.4"
+                ],
+                "destinationPorts": [
+                  "22"
+                ],
+                "translatedAddress": "10.1.200.10",
+                "translatedPort": "22"
+              },
+              {
+                "ruleType": "NatRule",
+                "name": "DNAT-WebServer",
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "sourceAddresses": [
+                  "*"
+                ],
+                "destinationAddresses": [
+                  "10.0.1.4"
+                ],
+                "destinationPorts": [
+                  "80"
+                ],
+                "translatedAddress": "10.1.200.20",
+                "translatedPort": "8080"
+              }
+            ]
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('networkRuleCollectionGroupName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('applicationRuleCollectionGroupName'))]",
+      "properties": {
+        "priority": 200,
+        "ruleCollections": [
+          {
+            "name": "AllowTeams",
+            "priority": 100,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "ApplicationRule",
+                "name": "AllowTeams",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "sourceAddresses": [
+                  "192.168.50.0/24"
+                ],
+                "targetFqdns": [
+                  "*.teams.microsoft.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              }
+            ]
+          },
+          {
+            "name": "AllowGitHub",
+            "priority": 200,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "ApplicationRule",
+                "name": "AllowGitHub",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.3.0.0/16"
+                ],
+                "targetFqdns": [
+                  "*.github.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              }
+            ]
+          },
+          {
+            "name": "BlockSocialMedia",
+            "priority": 300,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Deny"
+            },
+            "rules": [
+              {
+                "ruleType": "ApplicationRule",
+                "name": "BlockSocialMedia",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "sourceAddresses": [
+                  "*"
+                ],
+                "targetFqdns": [
+                  "*.facebook.com",
+                  "*.instagram.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              }
+            ]
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('dnatRuleCollectionGroupName'))]"
+      ]
+    }
+  ]
+}

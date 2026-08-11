@@ -1,0 +1,25 @@
+jobs:
+- job: Build
+  displayName: 'Build'
+  pool:
+    name: DAS - Continuous Integration Agents
+  workspace:
+    clean: all
+  steps:
+  - checkout: self
+  - pwsh: ./scripts/validate-firewall-rules.ps1
+    displayName: 'Validate firewall rule files'
+  - task: CopyFiles@2
+    displayName: Copy Files to $(build.artifactstagingdirectory)/publish
+    inputs:
+      Contents: |
+        azure/**
+        config/**
+        scripts/**
+      TargetFolder: $(build.artifactstagingdirectory)/publish
+      OverWrite: true
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: drop
