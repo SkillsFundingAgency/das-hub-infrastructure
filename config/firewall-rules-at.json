@@ -2128,6 +2128,34 @@
                 ]
               }
             ]
+          },
+          {
+            "name": "AllowSubnet-FNRVS-SN",
+            "priority": 115,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-FNRVS-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.1.229.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              }
+            ]
           }
         ]
       }
