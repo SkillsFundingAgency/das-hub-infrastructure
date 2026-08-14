@@ -2788,7 +2788,8 @@
                   "androidpublisher.googleapis.com",
                   "playdeveloperreporting.googleapis.com",
                   "storage.googleapis.com",
-                  "api.os.uk"
+                  "api.os.uk",
+                  "api.postcodes.io"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
