@@ -2787,7 +2787,8 @@
                   "www.googleapis.com",
                   "androidpublisher.googleapis.com",
                   "playdeveloperreporting.googleapis.com",
-                  "storage.googleapis.com"
+                  "storage.googleapis.com",
+                  "api.os.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
