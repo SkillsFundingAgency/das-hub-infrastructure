@@ -2309,7 +2309,8 @@
                   "*.surveymonkey.co.uk",
                   "*.schemas.xmlsoap.org",
                   "*.files.digital.nhs.uk",
-                  "*.logic.azure.com"
+                  "*.logic.azure.com",
+                  "api.os.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
