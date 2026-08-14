@@ -2310,7 +2310,8 @@
                   "*.schemas.xmlsoap.org",
                   "*.files.digital.nhs.uk",
                   "*.logic.azure.com",
-                  "api.os.uk"
+                  "api.os.uk",
+                  "api.postcodes.io"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
