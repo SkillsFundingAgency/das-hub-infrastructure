@@ -2158,7 +2158,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-learner-SN-0",
+            "name": "AllowSubnet-LEARNER-SN-0",
             "priority": 116,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2167,7 +2167,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-learner-SN-0-Outbound",
+                "name": "AllowSubnet-LEARNER-SN-0-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2186,7 +2186,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-assessor-SN-0",
+            "name": "AllowSubnet-ASSESSOR-SN-0",
             "priority": 117,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2195,7 +2195,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-assessor-SN-0-Outbound",
+                "name": "AllowSubnet-ASSESSOR-SN-0-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2214,7 +2214,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-employer-SN-0",
+            "name": "AllowSubnet-EMPLOYER-SN-0",
             "priority": 118,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2223,7 +2223,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-employer-SN-0-Outbound",
+                "name": "AllowSubnet-EMPLOYER-SN-0-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2242,7 +2242,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-employer-SN-1",
+            "name": "AllowSubnet-EMPLOYER-SN-1",
             "priority": 119,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2251,7 +2251,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-employer-SN-1-Outbound",
+                "name": "AllowSubnet-EMPLOYER-SN-1-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2270,7 +2270,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-provider-SN-0",
+            "name": "AllowSubnet-PROVIDER-SN-0",
             "priority": 120,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2279,7 +2279,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-provider-SN-0-Outbound",
+                "name": "AllowSubnet-PROVIDER-SN-0-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2298,7 +2298,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-external-SN-0",
+            "name": "AllowSubnet-EXTERNAL-SN-0",
             "priority": 121,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2307,7 +2307,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-external-SN-0-Outbound",
+                "name": "AllowSubnet-EXTERNAL-SN-0-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2326,7 +2326,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-internal-SN-0",
+            "name": "AllowSubnet-INTERNAL-SN-0",
             "priority": 122,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2335,7 +2335,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-internal-SN-0-Outbound",
+                "name": "AllowSubnet-INTERNAL-SN-0-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -2354,7 +2354,7 @@
             ]
           },
           {
-            "name": "AllowSubnet-provider-SN-1",
+            "name": "AllowSubnet-PROVIDER-SN-1",
             "priority": 123,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
@@ -2363,7 +2363,7 @@
             "rules": [
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-provider-SN-1-Outbound",
+                "name": "AllowSubnet-PROVIDER-SN-1-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
