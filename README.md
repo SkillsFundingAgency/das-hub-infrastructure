@@ -27,13 +27,39 @@ graph LR
         FW -. diagnostics .-> LAW
     end
 
-    POL --> NRG["Network rules<br/>Network-Rules-Outbound"]
-    POL --> DRG["DNAT rules<br/>Dnat-Rules-Inbound"]
-    POL --> ARG["Application rules<br/>Application-Rules-Outbound"]
+    POL --> RCG["Rule collection groups<br/>from config/firewall-rules-ENV.json"]
 ```
 
-The three rule collection groups hanging off the policy are what the files in
+The rule collection groups hanging off the policy are what the files in
 `config/` produce. Everything else is fixed infrastructure that rarely changes.
+
+Environments are moving from three groups split by rule type to five groups
+split by purpose. AT has moved; every other environment still uses the legacy
+layout.
+
+| Layout | Rule collection group | Priority | Holds |
+| --- | --- | --- | --- |
+| Tiered (AT) | `das-critical-infrastructure` | 100 | DNS, AD, management, shared platform services |
+| | `das-security-services` | 200 | Key Vault, monitoring, security services |
+| | `das-application-network` | 300 | Application-to-application and spoke-to-spoke rules |
+| | `das-external-integrations` | 400 | Third-party and network integrations |
+| | `das-general-outbound` | 500 | General approved outbound connectivity |
+| Legacy (everything else) | `Network-Rules-Outbound` | 100 | Network rules |
+| | `Application-Rules-Outbound` | 200 | Application rules |
+| | `Dnat-Rules-Inbound` | 300 | DNAT rules |
+
+In the tiered layout a group holds a few rule collections, one per rule type,
+and rules are added to those rather than each rule getting a collection of its
+own. `das-application-network` holds:
+
+| Rule collection | Type | Action | Priority |
+| --- | --- | --- | --- |
+| `DNAT-Outbound-Allow` | NAT | `DNAT` | 1000 |
+| `Network-Outbound-Allow` | Filter | `Allow` | 2000 |
+| `Application-Outbound-Allow` | Filter | `Allow` | 3000 |
+
+Group priorities and collection names and priorities are ARM `variables` at the
+top of the rules file; group names come from the variable group.
 
 Resource names are never written down anywhere. They are built inside the
 template from `das-<resourceEnvironmentName>-<serviceName>`, so `at` plus `hub`
@@ -84,9 +110,26 @@ applying rules, and it cannot be sped up.
 
 ## Adding a firewall rule
 
-Edit `config/firewall-rules-<env>.json`. Each file is an ARM template holding
-three rule collection groups; add your collection to the right one, under
-`resources[].properties.ruleCollections`.
+Edit `config/firewall-rules-<env>.json`.
+
+**Tiered environments (AT).** Add the rule to the `rules` array of the matching
+collection in the right group: a `NetworkRule` to `Network-Outbound-Allow`, an
+`ApplicationRule` to `Application-Outbound-Allow`. Rule names must be unique
+within their collection.
+
+```json
+{
+  "ruleType": "NetworkRule",
+  "name": "AllowSubnet-EXAMPLE-SN-Outbound",
+  "ipProtocols": [ "TCP" ],
+  "sourceAddresses": [ "10.1.2.0/24" ],
+  "destinationAddresses": [ "*" ],
+  "destinationPorts": [ "443" ]
+}
+```
+
+**Legacy environments.** Each file holds three rule collection groups; add a
+collection to the right one, under `resources[].properties.ruleCollections`.
 
 ```json
 {
@@ -151,6 +194,11 @@ environment.
 | `networkRuleCollectionGroupName` | `Network-Rules-Outbound` |
 | `applicationRuleCollectionGroupName` | `Application-Rules-Outbound` |
 | `dnatRuleCollectionGroupName` | `Dnat-Rules-Inbound` |
+| `criticalInfrastructureRuleCollectionGroupName` | `das-critical-infrastructure` |
+| `securityServicesRuleCollectionGroupName` | `das-security-services` |
+| `applicationNetworkRuleCollectionGroupName` | `das-application-network` |
+| `externalIntegrationsRuleCollectionGroupName` | `das-external-integrations` |
+| `generalOutboundRuleCollectionGroupName` | `das-general-outbound` |
 | `tags` | `{"Environment":"$(EnvironmentTag)", ...}` |
 
 **`<ENV> das-hub-infrastructure`** — five values, because resource names are
@@ -187,7 +235,7 @@ Service connections: `SFA-DAS-DevTest-ARM` for DTA, AT, TEST, TEST2 and DEMO,
 ## Things worth knowing before changing something
 
 **Azure Firewall applies one change at a time.** A rule collection group update
-locks itself and its parent policy for three to five minutes. The three groups
+locks itself and its parent policy for three to five minutes. The groups
 deploy in sequence, chained by `dependsOn` inside
 `config/firewall-rules-<env>.json`. Remove that chain and they race, and one
 fails with
@@ -213,6 +261,19 @@ az network firewall policy rule-collection-group delete `
 `configBaseUri`, which the pipeline pins to the commit being deployed. So the
 repository has to stay public, and deploying a branch really does deploy that
 branch.
+
+**Moving an environment to the tiered layout leaves the legacy groups live.**
+For the reason above, the three legacy groups keep enforcing their rules after
+the new groups deploy. That is harmless while every rule is `Allow`, but they
+share priorities 100 and 300 with the new groups, so delete them once the new
+groups show `Succeeded`:
+
+```powershell
+foreach ($group in 'Network-Rules-Outbound', 'Application-Rules-Outbound', 'Dnat-Rules-Inbound') {
+  az network firewall policy rule-collection-group delete `
+    -g das-<env>-hub-rg --policy-name das-<env>-hub-fw-policy-0 -n $group
+}
+```
 
 **Rule collection groups at equal priority have no defined order.** If two
 groups share a priority, which one's allow or deny wins is undefined. Keep them
