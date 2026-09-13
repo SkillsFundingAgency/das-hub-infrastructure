@@ -9,6 +9,9 @@
       "type": "bool",
       "defaultValue": false
     },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string"
+    },
     "applicationRuleCollectionGroupName": {
       "type": "string"
     },
@@ -72,7 +75,16 @@
       "type": "bool",
       "defaultValue": true
     },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string"
+    },
     "dnatRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "generalOutboundRuleCollectionGroupName": {
       "type": "string"
     },
     "location": {
@@ -83,6 +95,9 @@
       "type": "string"
     },
     "resourceEnvironmentName": {
+      "type": "string"
+    },
+    "securityServicesRuleCollectionGroupName": {
       "type": "string"
     },
     "serviceName": {
@@ -425,6 +440,21 @@
           },
           "dnatRuleCollectionGroupName": {
             "value": "[parameters('dnatRuleCollectionGroupName')]"
+          },
+          "criticalInfrastructureRuleCollectionGroupName": {
+            "value": "[parameters('criticalInfrastructureRuleCollectionGroupName')]"
+          },
+          "securityServicesRuleCollectionGroupName": {
+            "value": "[parameters('securityServicesRuleCollectionGroupName')]"
+          },
+          "applicationNetworkRuleCollectionGroupName": {
+            "value": "[parameters('applicationNetworkRuleCollectionGroupName')]"
+          },
+          "externalIntegrationsRuleCollectionGroupName": {
+            "value": "[parameters('externalIntegrationsRuleCollectionGroupName')]"
+          },
+          "generalOutboundRuleCollectionGroupName": {
+            "value": "[parameters('generalOutboundRuleCollectionGroupName')]"
           }
         }
       }

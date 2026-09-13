@@ -5,6 +5,36 @@
     "firewallPolicyName": {
       "type": "string"
     },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS, AD, management and shared platform services."
+      }
+    },
+    "securityServicesRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Key Vault, monitoring and security services."
+      }
+    },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application-to-application and spoke-to-spoke rules."
+      }
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Third-party and network integrations."
+      }
+    },
+    "generalOutboundRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "General approved outbound connectivity."
+      }
+    },
     "networkRuleCollectionGroupName": {
       "type": "string"
     },
@@ -14,6 +44,19 @@
     "dnatRuleCollectionGroupName": {
       "type": "string"
     }
+  },
+  "variables": {
+    "criticalInfrastructurePriority": 100,
+    "securityServicesPriority": 200,
+    "applicationNetworkPriority": 300,
+    "externalIntegrationsPriority": 400,
+    "generalOutboundPriority": 500,
+    "dnatOutboundAllowCollectionName": "DNAT-Outbound-Allow",
+    "dnatOutboundAllowCollectionPriority": 1000,
+    "networkOutboundAllowCollectionName": "Network-Outbound-Allow",
+    "networkOutboundAllowCollectionPriority": 2000,
+    "applicationOutboundAllowCollectionName": "Application-Outbound-Allow",
+    "applicationOutboundAllowCollectionPriority": 3000
   },
   "resources": [
     {

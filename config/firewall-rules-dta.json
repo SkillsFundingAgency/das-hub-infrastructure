@@ -13,6 +13,36 @@
     },
     "dnatRuleCollectionGroupName": {
       "type": "string"
+    },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Not used yet. Passed by hub.template.json; this environment still uses the legacy rule collection groups."
+      }
+    },
+    "securityServicesRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Not used yet. Passed by hub.template.json; this environment still uses the legacy rule collection groups."
+      }
+    },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Not used yet. Passed by hub.template.json; this environment still uses the legacy rule collection groups."
+      }
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Not used yet. Passed by hub.template.json; this environment still uses the legacy rule collection groups."
+      }
+    },
+    "generalOutboundRuleCollectionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Not used yet. Passed by hub.template.json; this environment still uses the legacy rule collection groups."
+      }
     }
   },
   "resources": [
