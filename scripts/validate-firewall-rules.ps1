@@ -10,9 +10,17 @@
     which can block the following run, so catching these up front is worth more
     than the few seconds it costs.
 
-    Each config/firewall-rules-<env>.json is an ARM template declaring three
-    rule collection groups, identified by which group name parameter each
-    resource is named after.
+    Each config/firewall-rules-<env>.json is an ARM template declaring rule
+    collection groups, identified by which group name parameter each resource is
+    named after. A file uses one of two layouts:
+
+      legacy  network, application and DNAT groups, one rule type each
+      tiered  the five das-* groups, each free to mix rule collection types
+
+    Priorities and names written as [variables('...')] are resolved against the
+    template's variables before they are checked. Those written as
+    [parameters('...')] are only known at deployment, so they are checked to be
+    declared and not reused, but their values are not checked.
 
     .PARAMETER Path
     Rule templates to check. Defaults to every config/firewall-rules-*.json.
@@ -29,10 +37,80 @@ $MaxRuleCollectionGroupBytes = 1MB
 $PriorityMin = 100
 $PriorityMax = 65000
 
-$ExpectedCollectionType = [ordered]@{
+$LegacyGroups = [ordered]@{
     networkRuleCollectionGroupName     = 'FirewallPolicyFilterRuleCollection'
     applicationRuleCollectionGroupName = 'FirewallPolicyFilterRuleCollection'
     dnatRuleCollectionGroupName        = 'FirewallPolicyNatRuleCollection'
+}
+
+$TieredGroups = @(
+    'criticalInfrastructureRuleCollectionGroupName'
+    'securityServicesRuleCollectionGroupName'
+    'applicationNetworkRuleCollectionGroupName'
+    'externalIntegrationsRuleCollectionGroupName'
+    'generalRuleCollectionGroupName'
+)
+
+$AllowedActions = @{
+    FirewallPolicyFilterRuleCollection = @('Allow', 'Deny')
+    FirewallPolicyNatRuleCollection    = @('DNAT')
+}
+
+$AllowedRuleTypes = @{
+    FirewallPolicyFilterRuleCollection = @('NetworkRule', 'ApplicationRule')
+    FirewallPolicyNatRuleCollection    = @('NatRule')
+}
+
+function Resolve-Value {
+    param($Value, $Variables, $Parameters)
+
+    if ($Value -is [String] -and $Value -match "^\[variables\('([^']+)'\)\]$") {
+        $variableName = $Matches[1]
+        if ($null -eq $Variables -or @($Variables.PSObject.Properties.Name) -notcontains $variableName) {
+            throw "references undefined variable '$variableName'"
+        }
+        return $Variables.$variableName
+    }
+    if ($Value -is [String] -and $Value -match "^\[parameters\('([^']+)'\)\]$") {
+        $parameterName = $Matches[1]
+        if ($null -eq $Parameters -or @($Parameters.PSObject.Properties.Name) -notcontains $parameterName) {
+            throw "references undeclared parameter '$parameterName'"
+        }
+    }
+    return $Value
+}
+
+function Test-IsParameter {
+    param($Value)
+    return $Value -is [String] -and $Value -match "^\[parameters\('[^']+'\)\]$"
+}
+
+function Test-Priority {
+    param($Priority, [String]$Where, [Hashtable]$Seen, [String]$Owner, [System.Collections.Generic.List[String]]$Errors)
+
+    if (Test-IsParameter $Priority) {
+        if ($Seen.ContainsKey($Priority)) {
+            $Errors.Add("${Where}: priority parameter $Priority already used by '$($Seen[$Priority])'")
+        }
+        else {
+            $Seen[$Priority] = $Owner
+        }
+    }
+    elseif ($null -eq $Priority) {
+        $Errors.Add("${Where}: missing 'priority'")
+    }
+    elseif ($Priority -isnot [Int32] -and $Priority -isnot [Int64]) {
+        $Errors.Add("${Where}: priority must be an integer, got '$Priority'")
+    }
+    elseif ($Priority -lt $PriorityMin -or $Priority -gt $PriorityMax) {
+        $Errors.Add("${Where}: priority $Priority outside the allowed range $PriorityMin-$PriorityMax")
+    }
+    elseif ($Seen.ContainsKey($Priority)) {
+        $Errors.Add("${Where}: duplicate priority $Priority, already used by '$($Seen[$Priority])'")
+    }
+    else {
+        $Seen[$Priority] = $Owner
+    }
 }
 
 function Test-RuleCollections {
@@ -41,6 +119,8 @@ function Test-RuleCollections {
         [String]$GroupLabel,
         [String]$ExpectedType,
         $Collections,
+        $Variables,
+        $Parameters,
         [System.Collections.Generic.List[String]]$Errors,
         [System.Collections.Generic.List[String]]$Warnings
     )
@@ -68,9 +148,15 @@ function Test-RuleCollections {
             continue
         }
 
-        $properties = @($collection.PSObject.Properties.Name)
+        try {
+            $name = Resolve-Value -Value $collection.name -Variables $Variables -Parameters $Parameters
+            $priority = Resolve-Value -Value $collection.priority -Variables $Variables -Parameters $Parameters
+        }
+        catch {
+            $Errors.Add("${where}: $($_.Exception.Message)")
+            continue
+        }
 
-        $name = $collection.name
         if ([String]::IsNullOrWhiteSpace($name)) {
             $Errors.Add("${where}: missing 'name'")
         }
@@ -81,38 +167,57 @@ function Test-RuleCollections {
             $seenName[$name] = $index
         }
 
-        $priority = $collection.priority
-        if ($properties -notcontains 'priority' -or $null -eq $priority) {
-            $Errors.Add("$where ('$name'): missing 'priority'")
-        }
-        elseif ($priority -isnot [Int32] -and $priority -isnot [Int64]) {
-            $Errors.Add("$where ('$name'): priority must be an integer, got '$priority'")
-        }
-        elseif ($priority -lt $PriorityMin -or $priority -gt $PriorityMax) {
-            $Errors.Add("$where ('$name'): priority $priority outside the allowed range $PriorityMin-$PriorityMax")
-        }
-        elseif ($seenPriority.ContainsKey($priority)) {
-            $Errors.Add("$where ('$name'): duplicate priority $priority, already used by '$($seenPriority[$priority])'")
-        }
-        else {
-            $seenPriority[$priority] = $name
-        }
+        $where = "$where ('$name')"
+        Test-Priority -Priority $priority -Where $where -Seen $seenPriority -Owner $name -Errors $Errors
 
         $collectionType = $collection.ruleCollectionType
-        if ($collectionType -ne $ExpectedType) {
-            $Errors.Add("$where ('$name'): ruleCollectionType is '$collectionType', expected '$ExpectedType'")
+        if (-not $AllowedActions.ContainsKey([String]$collectionType)) {
+            $Errors.Add("${where}: unknown ruleCollectionType '$collectionType'")
+            continue
+        }
+        if ($ExpectedType -and $collectionType -ne $ExpectedType) {
+            $Errors.Add("${where}: ruleCollectionType is '$collectionType', expected '$ExpectedType'")
         }
 
         $action = $collection.action
         if ($action -isnot [PSCustomObject] -or @($action.PSObject.Properties.Name) -notcontains 'type') {
-            $Errors.Add("$where ('$name'): missing action.type")
+            $Errors.Add("${where}: missing action.type")
+        }
+        elseif ($AllowedActions[$collectionType] -notcontains $action.type) {
+            $Errors.Add("${where}: action '$($action.type)' is not valid for $collectionType; use $($AllowedActions[$collectionType] -join ' or ')")
         }
 
-        if ($properties -notcontains 'rules' -or $collection.rules -isnot [Array]) {
-            $Errors.Add("$where ('$name'): 'rules' must be an array")
+        if (@($collection.PSObject.Properties.Name) -notcontains 'rules' -or $collection.rules -isnot [Array]) {
+            $Errors.Add("${where}: 'rules' must be an array")
+            continue
         }
-        elseif ($collection.rules.Count -eq 0) {
-            $Warnings.Add("$where ('$name'): contains no rules")
+        if ($collection.rules.Count -eq 0) {
+            $Warnings.Add("${where}: contains no rules")
+            continue
+        }
+
+        $ruleTypes = @($collection.rules | ForEach-Object { $_.ruleType } | Sort-Object -Unique)
+        foreach ($ruleType in $ruleTypes) {
+            if ($AllowedRuleTypes[$collectionType] -notcontains $ruleType) {
+                $Errors.Add("${where}: rule type '$ruleType' cannot sit in a $collectionType")
+            }
+        }
+        if ($ruleTypes.Count -gt 1) {
+            $Errors.Add("${where}: mixes rule types $($ruleTypes -join ', '); a rule collection holds one type only")
+        }
+
+        $seenRuleName = @{}
+        for ($ruleIndex = 0; $ruleIndex -lt $collection.rules.Count; $ruleIndex++) {
+            $ruleName = $collection.rules[$ruleIndex].name
+            if ([String]::IsNullOrWhiteSpace($ruleName)) {
+                $Errors.Add("${where}: rule $ruleIndex is missing 'name'")
+            }
+            elseif ($seenRuleName.ContainsKey($ruleName)) {
+                $Errors.Add("${where}: duplicate rule name '$ruleName' at rules[$ruleIndex], also at rules[$($seenRuleName[$ruleName])]")
+            }
+            else {
+                $seenRuleName[$ruleName] = $ruleIndex
+            }
         }
     }
 }
@@ -136,7 +241,9 @@ function Test-RuleFile {
         return [PSCustomObject]@{ Errors = $errors; Warnings = $warnings }
     }
 
+    $knownGroups = @($LegacyGroups.Keys) + $TieredGroups
     $seenGroups = @{}
+    $seenGroupPriority = @{}
 
     foreach ($resource in $document.resources) {
         if ($resource.type -ne 'Microsoft.Network/firewallPolicies/ruleCollectionGroups') {
@@ -144,9 +251,9 @@ function Test-RuleFile {
             continue
         }
 
-        $matched = @($ExpectedCollectionType.Keys | Where-Object { $resource.name -like "*$_*" })
+        $matched = @($knownGroups | Where-Object { $resource.name -like "*parameters('$_')*" })
         if ($matched.Count -ne 1) {
-            $errors.Add("${FilePath}: cannot tell which rule collection group '$($resource.name)' is; its name must reference exactly one of $($ExpectedCollectionType.Keys -join ', ')")
+            $errors.Add("${FilePath}: cannot tell which rule collection group '$($resource.name)' is; its name must reference exactly one of $($knownGroups -join ', ')")
             continue
         }
 
@@ -157,13 +264,31 @@ function Test-RuleFile {
         }
         $seenGroups[$groupLabel] = $true
 
+        try {
+            $groupPriority = Resolve-Value -Value $resource.properties.priority -Variables $document.variables -Parameters $document.parameters
+            Test-Priority -Priority $groupPriority -Where "${FilePath}: $groupLabel" -Seen $seenGroupPriority -Owner $groupLabel -Errors $errors
+        }
+        catch {
+            $errors.Add("${FilePath}: ${groupLabel}: priority $($_.Exception.Message)")
+        }
+
         Test-RuleCollections -FilePath $FilePath -GroupLabel $groupLabel `
-            -ExpectedType $ExpectedCollectionType[$groupLabel] `
+            -ExpectedType $LegacyGroups[$groupLabel] `
             -Collections $resource.properties.ruleCollections `
+            -Variables $document.variables `
+            -Parameters $document.parameters `
             -Errors $errors -Warnings $warnings
     }
 
-    foreach ($groupLabel in $ExpectedCollectionType.Keys) {
+    $usesTiered = @($TieredGroups | Where-Object { $seenGroups.ContainsKey($_) }).Count -gt 0
+    $usesLegacy = @($LegacyGroups.Keys | Where-Object { $seenGroups.ContainsKey($_) }).Count -gt 0
+
+    if ($usesTiered -and $usesLegacy) {
+        $errors.Add("${FilePath}: declares both legacy and tiered rule collection groups; the same rules would be enforced twice under different priorities")
+    }
+
+    $expectedGroups = if ($usesTiered) { $TieredGroups } else { @($LegacyGroups.Keys) }
+    foreach ($groupLabel in $expectedGroups) {
         if (-not $seenGroups.ContainsKey($groupLabel)) {
             $warnings.Add("${FilePath}: no resource for $groupLabel; that rule collection group will not be deployed")
         }
