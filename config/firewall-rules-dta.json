@@ -5,6 +5,60 @@
     "firewallPolicyName": {
       "type": "string"
     },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "securityServicesRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "generalRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "criticalInfrastructurePriority": {
+      "type": "int"
+    },
+    "securityServicesPriority": {
+      "type": "int"
+    },
+    "applicationNetworkPriority": {
+      "type": "int"
+    },
+    "externalIntegrationsPriority": {
+      "type": "int"
+    },
+    "generalPriority": {
+      "type": "int"
+    },
+    "dnatOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "dnatOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "networkOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "networkOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "applicationOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "applicationOutboundDenyCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundDenyCollectionPriority": {
+      "type": "int"
+    },
     "networkRuleCollectionGroupName": {
       "type": "string"
     },
@@ -19,35 +73,49 @@
     {
       "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
       "apiVersion": "2024-01-01",
-      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('networkRuleCollectionGroupName'))]",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('criticalInfrastructureRuleCollectionGroupName'))]",
       "properties": {
-        "priority": 100,
+        "priority": "[parameters('criticalInfrastructurePriority')]",
+        "ruleCollections": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('securityServicesRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('criticalInfrastructureRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('securityServicesPriority')]",
         "ruleCollections": [
           {
-            "name": "AllowSubnet-PL-SN",
-            "priority": 1010,
+            "name": "[parameters('applicationOutboundDenyCollectionName')]",
+            "priority": "[parameters('applicationOutboundDenyCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
-              "type": "Allow"
+              "type": "Deny"
             },
             "rules": [
               {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-PL-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
+                "ruleType": "ApplicationRule",
+                "name": "BlockSocialMedia",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
                 ],
                 "sourceAddresses": [
-                  "10.1.200.0/24"
-                ],
-                "destinationAddresses": [
                   "*"
                 ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
+                "targetFqdns": [
+                  "*.facebook.com",
+                  "*.instagram.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
               }
             ]
           }
@@ -57,16 +125,19 @@
     {
       "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
       "apiVersion": "2024-01-01",
-      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('dnatRuleCollectionGroupName'))]",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('applicationNetworkRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('securityServicesRuleCollectionGroupName'))]"
+      ],
       "properties": {
-        "priority": 300,
+        "priority": "[parameters('applicationNetworkPriority')]",
         "ruleCollections": [
           {
-            "name": "DNAT-Inbound-Allow-TestEnv",
-            "priority": 1020,
+            "name": "[parameters('dnatOutboundAllowCollectionName')]",
+            "priority": "[parameters('dnatOutboundAllowCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyNatRuleCollection",
             "action": {
-              "type": "Dnat"
+              "type": "DNAT"
             },
             "rules": [
               {
@@ -106,52 +177,51 @@
                 "translatedPort": "8080"
               }
             ]
-          }
-        ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('networkRuleCollectionGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
-      "apiVersion": "2024-01-01",
-      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('applicationRuleCollectionGroupName'))]",
-      "properties": {
-        "priority": 200,
-        "ruleCollections": [
+          },
           {
-            "name": "AllowTeams",
-            "priority": 100,
+            "name": "[parameters('networkOutboundAllowCollectionName')]",
+            "priority": "[parameters('networkOutboundAllowCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
               "type": "Allow"
             },
             "rules": [
               {
-                "ruleType": "ApplicationRule",
-                "name": "AllowTeams",
-                "protocols": [
-                  {
-                    "protocolType": "Https",
-                    "port": 443
-                  }
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-PL-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
                 ],
                 "sourceAddresses": [
-                  "192.168.50.0/24"
+                  "10.1.200.0/24"
                 ],
-                "targetFqdns": [
-                  "*.teams.microsoft.com"
+                "destinationAddresses": [
+                  "*"
                 ],
-                "fqdnTags": [],
-                "httpHeadersToInsert": [],
-                "terminateTLS": false
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
               }
             ]
-          },
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('externalIntegrationsRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('applicationNetworkRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('externalIntegrationsPriority')]",
+        "ruleCollections": [
           {
-            "name": "AllowGitHub",
-            "priority": 200,
+            "name": "[parameters('applicationOutboundAllowCollectionName')]",
+            "priority": "[parameters('applicationOutboundAllowCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
               "type": "Allow"
@@ -177,18 +247,31 @@
                 "terminateTLS": false
               }
             ]
-          },
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('generalRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('externalIntegrationsRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('generalPriority')]",
+        "ruleCollections": [
           {
-            "name": "BlockSocialMedia",
-            "priority": 300,
+            "name": "[parameters('applicationOutboundAllowCollectionName')]",
+            "priority": "[parameters('applicationOutboundAllowCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
-              "type": "Deny"
+              "type": "Allow"
             },
             "rules": [
               {
                 "ruleType": "ApplicationRule",
-                "name": "BlockSocialMedia",
+                "name": "AllowTeams",
                 "protocols": [
                   {
                     "protocolType": "Https",
@@ -196,11 +279,10 @@
                   }
                 ],
                 "sourceAddresses": [
-                  "*"
+                  "192.168.50.0/24"
                 ],
                 "targetFqdns": [
-                  "*.facebook.com",
-                  "*.instagram.com"
+                  "*.teams.microsoft.com"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
@@ -209,10 +291,7 @@
             ]
           }
         ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('dnatRuleCollectionGroupName'))]"
-      ]
+      }
     }
   ]
 }
