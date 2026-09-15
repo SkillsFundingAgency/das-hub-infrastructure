@@ -13,6 +13,54 @@
     },
     "dnatRuleCollectionGroupName": {
       "type": "string"
+    },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "securityServicesRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "generalRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "criticalInfrastructurePriority": {
+      "type": "int"
+    },
+    "securityServicesPriority": {
+      "type": "int"
+    },
+    "applicationNetworkPriority": {
+      "type": "int"
+    },
+    "externalIntegrationsPriority": {
+      "type": "int"
+    },
+    "generalPriority": {
+      "type": "int"
+    },
+    "dnatOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "dnatOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "networkOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "networkOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "applicationOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundAllowCollectionPriority": {
+      "type": "int"
     }
   },
   "resources": [

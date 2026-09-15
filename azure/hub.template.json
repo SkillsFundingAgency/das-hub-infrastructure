@@ -9,6 +9,18 @@
       "type": "bool",
       "defaultValue": false
     },
+    "applicationNetworkPriority": {
+      "type": "int"
+    },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "applicationOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
     "applicationRuleCollectionGroupName": {
       "type": "string"
     },
@@ -72,17 +84,53 @@
       "type": "bool",
       "defaultValue": true
     },
+    "criticalInfrastructurePriority": {
+      "type": "int"
+    },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "dnatOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "dnatOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
     "dnatRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "externalIntegrationsPriority": {
+      "type": "int"
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "generalPriority": {
+      "type": "int"
+    },
+    "generalRuleCollectionGroupName": {
       "type": "string"
     },
     "location": {
       "type": "string",
       "defaultValue": "westeurope"
     },
+    "networkOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "networkOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
     "networkRuleCollectionGroupName": {
       "type": "string"
     },
     "resourceEnvironmentName": {
+      "type": "string"
+    },
+    "securityServicesPriority": {
+      "type": "int"
+    },
+    "securityServicesRuleCollectionGroupName": {
       "type": "string"
     },
     "serviceName": {
@@ -425,6 +473,54 @@
           },
           "dnatRuleCollectionGroupName": {
             "value": "[parameters('dnatRuleCollectionGroupName')]"
+          },
+          "criticalInfrastructureRuleCollectionGroupName": {
+            "value": "[parameters('criticalInfrastructureRuleCollectionGroupName')]"
+          },
+          "securityServicesRuleCollectionGroupName": {
+            "value": "[parameters('securityServicesRuleCollectionGroupName')]"
+          },
+          "applicationNetworkRuleCollectionGroupName": {
+            "value": "[parameters('applicationNetworkRuleCollectionGroupName')]"
+          },
+          "externalIntegrationsRuleCollectionGroupName": {
+            "value": "[parameters('externalIntegrationsRuleCollectionGroupName')]"
+          },
+          "generalRuleCollectionGroupName": {
+            "value": "[parameters('generalRuleCollectionGroupName')]"
+          },
+          "criticalInfrastructurePriority": {
+            "value": "[parameters('criticalInfrastructurePriority')]"
+          },
+          "securityServicesPriority": {
+            "value": "[parameters('securityServicesPriority')]"
+          },
+          "applicationNetworkPriority": {
+            "value": "[parameters('applicationNetworkPriority')]"
+          },
+          "externalIntegrationsPriority": {
+            "value": "[parameters('externalIntegrationsPriority')]"
+          },
+          "generalPriority": {
+            "value": "[parameters('generalPriority')]"
+          },
+          "dnatOutboundAllowCollectionName": {
+            "value": "[parameters('dnatOutboundAllowCollectionName')]"
+          },
+          "dnatOutboundAllowCollectionPriority": {
+            "value": "[parameters('dnatOutboundAllowCollectionPriority')]"
+          },
+          "networkOutboundAllowCollectionName": {
+            "value": "[parameters('networkOutboundAllowCollectionName')]"
+          },
+          "networkOutboundAllowCollectionPriority": {
+            "value": "[parameters('networkOutboundAllowCollectionPriority')]"
+          },
+          "applicationOutboundAllowCollectionName": {
+            "value": "[parameters('applicationOutboundAllowCollectionName')]"
+          },
+          "applicationOutboundAllowCollectionPriority": {
+            "value": "[parameters('applicationOutboundAllowCollectionPriority')]"
           }
         }
       }
