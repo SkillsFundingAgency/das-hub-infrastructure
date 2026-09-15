@@ -53,6 +53,12 @@
     "applicationOutboundAllowCollectionPriority": {
       "type": "int"
     },
+    "applicationOutboundDenyCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundDenyCollectionPriority": {
+      "type": "int"
+    },
     "networkRuleCollectionGroupName": {
       "type": "string"
     },

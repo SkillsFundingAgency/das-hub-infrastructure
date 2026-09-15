@@ -34,12 +34,12 @@ The rule collection groups hanging off the policy are what the files in
 `config/` produce. Everything else is fixed infrastructure that rarely changes.
 
 Environments are moving from three groups split by rule type to five groups
-split by purpose. AT has moved; every other environment still uses the legacy
-layout.
+split by purpose. AT and DTA have moved; every other environment still uses the
+legacy layout.
 
 | Layout | Rule collection group | Priority | Holds |
 | --- | --- | --- | --- |
-| Tiered (AT) | `das-critical-infrastructure` | 100 | DNS, AD, management, shared platform services |
+| Tiered (AT, DTA) | `das-critical-infrastructure` | 100 | DNS, AD, management, shared platform services |
 | | `das-security-services` | 200 | Key Vault, monitoring, security services |
 | | `das-application-network` | 300 | Application-to-application and spoke-to-spoke rules |
 | | `das-external-integrations` | 400 | Third-party and network integrations |
@@ -48,26 +48,44 @@ layout.
 | | `Application-Rules-Outbound` | 200 | Application rules |
 | | `Dnat-Rules-Inbound` | 300 | DNAT rules |
 
-In the tiered layout a group holds a few rule collections, one per rule type,
-and rules are added to those rather than each rule getting a collection of its
-own. `das-application-network` holds:
+In the tiered layout a group holds a few rule collections, one per rule type and
+action, and rules are added to those rather than each rule getting a collection
+of its own. Every group draws on the same set of collections, using only the
+ones it needs:
 
 | Rule collection | Type | Action | Priority |
 | --- | --- | --- | --- |
 | `DNAT-Outbound-Allow` | NAT | `DNAT` | 1000 |
+| `Application-Outbound-Deny` | Filter | `Deny` | 1500 |
 | `Network-Outbound-Allow` | Filter | `Allow` | 2000 |
 | `Application-Outbound-Allow` | Filter | `Allow` | 3000 |
+
+A collection name or priority only has to be unique within its group, so the
+same collection can appear in several groups.
+
+| Environment | Group | Collections |
+| --- | --- | --- |
+| AT | `das-application-network` | `DNAT-Outbound-Allow` (empty), `Network-Outbound-Allow`, `Application-Outbound-Allow` |
+| DTA | `das-security-services` | `Application-Outbound-Deny` |
+| | `das-application-network` | `DNAT-Outbound-Allow`, `Network-Outbound-Allow` |
+| | `das-external-integrations` | `Application-Outbound-Allow` |
+| | `das-general` | `Application-Outbound-Allow` |
+
+AT's rules are all still in `das-application-network` and have yet to be sorted
+by purpose; DTA's are sorted.
+
+Put a Deny collection in a group with a lower priority number than any group
+holding an Allow the Deny must beat. Within a rule type, groups are processed in
+priority order and the first match wins.
 
 Group names and priorities, and collection names and priorities, all come from
 `RELEASE das-hub-infrastructure`.
 
-`hub.template.json` passes the three legacy group names and all sixteen tiered
+`hub.template.json` passes the three legacy group names and all eighteen tiered
 values to every environment's rules file, so every rules file has to declare all
 of them. AT and DTA do. **TEST, TEST2, DEMO and PP do not yet, so their rules
 deployment fails** until each is moved to the tiered layout. That failure is at
-validation, before any rule is touched, so their live rules stay as they are. DTA
-keeps the legacy layout but declares the tiered values, because AT only deploys
-after DTA succeeds.
+validation, before any rule is touched, so their live rules stay as they are.
 
 Resource names are never written down anywhere. They are built inside the
 template from `das-<resourceEnvironmentName>-<serviceName>`, so `at` plus `hub`
@@ -218,6 +236,8 @@ environment.
 | `networkOutboundAllowCollectionPriority` | `2000` |
 | `applicationOutboundAllowCollectionName` | `Application-Outbound-Allow` |
 | `applicationOutboundAllowCollectionPriority` | `3000` |
+| `applicationOutboundDenyCollectionName` | `Application-Outbound-Deny` |
+| `applicationOutboundDenyCollectionPriority` | `1500` |
 | `tags` | `{"Environment":"$(EnvironmentTag)", ...}` |
 
 **`<ENV> das-hub-infrastructure`** — five values, because resource names are
@@ -283,16 +303,22 @@ branch.
 
 **Moving an environment to the tiered layout leaves the legacy groups live.**
 For the reason above, the three legacy groups keep enforcing their rules after
-the new groups deploy. That is harmless while every rule is `Allow`, but they
-share priorities 100 and 300 with the new groups, so delete them once the new
-groups show `Succeeded`:
+the new groups deploy. The rules are duplicated rather than changed, but the
+legacy groups share priorities 100, 200 and 300 with the new ones, so delete
+them once the new groups show `Succeeded`. The names are whatever the
+environment's legacy group name variables were; check the portal first. For AT:
 
 ```powershell
 foreach ($group in 'Network-Rules-Outbound', 'Application-Rules-Outbound', 'Dnat-Rules-Inbound') {
   az network firewall policy rule-collection-group delete `
-    -g das-<env>-hub-rg --policy-name das-<env>-hub-fw-policy-0 -n $group
+    -g das-at-hub-rg --policy-name das-at-hub-fw-policy-0 -n $group
 }
 ```
+
+DTA's legacy groups are named `NetworkGroup`, `AppGroup` and `DNAT-Rules`.
+Delete `DNAT-Rules` promptly: its DNAT rules duplicate those in
+`das-application-network`, and only the first DNAT rule matching a destination
+address and port is ever used.
 
 **Rule collection groups at equal priority have no defined order.** If two
 groups share a priority, which one's allow or deny wins is undefined. Keep them

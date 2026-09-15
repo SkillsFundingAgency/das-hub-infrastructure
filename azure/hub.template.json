@@ -21,6 +21,12 @@
     "applicationOutboundAllowCollectionPriority": {
       "type": "int"
     },
+    "applicationOutboundDenyCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundDenyCollectionPriority": {
+      "type": "int"
+    },
     "applicationRuleCollectionGroupName": {
       "type": "string"
     },
@@ -521,6 +527,12 @@
           },
           "applicationOutboundAllowCollectionPriority": {
             "value": "[parameters('applicationOutboundAllowCollectionPriority')]"
+          },
+          "applicationOutboundDenyCollectionName": {
+            "value": "[parameters('applicationOutboundDenyCollectionName')]"
+          },
+          "applicationOutboundDenyCollectionPriority": {
+            "value": "[parameters('applicationOutboundDenyCollectionPriority')]"
           }
         }
       }
