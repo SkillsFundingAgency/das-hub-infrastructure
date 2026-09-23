@@ -1458,13 +1458,13 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-LRNNOTI-SN-Outbound",
+                "name": "AllowSubnet-LRNNOTIWKR-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
                 ],
                 "sourceAddresses": [
-                  "10.1.202.0/24"
+                  "10.1.203.0/24"
                 ],
                 "destinationAddresses": [
                   "*"
