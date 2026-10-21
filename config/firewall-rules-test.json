@@ -5,6 +5,60 @@
     "firewallPolicyName": {
       "type": "string"
     },
+    "criticalInfrastructureRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "securityServicesRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "applicationNetworkRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "externalIntegrationsRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "generalRuleCollectionGroupName": {
+      "type": "string"
+    },
+    "criticalInfrastructurePriority": {
+      "type": "int"
+    },
+    "securityServicesPriority": {
+      "type": "int"
+    },
+    "applicationNetworkPriority": {
+      "type": "int"
+    },
+    "externalIntegrationsPriority": {
+      "type": "int"
+    },
+    "generalPriority": {
+      "type": "int"
+    },
+    "dnatOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "dnatOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "networkOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "networkOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "applicationOutboundAllowCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundAllowCollectionPriority": {
+      "type": "int"
+    },
+    "applicationOutboundDenyCollectionName": {
+      "type": "string"
+    },
+    "applicationOutboundDenyCollectionPriority": {
+      "type": "int"
+    },
     "networkRuleCollectionGroupName": {
       "type": "string"
     },
@@ -19,13 +73,46 @@
     {
       "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
       "apiVersion": "2024-01-01",
-      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('networkRuleCollectionGroupName'))]",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('criticalInfrastructureRuleCollectionGroupName'))]",
       "properties": {
-        "priority": 100,
+        "priority": "[parameters('criticalInfrastructurePriority')]",
+        "ruleCollections": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('securityServicesRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('criticalInfrastructureRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('securityServicesPriority')]",
+        "ruleCollections": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('applicationNetworkRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('securityServicesRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('applicationNetworkPriority')]",
         "ruleCollections": [
           {
-            "name": "AllowSubnet-PFBA-SN",
-            "priority": 380,
+            "name": "[parameters('dnatOutboundAllowCollectionName')]",
+            "priority": "[parameters('dnatOutboundAllowCollectionPriority')]",
+            "ruleCollectionType": "FirewallPolicyNatRuleCollection",
+            "action": {
+              "type": "DNAT"
+            },
+            "rules": []
+          },
+          {
+            "name": "[parameters('networkOutboundAllowCollectionName')]",
+            "priority": "[parameters('networkOutboundAllowCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
               "type": "Allow"
@@ -48,17 +135,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ATLSSN-USR-SN",
-            "priority": 680,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ATLSSN-USR-SN-Outbound",
@@ -67,7 +144,7 @@
                   "UDP"
                 ],
                 "sourceAddresses": [
-                  "10.1.143.0/24"
+                  "10.2.143.0/24"
                 ],
                 "destinationAddresses": [
                   "*"
@@ -76,17 +153,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-MGMT-SN-0",
-            "priority": 240,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-MGMT-SN-0-Outbound",
@@ -104,17 +171,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-DATAMGMTAI-SN",
-            "priority": 260,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-DATAMGMTAI-SN-Outbound",
@@ -123,7 +180,7 @@
                   "UDP"
                 ],
                 "sourceAddresses": [
-                  "10.2.50.0/24"
+                  "10.2.169.0/24"
                 ],
                 "destinationAddresses": [
                   "*"
@@ -132,17 +189,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-EMPINCPAY-SN",
-            "priority": 270,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-EMPINCPAY-SN-Outbound",
@@ -160,17 +207,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-EMPINC-SN",
-            "priority": 280,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-EMPINC-SN-Outbound",
@@ -188,17 +225,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RCRT-WEBJOB-SN",
-            "priority": 290,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-RCRT-WEBJOB-SN-Outbound",
@@ -216,20 +243,10 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-EMPINCWKR-SN",
-            "priority": 310,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-PFBA-SN-Outbound",
+                "name": "AllowSubnet-EMPINCWKR-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -244,20 +261,10 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FCAST-SN",
-            "priority": 320,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-PFBA-SN-Outbound",
+                "name": "AllowSubnet-FCAST-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
                   "UDP"
@@ -272,17 +279,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-GW-SN-0",
-            "priority": 330,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-GW-SN-0-Outbound",
@@ -300,73 +297,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDFE-SN-0",
-            "priority": 100,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDFE-SN-0-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.15.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDBE-SN-0",
-            "priority": 150,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDBE-SN-0-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.20.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDWKR-SN-0",
-            "priority": 300,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SHAREDWKR-SN-0-Outbound",
@@ -384,17 +315,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ACCWKR-SN",
-            "priority": 340,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ACCWKR-SN-Outbound",
@@ -412,17 +333,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FINWKR-SN",
-            "priority": 360,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FINWKR-SN-Outbound",
@@ -440,17 +351,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SUPPWKR-SN",
-            "priority": 370,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SUPPWKR-SN-Outbound",
@@ -468,17 +369,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-COMTWKR-SN",
-            "priority": 220,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-COMTWKR-SN-Outbound",
@@ -496,17 +387,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-PASWKR-SN",
-            "priority": 390,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-PASWKR-SN-Outbound",
@@ -524,17 +405,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-MLRNWKR-SN",
-            "priority": 410,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-MLRNWKR-SN-Outbound",
@@ -552,17 +423,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ECHK-SN",
-            "priority": 420,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ECHK-SN-Outbound",
@@ -580,17 +441,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-LTMWKR-SN",
-            "priority": 430,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-LTMWKR-SN-Outbound",
@@ -608,101 +459,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RCRTB1-UI-MA-SN",
-            "priority": 440,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRTB1-UI-MA-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.133.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RCRTV1-SN",
-            "priority": 460,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRTV1-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.132.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RCRTV1WKR-SN",
-            "priority": 470,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRTV1WKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.134.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ROATPPCMWKR-SN",
-            "priority": 480,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ROATPPCMWKR-SN-Outbound",
@@ -720,17 +477,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FATDLOAD-SN",
-            "priority": 490,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FATDLOAD-SN-Outbound",
@@ -748,17 +495,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-PREL-SN",
-            "priority": 510,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-PREL-SN-Outbound",
@@ -776,17 +513,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APPFBWKR-SN",
-            "priority": 520,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-APPFBWKR-SN-Outbound",
@@ -804,17 +531,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-DATAMGMTWKR-SN",
-            "priority": 530,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-DATAMGMTWKR-SN-Outbound",
@@ -832,17 +549,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-PFBEWKR-SN",
-            "priority": 540,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-PFBEWKR-SN-Outbound",
@@ -860,17 +567,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FAAWKR-SN",
-            "priority": 550,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FAAWKR-SN-Outbound",
@@ -888,17 +585,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FAA-SN",
-            "priority": 560,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FAA-SN-Outbound",
@@ -916,17 +603,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-PREGWKR-SN",
-            "priority": 570,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-PREGWKR-SN-Outbound",
@@ -944,17 +621,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ASSWKR-SN",
-            "priority": 580,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ASSWKR-SN-Outbound",
@@ -972,73 +639,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RSRVAPI-SN",
-            "priority": 590,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RSRVAPI-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.135.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-EMPUWKR-SN",
-            "priority": 610,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-EMPUWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.137.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-NOTIWKR-SN",
-            "priority": 620,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-NOTIWKR-SN-Outbound",
@@ -1056,73 +657,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ALOGINWKR-SN",
-            "priority": 630,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-ALOGINWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.127.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-TASKWKR-SN",
-            "priority": 640,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-TASKWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.136.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FUNAPPERN-SN",
-            "priority": 660,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FUNAPPERN-SN-Outbound",
@@ -1140,17 +675,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-REFWKR-SN",
-            "priority": 670,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-REFWKR-SN-Outbound",
@@ -1168,17 +693,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ACOMTWKR-SN",
-            "priority": 230,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ACOMTWKR-SN-Outbound",
@@ -1196,17 +711,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-CHARWKR-SN",
-            "priority": 690,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-CHARWKR-SN-Outbound",
@@ -1224,17 +729,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APPACCWKR-SN",
-            "priority": 710,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-APPACCWKR-SN-Outbound",
@@ -1252,45 +747,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-DIGENG-SN",
-            "priority": 720,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-DIGENG-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.122.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FATWKR-SN",
-            "priority": 730,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FATWKR-SN-Outbound",
@@ -1308,17 +765,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-VACWKR-SN",
-            "priority": 740,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-VACWKR-SN-Outbound",
@@ -1336,17 +783,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FCASTWKR-SN",
-            "priority": 760,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FCASTWKR-SN-Outbound",
@@ -1364,17 +801,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RSRVWKR-SN",
-            "priority": 770,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-RSRVWKR-SN-Outbound",
@@ -1392,17 +819,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ROATPWKR-SN",
-            "priority": 780,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-ROATPWKR-SN-Outbound",
@@ -1420,17 +837,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APPS-SN",
-            "priority": 790,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-APPS-SN-Outbound",
@@ -1448,45 +855,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APPSAPPRVEVT-SN",
-            "priority": 800,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-APPSAPPRVEVT-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.154.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-VANL-SN",
-            "priority": 810,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-VANL-SN-Outbound",
@@ -1504,17 +873,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDSQL-SN",
-            "priority": 350,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SHAREDSQL-SN-Outbound",
@@ -1532,17 +891,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDKV-SN",
-            "priority": 400,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SHAREDKV-SN-Outbound",
@@ -1560,17 +909,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-TRKPRGWKR-SN",
-            "priority": 820,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-TRKPRGWKR-SN-Outbound",
@@ -1588,17 +927,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FUNAPPPAY-SN",
-            "priority": 250,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FUNAPPPAY-SN-Outbound",
@@ -1616,17 +945,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-STUB-SN",
-            "priority": 830,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-STUB-SN-Outbound",
@@ -1644,17 +963,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-AANHUBWKR-SN",
-            "priority": 840,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-AANHUBWKR-SN-Outbound",
@@ -1672,17 +981,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FNDAPPWKR-SN",
-            "priority": 850,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FNDAPPWKR-SN-Outbound",
@@ -1700,73 +999,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ERLYCONWKR-SN",
-            "priority": 860,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-ERLYCONWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.159.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-LRNRVRF-SN",
-            "priority": 870,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-LRNRVRF-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.201.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDSRCH-SN",
-            "priority": 880,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SHAREDSRCH-SN-Outbound",
@@ -1784,17 +1017,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDRDS-SN",
-            "priority": 890,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SHAREDRDS-SN-Outbound",
@@ -1812,17 +1035,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-LOGGINGRDS-SN",
-            "priority": 900,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-LOGGINGRDS-SN-Outbound",
@@ -1840,17 +1053,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-REFDATAWKR-SN",
-            "priority": 910,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-REFDATAWKR-SN-Outbound",
@@ -1868,17 +1071,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-AMPLS-SN",
-            "priority": 920,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-AMPLS-SN-Outbound",
@@ -1896,73 +1089,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-ERLYCONAPI-SN",
-            "priority": 930,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-ERLYCONAPI-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.202.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APIMENDP-ERLYCONAPI-SN",
-            "priority": 940,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-APIMENDP-ERLYCONAPI-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.203.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-PSHNTF-SN",
-            "priority": 950,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-PSHNTF-SN-Outbound",
@@ -1980,17 +1107,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-PRWKR-SN",
-            "priority": 960,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-PRWKR-SN-Outbound",
@@ -2008,129 +1125,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FAAV2UI-SN",
-            "priority": 970,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-FAAV2UI-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.163.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-FAAAPI-SN",
-            "priority": 980,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-FAAAPI-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.164.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-CANDACCAPI-SN",
-            "priority": 990,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-CANDACCAPI-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.165.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APIMENDP-SN-1",
-            "priority": 1000,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-APIMENDP-SN-1-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.26.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-RATWKR-SN",
-            "priority": 210,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-RATWKR-SN-Outbound",
@@ -2148,157 +1143,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDBE-SN-1",
-            "priority": 201,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDBE-SN-1-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.21.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDBE-SN-2",
-            "priority": 202,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDBE-SN-2-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.22.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDBE-SN-3",
-            "priority": 203,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDBE-SN-3-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.23.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDBE-SN-4",
-            "priority": 204,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDBE-SN-4-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.24.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDFE-SN-1",
-            "priority": 120,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDFE-SN-1-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.16.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SBUS-TOOLS-SN",
-            "priority": 1020,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SBUS-TOOLS-SN-Outbound",
@@ -2316,101 +1161,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDFE-SN-2",
-            "priority": 110,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDFE-SN-2-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.17.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDFE-SN-3",
-            "priority": 130,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDFE-SN-3-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.18.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-SHAREDFE-SN-4",
-            "priority": 140,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-SHAREDFE-SN-4-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.19.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APIM-SN-0",
-            "priority": 160,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-APIM-SN-0-Outbound",
@@ -2428,45 +1179,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APIMENDP-SN-0",
-            "priority": 170,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-APIMENDP-SN-0-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.25.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APROG-SN",
-            "priority": 180,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "AllowSubnet-APROG-SN-Outbound",
@@ -2484,45 +1197,7 @@
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowSubnet-APPRAPP-SN",
-            "priority": 190,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-APPRAPP-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.207.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "AllowServiceTags",
-            "priority": 106,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "Allow-ServiceTags-Outbound",
@@ -2531,33 +1206,21 @@
                   "UDP"
                 ],
                 "sourceAddresses": [
-                  "10.2.0.0/16"
+                  "10.1.0.0/16"
                 ],
                 "destinationAddresses": [
-                  "Internet",
                   "AzureMonitor",
                   "AzureKeyVault",
                   "AppService",
                   "AppConfiguration",
                   "ServiceBus",
-                  "Storage",
-                  "VirtualNetwork"
+                  "Storage"
                 ],
                 "destinationPorts": [
                   "80",
                   "443"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowServiceBus",
-            "priority": 105,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "Allow-ServiceBus-Outbound",
@@ -2574,17 +1237,7 @@
                 "destinationPorts": [
                   "5671"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowDNS-Services",
-            "priority": 107,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "Allow-DNS-Services-Outbound",
@@ -2601,17 +1254,7 @@
                 "destinationPorts": [
                   "53"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowAPI-Services",
-            "priority": 108,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "Allow-API-Services-Outbound",
@@ -2629,17 +1272,7 @@
                 "destinationPorts": [
                   "*"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "AllowEP-Ports",
-            "priority": 109,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "Allow-EpPorts-Services-Outbound",
@@ -2659,17 +1292,7 @@
                   "445",
                   "1886"
                 ]
-              }
-            ]
-          },
-          {
-            "name": "Allow-MongoDB",
-            "priority": 111,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "NetworkRule",
                 "name": "Allow-MongoDB-Services-Outbound",
@@ -2686,34 +1309,228 @@
                 "destinationPorts": [
                   "27017"
                 ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-FNRBWKR-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.231.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-APPSI-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.232.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-LRNNOTIWKR-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.203.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-FNRVS-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.229.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-LEARNER-SN-0-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.41.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-ASSESSOR-SN-0-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.42.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-EMPLOYER-SN-0-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.43.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-EMPLOYER-SN-1-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.44.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-PROVIDER-SN-0-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.45.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-EXTERNAL-SN-0-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.46.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-INTERNAL-SN-0-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.47.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-PROVIDER-SN-1-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.48.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
               }
             ]
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
-      "apiVersion": "2024-01-01",
-      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('dnatRuleCollectionGroupName'))]",
-      "properties": {
-        "priority": 300,
-        "ruleCollections": []
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('networkRuleCollectionGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
-      "apiVersion": "2024-01-01",
-      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('applicationRuleCollectionGroupName'))]",
-      "properties": {
-        "priority": 200,
-        "ruleCollections": [
+          },
           {
-            "name": "Allow-AppInsights-Outbound",
-            "priority": 100,
+            "name": "[parameters('applicationOutboundAllowCollectionName')]",
+            "priority": "[parameters('applicationOutboundAllowCollectionPriority')]",
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
             "action": {
               "type": "Allow"
@@ -2740,22 +1557,15 @@
                   "*.agentserviceapi.azure.com",
                   "*.live.applicationinsights.azure.com",
                   "*.blob.core.windows.net",
-                  "*.monitor.azure.com"
+                  "*.monitor.azure.com",
+                  "*.platform.education.gov.uk",
+                  "*.apprenticeships.education.gov.uk",
+                  "dev-api-customerengagement.platform.education.gov.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
                 "terminateTLS": false
-              }
-            ]
-          },
-          {
-            "name": "Allow-AppServices-Endpoints",
-            "priority": 110,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "ApplicationRule",
                 "name": "Allow-AppServices-Endpoints-Outbound",
@@ -2779,32 +1589,73 @@
                   "*.vault.azure.net",
                   "*.zendesk.com",
                   "management.azure.com",
-                  "*.platform.education.gov.uk",
-                  "*.apprenticeships.education.gov.uk",
-                  "dev-api-customerengagement.platform.education.gov.uk",
                   "api.appstoreconnect.apple.com",
                   "oauth2.googleapis.com",
                   "www.googleapis.com",
                   "androidpublisher.googleapis.com",
                   "playdeveloperreporting.googleapis.com",
                   "storage.googleapis.com",
+                  "rest-api.e-shot.net",
+                  "*.servicebus.windows.net",
+                  "*.onmicrosoft.com",
+                  "*.ofqual.gov.uk",
+                  "*.qaa.ac.uk",
+                  "*.signin.education.gov.uk",
+                  "*.skillsfunding.service.gov.uk",
+                  "*.management.azure-api.net",
+                  "*.education.gov.uk",
+                  "*.accounts.google.com",
+                  "*.oauth2.googleapis.com",
+                  "*.googleapis.com",
+                  "*.my.apprenticeships.education.gov.uk",
+                  "api.companieshouse.gov.uk",
+                  "*.neaan.org.uk",
+                  "*.gmail.com",
+                  "*.southwestwater.co.uk",
+                  "*.nwaan.co.uk",
+                  "*.wmaan.co.uk",
+                  "*.seaan.org.uk",
+                  "*.yhaan.co.uk",
+                  "*.azureedge.net",
+                  "*.able-futures.co.uk",
+                  "*.nationalcareers.service.gov.uk",
+                  "*.apprenticeships.gov.uk",
+                  "*.nus.org.uk",
+                  "*.totum.com",
+                  "*.servicebus.windows.net",
+                  "*.apps.charitycommission.gov.uk",
+                  "*.management.azure-api.net",
+                  "*.smartsurvey.co.uk",
+                  "*.cdn.contentful.com",
+                  "*.preview.contentful.com",
+                  "*.fasst.org.uk",
+                  "*.skillsengland.education.gov.uk",
+                  "*.mktorest.com",
+                  "*.gov.uk",
+                  "*.dfeuat.achieveservice.com",
+                  "*.hmrc.gov.uk",
+                  "*.api.powerplatform.com",
+                  "*.search.windows.net",
+                  "*.documents.azure.com",
+                  "*.findapprenticeship.service.gov.uk",
+                  "*.googletagmanager.com",
+                  "*.mongodb.net",
+                  "*.herokuapp.com",
+                  "*.ons.gov.uk",
+                  "*.nhs.uk",
+                  "*.police.uk",
+                  "*.slack.com",
+                  "*.surveymonkey.co.uk",
+                  "*.schemas.xmlsoap.org",
+                  "*.files.digital.nhs.uk",
+                  "*.logic.azure.com",
                   "api.os.uk",
                   "api.postcodes.io"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
                 "terminateTLS": false
-              }
-            ]
-          },
-          {
-            "name": "Allow-External-Endpoints",
-            "priority": 122,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "ApplicationRule",
                 "name": "Allow-External-Endpoints-Outbound",
@@ -2820,22 +1671,15 @@
                 "targetFqdns": [
                   "*.digicert.com",
                   "*.microsoft.com",
-                  "management.azure.com"
+                  "management.azure.com",
+                  "*.w3.org",
+                  "api.postcodes.io",
+                  "*.services.postcodeanywhere.co.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
                 "terminateTLS": false
-              }
-            ]
-          },
-          {
-            "name": "Allow-SQL-DB",
-            "priority": 121,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "ApplicationRule",
                 "name": "Allow-SQL-DB-Outbound",
@@ -2854,17 +1698,7 @@
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
                 "terminateTLS": false
-              }
-            ]
-          },
-          {
-            "name": "Allow-OIDC-Endpoints",
-            "priority": 123,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
+              },
               {
                 "ruleType": "ApplicationRule",
                 "name": "Allow-OIDC-Endpoints-Outbound",
@@ -2879,7 +1713,85 @@
                 ],
                 "targetFqdns": [
                   "*oidc.signin.education.gov.uk",
-                  "*oidc.integration.account.gov.uk"
+                  "*oidc.integration.account.gov.uk",
+                  "*.oidc.integration.account.gov.uk",
+                  "*.oidc.signin.education.gov.uk"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "Allow-REDISCACHE-Outbound",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 6380
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.2.0.0/16"
+                ],
+                "targetFqdns": [
+                  "*.redis.cache.windows.net"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "Allow-COSMOSMONGO-Outbound",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 10255
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.2.0.0/16"
+                ],
+                "targetFqdns": [
+                  "*.mongo.cosmos.azure.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "Allow-DOCSAZURE-Outbound",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 10255
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.2.0.0/16"
+                ],
+                "targetFqdns": [
+                  "*.documents.azure.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "Allow-AWS-Outbound",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 9243
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.2.0.0/16"
+                ],
+                "targetFqdns": [
+                  "*.eu-west-1.aws.found.io"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
@@ -2888,10 +1800,31 @@
             ]
           }
         ]
-      },
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('externalIntegrationsRuleCollectionGroupName'))]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('dnatRuleCollectionGroupName'))]"
-      ]
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('applicationNetworkRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('externalIntegrationsPriority')]",
+        "ruleCollections": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-01-01",
+      "name": "[concat(parameters('firewallPolicyName'), '/', parameters('generalRuleCollectionGroupName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups', parameters('firewallPolicyName'), parameters('externalIntegrationsRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "priority": "[parameters('generalPriority')]",
+        "ruleCollections": []
+      }
     }
   ]
 }
