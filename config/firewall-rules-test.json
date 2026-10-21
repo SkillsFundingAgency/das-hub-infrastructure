@@ -1206,7 +1206,7 @@
                   "UDP"
                 ],
                 "sourceAddresses": [
-                  "10.1.0.0/16"
+                  "10.2.0.0/16"
                 ],
                 "destinationAddresses": [
                   "AzureMonitor",
