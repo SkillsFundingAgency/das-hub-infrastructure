@@ -246,6 +246,24 @@
               },
               {
                 "ruleType": "NetworkRule",
+                "name": "AllowSubnet-RCRTWKR-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.209.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
                 "name": "AllowSubnet-EMPINCWKR-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
@@ -1355,6 +1373,24 @@
                 ],
                 "sourceAddresses": [
                   "10.2.203.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-ERLYCONWKR-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.2.159.0/24"
                 ],
                 "destinationAddresses": [
                   "*"
