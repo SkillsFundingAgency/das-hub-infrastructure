@@ -1384,24 +1384,6 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-ERLYCONWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.159.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
                 "name": "AllowSubnet-FNRVS-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
