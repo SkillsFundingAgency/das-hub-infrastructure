@@ -2479,7 +2479,8 @@
                   "playdeveloperreporting.googleapis.com",
                   "storage.googleapis.com",
                   "api.os.uk",
-                  "api.postcodes.io"
+                  "api.postcodes.io",
+                  "*.signin.education.gov.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
