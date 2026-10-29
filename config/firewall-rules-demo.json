@@ -2480,7 +2480,8 @@
                   "storage.googleapis.com",
                   "api.os.uk",
                   "api.postcodes.io",
-                  "*.signin.education.gov.uk"
+                  "*.signin.education.gov.uk",
+                  "*.ofqual.gov.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
