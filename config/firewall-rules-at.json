@@ -1901,7 +1901,8 @@
                   "10.1.200.0/24"
                 ],
                 "targetFqdns": [
-                  "*dev.azure.com",               ],
+                  "*dev.azure.com",
+                ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
                 "terminateTLS": false
