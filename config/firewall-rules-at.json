@@ -246,24 +246,6 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRT-WEBJOB-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.1.139.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
                 "name": "AllowSubnet-EMPINCWKR-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
@@ -660,24 +642,6 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-EMPUWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.1.137.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
                 "name": "AllowSubnet-NOTIWKR-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
@@ -685,24 +649,6 @@
                 ],
                 "sourceAddresses": [
                   "10.1.105.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-ALOGINWKR-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.1.127.0/24"
                 ],
                 "destinationAddresses": [
                   "*"
@@ -793,24 +739,6 @@
                 ],
                 "sourceAddresses": [
                   "10.1.147.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-DIGENG-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.1.122.0/24"
                 ],
                 "destinationAddresses": [
                   "*"
@@ -1074,24 +1002,6 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-LRNRVRF-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.1.201.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
                 "name": "AllowSubnet-SHAREDSRCH-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
@@ -1290,24 +1200,6 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-APPRAPP-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.1.207.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
                 "name": "Allow-ServiceTags-Outbound",
                 "ipProtocols": [
                   "TCP",
@@ -1317,14 +1209,12 @@
                   "10.1.0.0/16"
                 ],
                 "destinationAddresses": [
-                  "Internet",
                   "AzureMonitor",
                   "AzureKeyVault",
                   "AppService",
                   "AppConfiguration",
                   "ServiceBus",
-                  "Storage",
-                  "VirtualNetwork"
+                  "Storage"
                 ],
                 "destinationPorts": [
                   "80",
@@ -1883,6 +1773,25 @@
                 ],
                 "targetFqdns": [
                   "*.documents.azure.com"
+                ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "Allow-Plmet-Outbound",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.1.200.0/24"
+                ],
+                "targetFqdns": [
+                  "*dev.azure.com",
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],

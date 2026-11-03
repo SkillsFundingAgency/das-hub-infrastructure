@@ -276,34 +276,6 @@
             ]
           },
           {
-            "name": "AllowSubnet-RCRT-WEBJOB-SN",
-            "priority": 290,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRT-WEBJOB-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.4.139.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
             "name": "AllowSubnet-GW-SN-0",
             "priority": 330,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
@@ -2479,7 +2451,9 @@
                   "playdeveloperreporting.googleapis.com",
                   "storage.googleapis.com",
                   "api.os.uk",
-                  "api.postcodes.io"
+                  "api.postcodes.io",
+                  "*.signin.education.gov.uk",
+                  "*.ofqual.gov.uk"
                 ],
                 "fqdnTags": [],
                 "httpHeadersToInsert": [],
