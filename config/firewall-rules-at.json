@@ -1317,14 +1317,12 @@
                   "10.1.0.0/16"
                 ],
                 "destinationAddresses": [
-                  "Internet",
                   "AzureMonitor",
                   "AzureKeyVault",
                   "AppService",
                   "AppConfiguration",
                   "ServiceBus",
-                  "Storage",
-                  "VirtualNetwork"
+                  "Storage"
                 ],
                 "destinationPorts": [
                   "80",
