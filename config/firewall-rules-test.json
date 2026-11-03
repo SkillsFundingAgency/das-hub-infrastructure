@@ -228,24 +228,6 @@
               },
               {
                 "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRT-WEBJOB-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.139.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              },
-              {
-                "ruleType": "NetworkRule",
                 "name": "AllowSubnet-RCRTWKR-SN-Outbound",
                 "ipProtocols": [
                   "TCP",
