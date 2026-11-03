@@ -192,34 +192,6 @@
             ]
           },
           {
-            "name": "AllowSubnet-RCRT-WEBJOB-SN",
-            "priority": 290,
-            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
-            "action": {
-              "type": "Allow"
-            },
-            "rules": [
-              {
-                "ruleType": "NetworkRule",
-                "name": "AllowSubnet-RCRT-WEBJOB-SN-Outbound",
-                "ipProtocols": [
-                  "TCP",
-                  "UDP"
-                ],
-                "sourceAddresses": [
-                  "10.2.139.0/24"
-                ],
-                "destinationAddresses": [
-                  "*"
-                ],
-                "destinationPorts": [
-                  "80",
-                  "443"
-                ]
-              }
-            ]
-          },
-          {
             "name": "AllowSubnet-EMPINCWKR-SN",
             "priority": 310,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
