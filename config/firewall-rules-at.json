@@ -1890,6 +1890,24 @@
               },
               {
                 "ruleType": "ApplicationRule",
+                "name": "Allow-Plmet-Outbound",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "sourceAddresses": [
+                  "10.1.200.0/24"
+                ],
+                "targetFqdns": [
+                  "*dev.azure.com",               ],
+                "fqdnTags": [],
+                "httpHeadersToInsert": [],
+                "terminateTLS": false
+              },
+              {
+                "ruleType": "ApplicationRule",
                 "name": "Allow-AWS-Outbound",
                 "protocols": [
                   {
