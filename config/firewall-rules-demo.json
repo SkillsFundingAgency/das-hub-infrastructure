@@ -1984,6 +1984,62 @@
             ]
           },
           {
+            "name": "AllowSubnet-FNRVSALT-SN",
+            "priority": 1030,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-FNRVSALT-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.4.212.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "AllowSubnet-FNRBWKRALT-SN",
+            "priority": 1040,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "AllowSubnet-FNRBWKRALT-SN-Outbound",
+                "ipProtocols": [
+                  "TCP",
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.4.204.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "80",
+                  "443"
+                ]
+              }
+            ]
+          },
+          {
             "name": "AllowSubnet-SHAREDFE-SN-2",
             "priority": 210,
             "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
