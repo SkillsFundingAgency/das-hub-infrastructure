@@ -68,11 +68,11 @@
         "scope": "[resourceId('Microsoft.Network/azureFirewalls', parameters('firewallName'))]",
         "properties": {
           "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
-          "logAnalyticsDestinationType": "AzureDiagnostics",
+          "logAnalyticsDestinationType": "Dedicated",
           "logs": [
-            {"category": "AzureFirewallApplicationRule", "enabled": "[parameters('AzureFirewallApplicationRule')]"},
-            {"category": "AzureFirewallNetworkRule", "enabled": "[parameters('AzureFirewallNetworkRule')]"},
-            {"category": "AzureFirewallDnsProxy", "enabled": "[parameters('AzureFirewallDnsProxy')]"},
+            {"category": "AzureFirewallApplicationRule", "enabled": false},
+            {"category": "AzureFirewallNetworkRule", "enabled": false},
+            {"category": "AzureFirewallDnsProxy", "enabled": false},
             {"category": "AZFWNetworkRule", "enabled": "[parameters('AZFWNetworkRule')]"},
             {"category": "AZFWApplicationRule", "enabled": "[parameters('AZFWApplicationRule')]"},
             {"category": "AZFWNatRule", "enabled": "[parameters('AZFWNatRule')]"},
